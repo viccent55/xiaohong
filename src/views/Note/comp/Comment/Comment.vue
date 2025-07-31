@@ -1,0 +1,110 @@
+<script setup lang="ts">
+  import Date from '../Date.vue'
+  import InterAction from './InterAction.vue'
+  import ReportButton from '../ReportButton.vue'
+
+  import { type CommentInfo } from '@/types/info'
+
+  defineProps<{
+    comment: CommentInfo
+  }>()
+
+  defineEmits([
+    'click-like', // 点赞
+    'click-avatar', // 点击头像
+    'click-reply', // 点击回复
+    'click-report', // 点击举报
+  ])
+</script>
+
+<template>
+  <div class="comment">
+    <div
+      class="avatar"
+      :class="{ 'with-reply': comment.replyTo }">
+      <img
+        :src="comment.author.avatarUrl"
+        @click="$emit('click-avatar', comment.author.id)" />
+    </div>
+    <div class="right">
+      <!-- prettier-ignore -->
+      <div class="author-wrapper">
+        <span class="name">{{ comment.author.name }}</span>
+        <span class="name" v-if="comment.replyTo">></span>
+        <span class="name" v-if="comment.replyTo">{{ comment.replyTo }}</span>
+        <ReportButton @click-report="$emit('click-report', comment.id)" />
+      </div>
+      <span class="content">{{ comment.content }}</span>
+      <Date :date="comment.date" />
+      <InterAction
+        :action="comment.action"
+        @click-comment="$emit('click-reply', comment.id, comment.author.name)"
+        @click-like="$emit('click-like', comment.action, comment.id)" />
+    </div>
+  </div>
+</template>
+
+<style scoped lang="less">
+  .comment {
+    // width: 100%;
+    display: flex;
+    padding: 8px;
+  }
+
+  .right {
+    margin-left: 8px;
+    font-size: 14px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .name {
+      font-size: 14px;
+      max-width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .content {
+      font-size: 14px;
+      color: var(--text-color-dark);
+    }
+
+    > :not(:first-child) {
+      margin-top: 8px;
+    }
+  }
+
+  .avatar {
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+
+    img {
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--border-color);
+    }
+  }
+
+  .with-reply {
+    img {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .author-wrapper {
+    display: flex;
+
+    span {
+      margin-right: 8px;
+    }
+
+    > :last-child {
+      margin-left: auto;
+    }
+  }
+</style>

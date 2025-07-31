@@ -1,0 +1,79 @@
+@pc-width: 1200px;
+@pad-width: 960px;
+@pad-width-small: 959px;
+@phone-width: 695px;
+
+@pc-padding: 0 32px;
+@pad-padding: 0 24px;
+@phone-padding: 0 12px;
+
+@pc-right-padding: 32px;
+@pad-right-padding: 24px;
+@phone-right-padding: 12px;
+
+// 电脑模式 >= 1200px
+.pc-mode(@styles) {
+  @media (min-width: @pad-width) {
+    @styles();
+  }
+}
+
+// 移动设备模式 <= 960px
+.mobile-mode(@styles) {
+  @media (max-width: @pad-width-small) {
+    @styles();
+  }
+}
+
+// 平板模式 >=695px and <= 960px
+.pad-mode(@styles) {
+  @media (min-width: @phone-width) and (max-width: @pad-width) {
+    @styles();
+  }
+}
+
+// 手机模式 <= 695px
+.phone-mode(@styles) {
+  @media (max-width: @phone-width) {
+    @styles();
+  }
+}
+
+.button(@height, @padding) {
+  height: @height;
+  padding: @padding;
+  
+  border-radius: var(--button-border-radius);
+  background-color: transparent;
+
+  &:hover {
+    color: var(--text-color-dark);
+    background-color: var(--background-color-dark);
+  }
+
+  & ~ .icon {
+    font-size: 20px;
+    padding: 0 10px;
+  }
+
+  & ~ .active {
+    color: var(--text-color-dark);
+    background-color: var(--background-color-dark);
+  }
+}
+
+// 基础按钮样式
+.btn-base() {
+  @height: var(--button-height);
+  @padding: var(--button-padding);
+  
+  .button(@height, @padding)
+}
+
+// 大号按钮样式
+.btn-large() {
+  @height: var(--button-height-large);
+  @padding: var(--button-padding);
+  
+  .button(@height, @padding)
+}
