@@ -10,7 +10,10 @@ declare module 'vue' {
   export interface GlobalComponents {
     Aside: typeof import('./src/components/Layout/Aside.vue')['default']
     BottomMore: typeof import('./src/components/global/BottomMore.vue')['default']
+    Ckeditor: typeof import('./src/components/Ckeditor/index.vue')['default']
+    CkEditor: typeof import('./src/components/Ckeditor/index.vue')['default']
     CloseButton: typeof import('./src/components/global/CloseButton.vue')['default']
+    Components: typeof import('./src/components/Ckeditor/index.vue')['default']
     Dropdown: typeof import('./src/components/global/Dropdown.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCarousel: typeof import('element-plus/es')['ElCarousel']
