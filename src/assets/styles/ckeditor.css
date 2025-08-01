@@ -1,0 +1,120 @@
+ .editor-wrapper.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+
+  /* Set the background for fullscreen mode when dark mode is active */
+  .dark .editor-wrapper.fullscreen {
+    background:  var(--background-color);
+  }
+
+  .editor-wrapper.fullscreen .ck-editor {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .editor-wrapper.fullscreen .ck-editor__main {
+    flex-grow: 1;
+    overflow-y: auto;
+  }
+
+  .ck-editor__editable_inline:not(.ck-editor__nested-editable) {
+    min-height: var(--editor-min-height, 150px);
+  }
+
+  /* Heading styles for the editor content */
+  .ck-content h1 {
+    font-size: 2em;
+    font-weight: bold;
+    margin: 0.67em 0;
+  }
+
+  .ck-content h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 0.75em 0;
+  }
+
+  .ck-content h3 {
+    font-size: 1.17em;
+    font-weight: bold;
+    margin: 0.83em 0;
+  }
+
+  .ck-content h4 {
+    font-size: 1em;
+    font-weight: bold;
+    margin: 1.12em 0;
+  }
+
+  .ck-content h5 {
+    font-size: 0.83em;
+    font-weight: bold;
+    margin: 1.5em 0;
+  }
+
+  .ck-content h6 {
+    font-size: 0.75em;
+    font-weight: bold;
+    margin: 1.67em 0;
+  }
+
+  /*
+  ===========================================================================
+   CKEditor 5 Dark Mode Styles
+  ===========================================================================
+*/
+
+  /* Assumes a .dark class is applied to a parent element (e.g., <html> or <body>) */
+  .dark .ck.ck-editor {
+    /* Overrides for the main CSS variables */
+    --ck-color-base-border: #4a5568;
+    --ck-color-focus-border: #63b3ed;
+    --ck-color-text: #e2e8f0;
+    --ck-color-base-background:  var(--background-color); /* Unified dark background */
+    --ck-color-base-action: #63b3ed;
+    --ck-color-base-active: #4299e1;
+    --ck-color-button-on-background: #2b6cb0;
+    --ck-color-button-on-hover-background: #3182ce;
+    --ck-color-button-default-hover-background: #4a5568;
+    --ck-color-dropdown-panel-background: #2d3748; /* Keep dropdowns slightly lighter for depth */
+    --ck-color-dropdown-panel-border: #4a5568;
+    --ck-color-input-background:  var(--background-color);
+    --ck-color-input-border: #4a5568;
+    --ck-color-list-item-hover-background: #4a5568;
+    --ck-color-toolbar-background:  var(--background-color); /* Unified dark background */
+    --ck-color-toolbar-border: #4a5568;
+    --ck-color-tooltip-background:  var(--background-color);
+    --ck-color-tooltip-text: #e2e8f0;
+  }
+
+  /* Editable area background and text color */
+  .dark .ck-editor__editable_inline {
+    background-color:  var(--background-color); /* Unified dark background */
+    color: #e2e8f0;
+  }
+
+  /* Placeholder text color */
+  .dark .ck-editor__editable_inline.ck-placeholder::before {
+    color: #718096;
+  }
+
+  /* Ensure icons in buttons inherit the new text color */
+  .dark .ck.ck-button .ck-icon {
+    color: inherit;
+  }
+
+  /* Labeled fields (like in the link dialog) */
+  .dark .ck.ck-labeled-field-view .ck-labeled-field-view__label {
+    color: #a0aec0;
+  }
