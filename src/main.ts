@@ -1,20 +1,27 @@
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-import 'element-plus/dist/index.css'
-import App from '@/App.vue'
-import router from '@/router'
-import { useElementPlus } from '@/utils/element'
-import Heart from './components/global/Heart.vue'
+import { createApp } from "vue";
+import { createPinia } from "pinia";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+
+import "element-plus/dist/index.css";
+import "element-plus/theme-chalk/dark/css-vars.css";
+import "@/assets/styles/styles.css";
+import App from "@/App.vue";
+import router from "@/router";
+import { useElementPlus, setElementPlusNamespace } from "@/utils/element";
+import Heart from "./components/global/Heart.vue";
 
 // mock
-import '@/mock'
+import "@/mock";
 
-const app = createApp(App)
+const app = createApp(App);
 
-useElementPlus(app)
+useElementPlus(app);
+setElementPlusNamespace();
 
-app.component('Heart', Heart)
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
 
-app.use(createPinia())
-app.use(router)
-app.mount('#app')
+app.component("Heart", Heart);
+app.use(pinia);
+app.use(router);``
+app.mount("#app");

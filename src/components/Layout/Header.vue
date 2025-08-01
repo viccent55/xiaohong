@@ -1,14 +1,20 @@
 <script setup lang="ts">
-  import type { DropdownItem } from '@/types/item'
-  import Dropdown from '../global/Dropdown.vue'
+  import type { DropdownItem } from "@/types/item";
+  import Dropdown from "../global/Dropdown.vue";
+  import { useStore } from "@/store";
 
-  import { dropDownItems1, dropDownItems2, dropDownItems4 } from '@/common'
+  import { dropDownItems1, dropDownItems2, dropDownItems4 } from "@/common";
 
-  const emits = defineEmits(['click-menu-item'])
+  const store = useStore();
+  const emits = defineEmits(["click-menu-item"]);
 
   const clickMenuItem = (item: DropdownItem) => {
-    emits('click-menu-item', item)
-  }
+    emits("click-menu-item", item);
+  };
+
+  const toggleDarkMode = () => {
+    store.toggleDarkMode();
+  };
 </script>
 
 <template>
@@ -19,25 +25,37 @@
     <div class="input-wrapper">
       <input
         type="text"
-        placeholder="搜索" />
+        placeholder="搜索"
+      />
       <div class="search-icon">
         <el-icon><Search /></el-icon>
       </div>
     </div>
-
     <div class="button-wrapper">
+      <!-- Dark mode toggle -->
+      <el-button
+        circle
+        @click="toggleDarkMode"
+        title="切换主题"
+        style="width: 40px"
+      >
+        <el-icon v-if="store.isDarkmode === 'light'"><Moon /></el-icon>
+        <el-icon v-else><Sunny /></el-icon>
+      </el-button>
       <!-- >960 -->
       <Dropdown
         @click-item="clickMenuItem"
         :items="dropDownItems1"
-        placement="bottom">
+        placement="bottom"
+      >
         <button>创作中心</button>
       </Dropdown>
 
       <Dropdown
         @click-item="clickMenuItem"
         :items="dropDownItems2"
-        placement="bottom-end">
+        placement="bottom-end"
+      >
         <button>业务合作</button>
       </Dropdown>
 
@@ -46,7 +64,8 @@
         @click-item="clickMenuItem"
         :items="dropDownItems4"
         placement="bottom-end"
-        trigger="click">
+        trigger="click"
+      >
         <button class="more-btn">
           <el-icon><MoreFilled /></el-icon>
         </button>
@@ -56,7 +75,7 @@
 </template>
 
 <style scoped lang="less">
-  @import '@/assets/styles/base.less';
+  @import "@/assets/styles/base.less";
 
   .header {
     z-index: 16px;
@@ -123,20 +142,36 @@
     }
   }
 
+  .dark-mode-btn {
+    border-radius: 50%;
+    padding: 8px;
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .el-icon {
+      font-size: 18px;
+    }
+  }
+
   .more-btn {
     border-radius: 50%;
     padding: 12px;
   }
 
   .button-wrapper {
-    > :nth-child(1),
-    > :nth-child(2) {
+    display: flex;
+    align-items: center;
+
+    > :nth-child(2),
+    > :nth-child(3) {
       .mobile-mode({
         display: none;
       });
     }
 
-    > :nth-child(3) {
+    > :nth-child(4) {
       .pc-mode({
         display: none;
       });

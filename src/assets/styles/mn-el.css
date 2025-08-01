@@ -5,6 +5,7 @@
   padding: 0 !important;
   border-radius: 16px !important;
   overflow: hidden !important;
+  background-color: var(--background-color) !important;
 }
 
 .el-dialog__header {
@@ -18,21 +19,33 @@
 /* 下拉菜单 */
 .el-dropdown-menu {
   padding: 5px !important;
+  background-color: var(--background-color) !important;
+  border: 1px solid var(--border-color) !important;
 }
 
 .el-dropdown-menu__item {
   padding: 0 !important;
+  color: var(--text-color) !important;
 }
 
 .el-dropdown-menu__item:hover {
-  color: inherit !important;
-  background-color: transparent !important;
+  color: var(--text-color-dark) !important;
+  background-color: var(--background-color-dark) !important;
   cursor: pointer !important;
 }
 
 .el-dropdown-menu__item:focus {
-  background-color: inherit !important;
-  color: inherit !important;
+  background-color: var(--background-color-dark) !important;
+  color: var(--text-color-dark) !important;
+}
+
+/* 分割线 */
+.el-divider {
+  border-color: var(--border-color) !important;
+}
+
+.el-divider--horizontal {
+  border-top-color: var(--border-color) !important;
 }
 
 /* 轮播图 */
@@ -63,4 +76,46 @@
 
 .el-carousel__item {
   height: 100% !important;
+}
+
+/* 消息提示 */
+.el-message {
+  background-color: var(--background-color) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-color-dark) !important;
+}
+
+.el-message--success {
+  background-color: var(--background-color) !important;
+  border-color: #67c23a !important;
+}
+
+.el-message--warning {
+  background-color: var(--background-color) !important;
+  border-color: #e6a23c !important;
+}
+
+.el-message--error {
+  background-color: var(--background-color) !important;
+  border-color: #f56c6c !important;
+}
+
+/* 图标颜色 */
+.el-icon {
+  color: var(--text-color) !important;
+}
+
+/* 输入框 */
+.el-input__wrapper {
+  background-color: var(--background-color-dark) !important;
+  border-color: var(--border-color) !important;
+}
+
+.el-input__inner {
+  color: var(--text-color-dark) !important;
+  background-color: transparent !important;
+}
+
+.el-input__inner::placeholder {
+  color: var(--text-color-light) !important;
 }

@@ -1,27 +1,29 @@
 <script setup lang="ts">
   const emits = defineEmits([
-    'get-more', // 获取更多
-  ])
+    "get-more", // 获取更多
+  ]);
 
   const on = () => {
-    emits('get-more')
-  }
+    emits("get-more");
+  };
+
 </script>
 
 <template>
   <!-- 列表容器 -->
   <!-- prettier-ignore -->
-  <div 
+  <div
     class="feeds-container"
     :infinite-scroll-immediate="false"
     :infinite-scroll-distance="300"
-    v-infinite-scroll="on">
+    v-infinite-scroll="on"
+  >
     <slot></slot>
   </div>
 </template>
 
 <style scoped lang="less">
-  @import '@/assets/styles/base.less';
+  @import "@/assets/styles/base.less";
 
   .feeds-container {
     width: 100%;

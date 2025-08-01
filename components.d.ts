@@ -12,6 +12,7 @@ declare module 'vue' {
     BottomMore: typeof import('./src/components/global/BottomMore.vue')['default']
     CloseButton: typeof import('./src/components/global/CloseButton.vue')['default']
     Dropdown: typeof import('./src/components/global/Dropdown.vue')['default']
+    ElButton: typeof import('element-plus/es')['ElButton']
     ElCarousel: typeof import('element-plus/es')['ElCarousel']
     ElCarouselItem: typeof import('element-plus/es')['ElCarouselItem']
     ElDialog: typeof import('element-plus/es')['ElDialog']

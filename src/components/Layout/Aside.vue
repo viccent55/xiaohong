@@ -145,7 +145,7 @@
         margin-bottom: 8px;
       }
 
-      color: #33333399;
+      color: var(--text-color-light);
       font-size: 14px;
       line-height: 120%;
 

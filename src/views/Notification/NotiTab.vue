@@ -91,7 +91,7 @@
 
         span {
           font-size: 14px;
-          color: rgba(51, 51, 51, 0.6);
+          color: var(--text-color-light);
           margin-right: 8px;
         }
       }
@@ -119,7 +119,7 @@
   .quote {
     font-size: 12px;
     margin-bottom: 12px;
-    color: rgba(51, 51, 51, 0.6);
+    color: var(--text-color-light);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
