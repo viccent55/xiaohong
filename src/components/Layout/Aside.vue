@@ -47,11 +47,11 @@
       class="float-box"
       @click="openLoginDialog"
       v-if="!userStore.isLogin">
-      <span>马上登录即可</span>
-      <span><Pointer />刷到更懂你的优质内容</span>
-      <span><Position />搜索最新种草、拔草信息</span>
-      <span><Star />查看收藏、点赞笔记</span>
-      <span><ChatSquare />与他人更好地互动、交流</span>
+      <span >马上登录即可</span>
+      <span class="flex ga-2"><Pointer />刷到更懂你的优质内容</span>
+      <span class="flex ga-2"><Position />搜索最新种草、拔草信息</span>
+      <span class="flex ga-2"><Star />查看收藏、点赞笔记</span>
+      <span class="flex ga-2"><ChatSquare />与他人更好地互动、交流</span>
     </div>
 
     <!-- 更多菜单 -->

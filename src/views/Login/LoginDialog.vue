@@ -1,23 +1,23 @@
 <script setup lang="ts">
-  import CloseButton from '@/components/global/CloseButton.vue'
-  import Qrcode from 'qrcode'
-  import { reactive, ref, watch } from 'vue'
-  import { loginDialogVisible, closeLoginDialog } from '@/hooks/useLoginDialog'
-  import { screenMode } from '@/hooks/useScreenMode'
-  import { getCaptcha, getQrcode } from '@/api/login'
-  import { useUserStore } from '@/store/user'
-  import { ElMessage } from 'element-plus'
+  import CloseButton from "@/components/global/CloseButton.vue";
+  import Qrcode from "qrcode";
+  import { reactive, ref, watch } from "vue";
+  import { loginDialogVisible, closeLoginDialog } from "@/hooks/useLoginDialog";
+  import { screenMode } from "@/hooks/useScreenMode";
+  import { getCaptcha, getQrcode } from "@/api/login";
+  import { useUserStore } from "@/store/user";
+  import { ElMessage } from "element-plus";
 
   // state
-  const dialogMode = ref<'all' | 'left' | 'right'>()
+  const dialogMode = ref<"all" | "left" | "right">();
   // 表单
   const form = reactive({
-    qrcode: '',
-    phone: '',
-    captcha: '',
+    qrcode: "",
+    phone: "",
+    captcha: "",
     agreeProtocol: false,
     timer: 0,
-  })
+  });
 
   // 监听屏幕宽度变化
   watch(
@@ -25,82 +25,82 @@
     (value, oldValue) => {
       // 首次加载
       if (!oldValue) {
-        dialogMode.value = screenMode.value === 'pc' ? 'all' : 'right'
+        dialogMode.value = screenMode.value === "pc" ? "all" : "right";
       }
 
-      if (value === 'pc') {
-        dialogMode.value = 'all'
-      } else if (oldValue === 'pc') {
-        dialogMode.value = 'right'
+      if (value === "pc") {
+        dialogMode.value = "all";
+      } else if (oldValue === "pc") {
+        dialogMode.value = "right";
       }
     },
-    { immediate: true },
-  )
+    { immediate: true }
+  );
   // 关闭
   const handleClose = () => {
-    closeLoginDialog()
-    form.agreeProtocol = false
-    form.qrcode = ''
-    form.phone = ''
-    form.captcha = ''
-  }
+    closeLoginDialog();
+    form.agreeProtocol = false;
+    form.qrcode = "";
+    form.phone = "";
+    form.captcha = "";
+  };
   // 获取二维码
   const getQRCode = () => {
-    console.log('获取验证码')
-    getQrcode().then(res => {
+    console.log("获取验证码");
+    getQrcode().then((res) => {
       Qrcode.toDataURL(res.data, (err, url) => {
         if (err) {
-          console.error(err)
+          console.error(err);
         } else {
-          form.qrcode = url
+          form.qrcode = url;
         }
-      })
-    })
-  }
+      });
+    });
+  };
   // 获取验证码
   const getCode = () => {
-    console.log('获取验证码')
+    console.log("获取验证码");
     if (form.phone.length !== 11) {
-      ElMessage.warning('请输入正确的手机号')
-      return
+      ElMessage.warning("请输入正确的手机号");
+      return;
     }
-    getCaptcha({ phone: form.phone }).then(res => {
-      if (res.code !== 200) return
-      ElMessage.success('验证码已发送')
-      form.captcha = '123456'
-      form.timer = 60
+    getCaptcha({ phone: form.phone }).then((res) => {
+      if (res.code !== 200) return;
+      ElMessage.success("验证码已发送");
+      form.captcha = "123456";
+      form.timer = 60;
       // 启动倒计时
       let countDown = setInterval(() => {
         if (form.timer <= 0) {
-          clearInterval(countDown)
+          clearInterval(countDown);
         } else {
-          form.timer--
+          form.timer--;
         }
-      }, 1000)
-    })
-  }
+      }, 1000);
+    });
+  };
   // 登录
   const login = () => {
-    if (form.phone == '' || form.captcha == '') {
-      ElMessage.warning('请填写手机号和验证码')
-      return
+    if (form.phone == "" || form.captcha == "") {
+      ElMessage.warning("请填写手机号和验证码");
+      return;
     }
     if (!form.agreeProtocol) {
-      ElMessage.warning('请阅读并同意相关协议')
-      return
+      ElMessage.warning("请阅读并同意相关协议");
+      return;
     }
 
-    const userStore = useUserStore()
+    const userStore = useUserStore();
     userStore.login({
       phone: parseInt(form.phone),
       captcha: parseInt(form.captcha),
-    })
-  }
+    });
+  };
   // 切换模式
   const switchDialogMode = () => {
-    console.log('切换模式')
-    dialogMode.value = dialogMode.value === 'left' ? 'right' : 'left'
-  }
+    console.log("切换模式");
+    dialogMode.value = dialogMode.value === "left" ? "right" : "left";
+  };
 </script>
 
 <template>
@@ -109,12 +109,14 @@
     width="fit-content"
     style="border-radius: 16px"
     :show-close="false"
-    align-center>
+    align-center
+  >
     <div class="login-dialog">
       <!-- 关闭按钮 -->
       <CloseButton
         class="close-btn"
-        @click="handleClose" />
+        @click="handleClose"
+      />
 
       <!-- 扫码登录区域 -->
       <!-- prettier-ignore -->
@@ -129,52 +131,65 @@
             <span v-if="!form.qrcode">获取二维码</span>
             <img v-else :src="form.qrcode"  />
           </div>
-          <div class="tip">
-            可用 
-            <span><img src="@/assets/svg/小红书.svg" /> 小红书</span>
+          <div class="tip flex gap-2  items-center">
+           <div class="flex  gap-1">
+            <span>可用 </span>
+            <img width="18px" height="18px" src="@/assets/svg/小红书.svg" />
+            <span> 小红书</span></div>
             或 
-            <span><img src="@/assets/svg/微信.svg" /> 微信</span>
-            扫码
+           <div class="flex gap-2 items-center">
+            <img width="18px" height="18px"  src="@/assets/svg/微信.svg" /> 
+             <span>微信</span>
+           </div>
+           <div>
+             扫码
+           </div>
           </div>
+           <div class="mt-10">小红书如何扫码</div>
         </div>
         
-        <span class="bottom-tip">小红书如何扫码</span>
       </div>
 
       <!-- 手机号登录区域 -->
       <div
         class="right"
-        v-if="dialogMode !== 'left'">
+        v-if="dialogMode !== 'left'"
+      >
         <h1>手机号登录</h1>
         <div class="input">
           <span>+86</span>
           <input
             placeholder="输入手机号"
-            v-model="form.phone" />
+            v-model="form.phone"
+          />
         </div>
         <div class="input">
           <input
             placeholder="输入验证码"
-            v-model="form.captcha" />
+            v-model="form.captcha"
+          />
           <button v-if="form.timer > 0">{{ form.timer }} 秒后重新获取</button>
           <button
             v-else
-            @click.stop="getCode">
+            @click.stop="getCode"
+          >
             获取验证码
           </button>
         </div>
         <button
           class="input"
-          @click="login">
+          @click="login"
+        >
           登录
         </button>
         <div class="other">
           <input
             type="checkbox"
-            v-model="form.agreeProtocol" />
+            v-model="form.agreeProtocol"
+          />
           <span>我已阅读并同意相关协议</span>
         </div>
-        <span class="bottom-tip"> 新用户可直接登录 </span>
+        <span class="bottom-tip">新用户可直接登录</span>
       </div>
 
       <div class="bottom">
@@ -185,7 +200,7 @@
 </template>
 
 <style scoped lang="less">
-  @import '@/assets/styles/base.less';
+  @import "@/assets/styles/base.less";
 
   .login-dialog {
     display: flex;
