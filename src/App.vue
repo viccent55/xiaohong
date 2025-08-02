@@ -4,7 +4,6 @@
   import Footer from "./components/Layout/Footer.vue";
   import NoteDialog from "./views/Note/NoteDialog.vue";
   import LoginDialog from "./views/Login/LoginDialog.vue";
-
   import { listenResizeEvent } from "./hooks/useScreenMode";
   import {
     checkPermissions,

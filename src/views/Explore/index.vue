@@ -26,7 +26,7 @@
   const loading = ref(false)
   const onlyPic = computed(() => {
     return floatItems.value.some(
-      item => item.label === 'only-pic' && item.active,
+      item => item.label === 'goto-top' && item.active,
     )
   })
 
@@ -34,15 +34,17 @@
   const loadMoreNum = 5 // 每次加载更多数量
 
   // 回到顶部
-  const backToTop = () => {
+  const backToTop = (smooth = true) => {
     const el = document.querySelector('.container')
-    if (el) el.scrollTop = 0
+    if (el) {
+      el.scrollTo({ top: 0, behavior: smooth ? 'smooth' : 'auto' })
+    }
   }
 
   // 刷新列表
   const freshFeeds = () => {
     loading.value = true
-    backToTop()
+    backToTop(false)
     getExploreFeeds({
       num: freshFeedNum,
       channel: channel.value,
@@ -71,8 +73,8 @@
     },
     // 点击浮动按钮
     clickFLoatItem(item: ExploreFLoatSetItem) {
-      if (item.label === 'only-pic') {
-        item.active = !item.active
+      if (item.label === 'goto-top') {
+        return backToTop()
       }
       freshFeeds()
     },

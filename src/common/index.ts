@@ -73,13 +73,13 @@ export const NavigationItems: NavigationItem[] = [
   },
   {
     label: '发布',
-    icon: 'CirclePlus',
+    icon: 'VideoPlay',
     type: 'external-link',
     href: 'https://creator.xiaohongshu.com/',
   },
   {
     label: '通知',
-    icon: 'Bell',
+    icon: 'Picture',
     type: 'router-link',
     href: '/notification',
   },
@@ -140,8 +140,8 @@ export const ExploreChannelItems: ExploreChannelItem[] = [
 
 export const ExploreFloatSetItems: ExploreFLoatSetItem[] = [
   {
-    icon: 'Picture',
-    label: 'only-pic',
+    icon: 'Top',
+    label: 'goto-top',
     active: false,
   },
   {
