@@ -257,10 +257,11 @@
         border-radius: 999px;
         height: 48px;
         line-height: 48px;
+        font-size: 1.2rem;
         text-align: center;
         color: #3d8af5;
         font-weight: 600;
-        background-color: rgba(61, 138, 245, 0.1);
+        // background-color: rgba(61, 138, 245, 0.1);
       }
 
       img {

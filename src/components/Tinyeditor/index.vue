@@ -44,6 +44,7 @@ const initialContent = ref(`
 <template>
   <div class="tinymce-container">
     <div v-html="initialContent"></div>
+    
     <h1 class="text-3xl font-bold mb-4">TinyMCE Editor Demo</h1>
     <Editor
       :api-key="apiKey"
@@ -61,7 +62,7 @@ const initialContent = ref(`
         autosave_restore_when_empty: false,
         autosave_retention: '2m',
         image_advtab: true,
-        content_css: '//www.tiny.cloud/css/codepen.min.css',
+        content_css: '',
         link_list: [
           { title: 'My page 1', value: 'http://www.tinymce.com' },
           { title: 'My page 2', value: 'http://www.moxiecode.com' }
