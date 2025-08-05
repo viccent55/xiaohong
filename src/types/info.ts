@@ -95,3 +95,62 @@ export interface NotificationInfo {
     quote?: string // 引用内容
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// 会员中心信息
+////////////////////////////////////////////////////////////////////////////////
+
+// 我的评论信息
+export interface MyCommentInfo {
+  id: string // 评论ID
+  content: string // 评论内容
+  noteId: string // 笔记ID
+  noteTitle: string // 笔记标题
+  noteCover: string // 笔记封面
+  createTime: string // 创建时间
+  likeCount: number // 点赞数
+  replyCount: number // 回复数
+}
+
+// 我的收藏信息
+export interface MyCollectionInfo {
+  id: string // 收藏ID
+  noteId: string // 笔记ID
+  noteTitle: string // 笔记标题
+  noteCover: string // 笔记封面
+  authorName: string // 作者名称
+  authorAvatar: string // 作者头像
+  collectTime: string // 收藏时间
+  likeCount: number // 点赞数
+}
+
+// 我的点赞信息
+export interface MyLikeInfo {
+  id: string // 点赞ID
+  noteId: string // 笔记ID
+  noteTitle: string // 笔记标题
+  noteCover: string // 笔记封面
+  authorName: string // 作者名称
+  authorAvatar: string // 作者头像
+  likeTime: string // 点赞时间
+}
+
+// 系统消息信息
+export interface SystemMessageInfo {
+  id: string // 消息ID
+  type: 'welcome' | 'comment_approved' | 'system_notice' | 'account_update' // 消息类型
+  title: string // 消息标题
+  content: string // 消息内容
+  createTime: string // 创建时间
+  isRead: boolean // 是否已读
+  icon?: string // 消息图标
+}
+
+// 会员中心数据
+export interface MemberCenterInfo {
+  userInfo: UserDetailInfo // 用户信息
+  myComments: MyCommentInfo[] // 我的评论
+  myCollections: MyCollectionInfo[] // 我的收藏
+  myLikes: MyLikeInfo[] // 我的点赞
+  systemMessages: SystemMessageInfo[] // 系统消息
+}

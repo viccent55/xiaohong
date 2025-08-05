@@ -45,11 +45,13 @@ export const genFeeds = (
 ): ExploreFeedInfo[] => {
   const list = []
   for (let i = 0; i < num; i++) {
+    const width = Random.integer(200, 400)
+    const height = Random.integer(200, 500)
     list.push({
       id: Mock.mock('@id()'),
       title: Mock.mock('@ctitle(7, 100)'),
       isPic: onlyPic ? true : Mock.mock('@boolean()'),
-      mediaUrl: Mock.mock('@image(200x200)'),
+      mediaUrl: Mock.mock(`@image(${width}x${height})`),
       authorName: Mock.mock('@cname()'),
       authorAvatarUrl: Mock.mock('@image(20x20)'),
       likeCount: Mock.mock('@integer(0, 1000)'),
@@ -103,10 +105,17 @@ export const genComments = (): CommentBlockInfo => {
 // 生成媒体信息
 export const genMedia = (): MediaInfo => {
   const video = Random.boolean()
+  const width1 = Random.integer(200, 500)
+  const height1 = Random.integer(200, 500)
+  const width2 = Random.integer(200, 500)
+  const height2 = Random.integer(200, 500)
   return {
     imageUrl: video
       ? []
-      : [Mock.mock('@image(200x200)'), Mock.mock('@image(200x200)')],
+      : [
+          Mock.mock(`@image(${width1}x${height1})`),
+          Mock.mock(`@image(${width2}x${height2})`),
+        ],
     videoUrl: video ? CONST.VIDEO_URL : undefined,
   }
 }

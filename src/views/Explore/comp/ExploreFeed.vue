@@ -1,12 +1,12 @@
 <script setup lang="ts">
-  import { type ExploreFeedInfo } from '@/types/info'
-  import Heart from '@/components/global/Heart.vue'
+  import { type ExploreFeedInfo } from "@/types/info";
+  import Heart from "@/components/global/Heart.vue";
 
   defineProps<{
-    feed: ExploreFeedInfo
-  }>()
+    feed: ExploreFeedInfo;
+  }>();
 
-  defineEmits(['click', 'clickAuthor', 'clickLike'])
+  defineEmits(["click", "clickAuthor", "clickLike"]);
 </script>
 
 <template>

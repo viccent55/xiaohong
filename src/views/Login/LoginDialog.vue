@@ -7,6 +7,7 @@
   import { getCaptcha, getQrcode } from "@/api/login";
   import { useUserStore } from "@/store/user";
   import { ElMessage } from "element-plus";
+  import { useRouter } from "vue-router";
 
   // state
   const dialogMode = ref<"all" | "left" | "right">();
@@ -18,7 +19,7 @@
     agreeProtocol: false,
     timer: 0,
   });
-
+  const router = useRouter();
   // 监听屏幕宽度变化
   watch(
     () => screenMode.value,
@@ -89,7 +90,7 @@
       ElMessage.warning("请阅读并同意相关协议");
       return;
     }
-
+    router.push("/member");
     const userStore = useUserStore();
     userStore.login({
       phone: parseInt(form.phone),

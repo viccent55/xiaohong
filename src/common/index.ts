@@ -89,6 +89,12 @@ export const NavigationItems: NavigationItem[] = [
     type: 'router-link',
     href: '/user',
   },
+  {
+    label: '会员中心',
+    icon: 'Setting',
+    type: 'router-link',
+    href: '/member',
+  },
 ]
 
 export const ExploreChannelItems: ExploreChannelItem[] = [

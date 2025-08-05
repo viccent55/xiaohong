@@ -21,6 +21,7 @@
   import { useRouter, useRoute } from "vue-router";
   import { useUserStore } from "./store/user";
   import { useStore } from "./store";
+  import InstallPWA from "./components/global/InstallPWA.vue";
 
   const route = useRoute();
   const router = useRouter();
@@ -106,6 +107,7 @@
       ></Aside>
 
       <div class="container">
+        <InstallPWA />
         <router-view v-slot="{ Component }">
           <keep-alive>
             <component :is="Component" />
