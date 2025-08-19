@@ -66,7 +66,7 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
       },
     },
     server: {
-      host: "0.0.0.0",
+      host: true,
       open: false,
       hmr: true,
       cors: true,
@@ -80,7 +80,7 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
           changeOrigin: true,
         },
       },
-      allowedHosts: [/^.*/], // allow any hostname
+      allowedHosts: "all",
     },
   };
 });
