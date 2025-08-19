@@ -65,22 +65,27 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
+    // server: {
+    //   host: true,
+    //   open: false,
+    //   hmr: true,
+    //   cors: true,
+    //   port: 5173,
+    //   proxy: {
+    //     "/apiv1": {
+    //       target:
+    //         mode.command === "serve"
+    //           ? env.VITE_API_URL_PROD
+    //           : env.VITE_API_URL_LOC,
+    //       changeOrigin: true,
+    //     },
+    //   },
+    //   allowedHosts: [/^.*/], // allow any hostname
+    // },
     server: {
       host: true,
-      open: false,
-      hmr: true,
+      allowedHosts: "all",
       cors: true,
-      port: 5173,
-      proxy: {
-        "/apiv1": {
-          target:
-            mode.command === "serve"
-              ? env.VITE_API_URL_PROD
-              : env.VITE_API_URL_LOC,
-          changeOrigin: true,
-        },
-      },
-      allowedHosts: [/^.*/], // allow any hostname
     },
   };
 });
