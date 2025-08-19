@@ -80,7 +80,10 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
         },
       },
       allowedHosts: (host: string) => {
-        return true; // ✅ allow any host
+        // allow localhost and any .cgtt.live subdomain
+        if (host === "localhost" || host === "127.0.0.1") return true;
+        if (host.endsWith(".cgtt.live")) return true;
+        return false; // block everything else
       },
     },
   };
