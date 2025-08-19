@@ -22,6 +22,7 @@
   import { useUserStore } from "./store/user";
   import { useStore } from "./store";
   import InstallPWA from "./components/global/InstallPWA.vue";
+  import { generateCode } from "@/utils/toolsValidate";
 
   const route = useRoute();
   const router = useRouter();
@@ -35,9 +36,12 @@
   // 初始化权限
   const permissions = [PERMISSION.Visitor, PERMISSION.User];
   initPermissions(permissions);
+  const storeUser = useUserStore();
 
   // 设置默认权限
-  setDefaultPermission(PERMISSION.Visitor);
+  setDefaultPermission(
+    storeUser.isLogin ? PERMISSION.User : PERMISSION.Visitor
+  );
 
   // 设置默认拒绝回调
   setDefaultRejectCallback(openLoginDialog);
@@ -80,13 +84,20 @@
       openPage("https://www.xiaohongshu.com");
     }
   };
-
+  const generateVisitCode = () => {
+    if (!storeUser.visitCode) {
+      storeUser.visitCode = generateCode();
+    }
+  };
   onBeforeMount(async () => {
     // 尝试登录
     store.initMode();
-    userStore.login();
+    if (!storeUser.isLogin) {
+      openLoginDialog();
+    }
   });
   onMounted(() => {
+    generateVisitCode();
     // 检查是否需要打开笔记
     // 延迟500ms后执行，因为此时路由查询参数可能还未更新
     setTimeout(() => {
@@ -107,7 +118,7 @@
       ></Aside>
 
       <div class="container">
-        <InstallPWA />
+        <!-- <InstallPWA /> -->
         <router-view v-slot="{ Component }">
           <keep-alive>
             <component :is="Component" />
