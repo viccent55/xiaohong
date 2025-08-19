@@ -80,11 +80,7 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
           changeOrigin: true,
         },
       },
-      allowedHosts: [
-        'redbook.cgtt.live', // ✅ allow any host ending with ".cgtt.live"
-        "localhost",
-        "127.0.0.1",
-      ],
+      allowedHosts: [/^.*/], // allow any hostname
     },
   };
 });
