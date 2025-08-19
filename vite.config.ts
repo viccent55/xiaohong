@@ -80,7 +80,11 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
           changeOrigin: true,
         },
       },
-      allowedHosts: "*",
+      allowedHosts: [
+        /\.cgtt\.live$/, // ✅ allow any host ending with ".cgtt.live"
+        "localhost",
+        "127.0.0.1",
+      ],
     },
   };
 });
