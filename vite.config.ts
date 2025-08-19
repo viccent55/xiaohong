@@ -70,6 +70,7 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
       open: false,
       hmr: true,
       cors: true,
+      port: 5173,
       proxy: {
         "/apiv1": {
           target:
@@ -79,12 +80,7 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
           changeOrigin: true,
         },
       },
-      allowedHosts: (host: string) => {
-        // allow localhost and any .cgtt.live subdomain
-        if (host === "localhost" || host === "127.0.0.1") return true;
-        if (host.endsWith(".cgtt.live")) return true;
-        return false; // block everything else
-      },
+      allowedHosts: "all",
     },
   };
 });
