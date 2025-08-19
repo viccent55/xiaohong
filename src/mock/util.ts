@@ -21,7 +21,7 @@ export const CONST = {
 // 获取参数
 export function queryParams(reqeust: any) {
   if (reqeust.type === 'GET') {
-    const url_ = new URL(reqeust.url)
+    const url_ = new URL(`https://xiahongshou/${reqeust.url}`)
     return Object.fromEntries(url_.searchParams)
   } else {
     return JSON.parse(reqeust.body)

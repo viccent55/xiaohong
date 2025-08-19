@@ -1,24 +1,26 @@
 <script setup lang="ts">
-  import { type ExploreChannelItem } from '@/types/item'
+  import { type ExploreChannelItem } from "@/types/item";
 
   defineProps<{
-    items: ExploreChannelItem[]
-    activeValue: string
-  }>()
+    items: Record<string, string>[];
+    activeValue: string;
+  }>();
 
-  defineEmits(['click-item'])
+  defineEmits(["click-item"]);
 </script>
 
 <template>
   <div class="channel-container">
     <template
       v-for="item in items"
-      :key="item.label">
+      :key="item.id"
+    >
       <span
         @click="$emit('click-item', item)"
-        :class="{ active: item.value === activeValue }"
-        >{{ item.label }}</span
+        :class="{ active: item.name === activeValue }"
       >
+        {{ item.name }}
+      </span>
     </template>
   </div>
 </template>

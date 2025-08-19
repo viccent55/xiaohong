@@ -1,47 +1,51 @@
 <script setup lang="ts">
-  import { type DropdownItem } from '@/types/item'
-  import { useUserStore } from '@/store/user'
-  const userStore = useUserStore()
+  import { type DropdownItem } from "@/types/item";
+  import { useUserStore } from "@/store/user";
+  const userStore = useUserStore();
 
   defineProps<{
-    items: DropdownItem[]
+    items: DropdownItem[];
     placement?:
-      | 'bottom-start'
-      | 'bottom-end'
-      | 'top-start'
-      | 'top-end'
-      | 'bottom'
-      | 'top'
-      | 'left'
-      | 'right'
-    trigger?: 'hover' | 'click'
-  }>()
+      | "bottom-start"
+      | "bottom-end"
+      | "top-start"
+      | "top-end"
+      | "bottom"
+      | "top"
+      | "left"
+      | "right";
+    trigger?: "hover" | "click";
+  }>();
 
   defineEmits([
-    'click-item', // 点击菜单项时触发
-  ])
+    "click-item", // 点击菜单项时触发
+  ]);
 </script>
 
 <template>
   <el-dropdown
     :placement="placement"
-    :trigger="trigger">
+    :trigger="trigger"
+  >
     <slot></slot>
     <template #dropdown>
       <el-dropdown-menu>
         <el-dropdown-item
           v-for="item in items"
-          :divided="item.divided">
+          :divided="item.divided"
+        >
           <template v-if="!item.loginRequired || userStore.isLogin">
             <span
               v-if="item.type === 'text'"
-              class="text">
+              class="text"
+            >
               {{ item.label }}
             </span>
             <div
               v-else
               class="link"
-              @click="$emit('click-item', item)">
+              @click="$emit('click-item', item)"
+            >
               {{ item.label }}
               <span>
                 <el-icon class="icon"><TopRight /></el-icon>
@@ -55,8 +59,8 @@
 </template>
 
 <style scoped lang="less">
-  @import '@/assets/styles/base.less';
-  /deep/ .el-dropdown-menu__item {
+  @import "@/assets/styles/base.less";
+  :deep(.el-dropdown-menu__item) {
     border-radius: var(--button-border-radius);
     height: fit-content;
 

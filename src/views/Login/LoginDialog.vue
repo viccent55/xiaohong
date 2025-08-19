@@ -4,10 +4,10 @@
   import { reactive, ref, watch } from "vue";
   import { loginDialogVisible, closeLoginDialog } from "@/hooks/useLoginDialog";
   import { screenMode } from "@/hooks/useScreenMode";
-  import { getCaptcha, getQrcode } from "@/api/login";
+  import { getQrcode } from "@/api/login";
   import { useUserStore } from "@/store/user";
   import { ElMessage } from "element-plus";
-  import { useRouter } from "vue-router";
+  import { login, register, veryCode } from "@/api/user";
 
   // state
   const dialogMode = ref<"all" | "left" | "right">();
@@ -19,7 +19,24 @@
     agreeProtocol: false,
     timer: 0,
   });
-  const router = useRouter();
+  const state = reactive({
+    login: {
+      email: "",
+      password: "",
+    },
+    register: {
+      email: "",
+      password: "",
+      password_repeat: "",
+      invite_code: "",
+    },
+    codeVerify: {
+      isShowEmail: false,
+      email: "",
+      code: "",
+    },
+    isLogin: true,
+  });
   // 监听屏幕宽度变化
   watch(
     () => screenMode.value,
@@ -59,43 +76,83 @@
     });
   };
   // 获取验证码
-  const getCode = () => {
-    console.log("获取验证码");
-    if (form.phone.length !== 11) {
-      ElMessage.warning("请输入正确的手机号");
+  const onVerifyCode = async () => {
+    if (!state.codeVerify.email) {
+      state.codeVerify.isShowEmail = true;
+      ElMessage.warning("请输入您的电子邮件");
       return;
     }
-    getCaptcha({ phone: form.phone }).then((res) => {
-      if (res.code !== 200) return;
-      ElMessage.success("验证码已发送");
-      form.captcha = "123456";
-      form.timer = 60;
-      // 启动倒计时
-      let countDown = setInterval(() => {
-        if (form.timer <= 0) {
-          clearInterval(countDown);
-        } else {
-          form.timer--;
-        }
-      }, 1000);
-    });
+    if (!state.codeVerify.code) {
+      return ElMessage.warning("请输入您的代码!");
+    }
+    const request = {
+      email: state.codeVerify.email,
+      code: state.codeVerify.code,
+    };
+    const response = await veryCode(request);
+    if (response.errcode === 0) {
+      ElMessage.success("代码验证成功!");
+    } else {
+      ElMessage.error(response.info);
+    }
+    console.log(response);
   };
+  const storeUser = useUserStore();
   // 登录
-  const login = () => {
-    if (form.phone == "" || form.captcha == "") {
-      ElMessage.warning("请填写手机号和验证码");
+  const onLogin = async () => {
+    if (!state.login.email) {
+      ElMessage.warning("请输入您的电子邮件");
       return;
     }
-    if (!form.agreeProtocol) {
-      ElMessage.warning("请阅读并同意相关协议");
+    if (!state.login.password) {
+      ElMessage.warning("请输入您的密码");
       return;
     }
-    router.push("/member");
-    const userStore = useUserStore();
-    userStore.login({
-      phone: parseInt(form.phone),
-      captcha: parseInt(form.captcha),
-    });
+    try {
+      const response = await login(state.login);
+      console.log(response);
+      if (response.errcode === 0) {
+        storeUser.login(response.data?.token, response.data?.userinfo);
+        ElMessage.success("登录成功");
+        closeLoginDialog();
+      } else {
+        ElMessage.error(response.info);
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
+  };
+  const onRegister = async () => {
+    if (!state.register.email) {
+      ElMessage.warning("请输入您的电子邮件");
+      return;
+    }
+    if (!state.register.password && !state.register.password_repeat) {
+      ElMessage.warning("请输入您的密码");
+      return;
+    }
+    if (state.register.password !== state.register.password_repeat) {
+      ElMessage.warning("两次密码不一致");
+      return;
+    }
+    try {
+      const response = await register(state.register);
+      if (response.errcode === 0) {
+        ElMessage.success("代码已发送至您的邮箱!");
+        state.codeVerify.email = state.register.email;
+      } else {
+        ElMessage.error(response.info);
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
+  };
+  const onAuth = () => {
+    if (state.isLogin) {
+      onLogin();
+    } else {
+      onRegister();
+    }
   };
   // 切换模式
   const switchDialogMode = () => {
@@ -157,39 +214,140 @@
         v-if="dialogMode !== 'left'"
       >
         <h1>手机号登录</h1>
-        <div class="input">
-          <span>+86</span>
-          <input
-            placeholder="输入手机号"
-            v-model="form.phone"
-          />
-        </div>
-        <div class="input">
-          <input
-            placeholder="输入验证码"
-            v-model="form.captcha"
-          />
-          <button v-if="form.timer > 0">{{ form.timer }} 秒后重新获取</button>
-          <button
-            v-else
-            @click.stop="getCode"
+        <el-form
+          class="p-10 pb-0 w-full"
+          ref="form"
+          label-position="top"
+          label-width="auto"
+          v-if="state.isLogin"
+        >
+          <el-form-item label="电子邮件">
+            <el-input
+              v-model="state.login.email"
+              type="email"
+              label="电子邮件"
+              size="large"
+            />
+          </el-form-item>
+          <el-form-item
+            label="密码"
+            size="large"
           >
-            获取验证码
-          </button>
-        </div>
+            <el-input
+              v-model="state.login.password"
+              size="large"
+              show-password
+              type="password"
+              @keydown.enter="onAuth()"
+            />
+          </el-form-item>
+        </el-form>
+        <el-form
+          v-else
+          class="p-10 pb-0 w-full"
+          ref="form"
+          label-position="left"
+          label-width="auto"
+        >
+          <el-form-item label="电子邮件">
+            <el-input
+              v-model="state.register.email"
+              type="email"
+              label="电子邮件"
+              size="large"
+            />
+          </el-form-item>
+          <el-form-item
+            label="密码"
+            size="large"
+          >
+            <el-input
+              v-model="state.register.password"
+              size="large"
+              type="password"
+              show-password
+            />
+          </el-form-item>
+          <el-form-item label="重复密码">
+            <el-input
+              v-model="state.register.password_repeat"
+              type="password"
+              size="large"
+              show-password
+            />
+          </el-form-item>
+          <el-form-item
+            label="邀请码"
+            size="large"
+          >
+            <el-input
+              v-model="state.register.invite_code"
+              size="large"
+              type="password"
+            />
+          </el-form-item>
+          <div class="flex justify-end text-end w-100 mb-5">
+            <el-button
+              type="danger"
+              class="w-[100px]"
+              @click="onRegister"
+            >
+              注册
+            </el-button>
+          </div>
+
+          <el-form-item
+            label="电子邮件"
+            v-if="state.codeVerify.isShowEmail"
+          >
+            <el-input
+              v-model="state.codeVerify.email"
+              type="email"
+              label="电子邮件"
+              size="large"
+            />
+          </el-form-item>
+          <el-form-item label="代码">
+            <el-input
+              v-model="state.codeVerify.code"
+              placeholder="请输入您的代码"
+              size="large"
+              type="text"
+            >
+              <template #append>
+                <el-button
+                  type="danger"
+                  @click="onVerifyCode"
+                >
+                  确认码
+                </el-button>
+              </template>
+            </el-input>
+          </el-form-item>
+        </el-form>
         <button
           class="input"
-          @click="login"
+          v-if="state.isLogin"
+          @click="onAuth()"
         >
           登录
         </button>
-        <div class="other">
+        <div class="flex justify-center my-3">
+          <div>{{ state.isLogin ? "没有账号？" : "已有账户？" }}</div>
+          <div
+            @click="state.isLogin = !state.isLogin"
+            class="text-blue cursor-pointer"
+          >
+            {{ state.isLogin ? "请注册" : "登录" }}
+          </div>
+        </div>
+        <!-- <div class="other">
           <input
             type="checkbox"
             v-model="form.agreeProtocol"
           />
           <span>我已阅读并同意相关协议</span>
-        </div>
+        </div> -->
         <span class="bottom-tip">新用户可直接登录</span>
       </div>
 
@@ -342,7 +500,7 @@
       }
 
       &:first-of-type {
-        margin-top: 32px;
+        margin-top: 10px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -379,7 +537,7 @@
     .other {
       display: flex;
       align-items: center;
-      margin: 12px 0;
+      margin: 6px 0;
 
       span {
         margin-left: 8px;
@@ -395,6 +553,6 @@
   .bottom-tip {
     margin-top: auto;
     font-size: 14px;
-    margin-bottom: 32px;
+    margin-bottom: 36px;
   }
 </style>

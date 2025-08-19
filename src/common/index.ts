@@ -97,7 +97,7 @@ export const NavigationItems: NavigationItem[] = [
   },
 ]
 
-export const ExploreChannelItems: ExploreChannelItem[] = [
+export const ExploreChannelItems: EmptyArrayType = [
   {
     label: '推荐',
     value: 'recommend',

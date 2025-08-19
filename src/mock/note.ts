@@ -47,7 +47,7 @@ Mock.mock(/captcha/, 'post', () => {
   }
 })
 
-Mock.mock(/login/, 'post', reqeust => {
+Mock.mock(/logins/, 'post', reqeust => {
   const params = queryParams(reqeust)
 
   // 检查token

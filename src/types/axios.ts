@@ -7,6 +7,6 @@ export interface ResponseConfig<T> {
 }
 
 export interface ListConfig<T> {
-  list: T[];
+  items: T[];
   total: number;
 }

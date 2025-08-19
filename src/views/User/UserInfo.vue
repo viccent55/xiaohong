@@ -1,69 +1,79 @@
 <script setup lang="ts">
-  import ReportButton from '../Note/comp/ReportButton.vue'
-  import FollowButton from '@/components/global/FollowButton.vue'
+  import ReportButton from "../Note/comp/ReportButton.vue";
+  import FollowButton from "@/components/global/FollowButton.vue";
 
-  import type { UserDetailInfo } from '@/types/info'
-  import { useUserStore } from '@/store/user'
-  import { computed } from 'vue'
+  import type { UserDetailInfo } from "@/types/info";
+  import { useUserStore } from "@/store/user";
+  import { computed } from "vue";
+  import Image from "@/components/Image.vue";
 
-  const props = defineProps<{ user: UserDetailInfo }>()
-  const emits = defineEmits(['click-follow', 'click-report'])
-  const userStore = useUserStore()
+  const props = defineProps<{ user: UserDetailInfo }>();
+  const emits = defineEmits(["click-follow", "click-report"]);
+  const userStore = useUserStore();
 
   const self = computed(() => {
-    return userStore.useId === parseInt(props.user.id)
-  })
+    return userStore.useId === props.user.id;
+  });
 
   function clickFollow() {
-    emits('click-follow', props.user)
+    emits("click-follow", props.user);
   }
   function clickReport() {
-    emits('click-report', props.user)
+    emits("click-report", props.user);
   }
 </script>
 
 <template>
   <div class="info-wrapper">
     <div class="avatar-wrapper">
-      <img :src="user.avatarUrl" />
+      <Image
+        :src="user.avatar"
+        class="avatar-wrapper"
+      />
     </div>
     <div class="basic-wrapper">
       <div class="base-info">
-        <img :src="user.avatarUrl" />
+        <!-- <img
+          :src="user.avatar"
+          width="100"
+          height="100"
+        /> -->
         <div class="name-wrapper">
           <span class="name">{{ user.name }}</span>
           <span class="id">小红书号: {{ user.id }}</span>
         </div>
       </div>
-      <div class="desc">{{ user.desc }}</div>
+      <div class="desc">{{ user.slogan || '还没有简介' }}</div>
       <div class="interactions">
         <div class="action">
-          <span>{{ user.followCount }}</span>
+          <span>{{ user.subscribed }}</span>
           <span>关注</span>
         </div>
         <div class="action">
-          <span>{{ user.followerCount }}</span>
+          <span>{{ user.inviter }}</span>
           <span>粉丝</span>
         </div>
         <div class="action">
-          <span>{{ user.likedCount }}</span>
+          <span>{{ user.invite_count }}</span>
           <span>获赞与收藏</span>
         </div>
       </div>
     </div>
     <div
       class="button-wrapper"
-      v-if="!self">
+      v-if="!self"
+    >
       <FollowButton
-        :is-follow="user.isFollow"
-        @click="clickFollow" />
+        :is-follow="user.subscribed"
+        @click="clickFollow"
+      />
       <ReportButton @click-report="clickReport" />
     </div>
   </div>
 </template>
 
 <style scoped lang="less">
-  @import '@/assets/styles/base.less';
+  @import "@/assets/styles/base.less";
 
   .info-wrapper {
     padding: 16px;
@@ -113,6 +123,7 @@
     .name-wrapper {
       display: flex;
       flex-direction: column;
+      width: 100px;
     }
 
     img {

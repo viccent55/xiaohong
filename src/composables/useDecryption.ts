@@ -22,7 +22,7 @@ export const  useDecryption = () => {
   const decryptAndCreateUrl = async (imageUrl: string): Promise<string> => {
     // Check if the image is already in the cache
     if (urlCache.has(imageUrl)) {
-      console.log("Using cached image URL for:", imageUrl);
+      // console.log("Using cached image URL for:", imageUrl);
       return urlCache.get(imageUrl)!;
     }
 

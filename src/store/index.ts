@@ -3,6 +3,21 @@ import { defineStore } from "pinia";
 export const useStore = defineStore("store", {
   state: () => ({
     isDarkmode: "light",
+    configuration: <EmptyObjectType>{
+      name: "",
+      logo: "",
+      home_description: "",
+      home_keywords: "",
+      home_title: "",
+      home_url: "http://www.honglou.com",
+      domain_latest: "honglou.tv",
+      domain_next: "honglou.fun",
+      email: "url@honglou.com",
+      github: "",
+      gitlab: "",
+      tg_business: "",
+      categories: [],
+    },
   }),
   actions: {
     initMode() {

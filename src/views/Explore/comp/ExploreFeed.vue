@@ -1,11 +1,14 @@
 <script setup lang="ts">
-  import { type ExploreFeedInfo } from "@/types/info";
   import Heart from "@/components/global/Heart.vue";
+  import Image from "@/components/Image.vue";
+  import type { PropType } from "vue";
 
-  defineProps<{
-    feed: ExploreFeedInfo;
-  }>();
-
+  defineProps({
+    feed: {
+      type: Object as PropType<EmptyObjectType>,
+      default: () => [],
+    },
+  });
   defineEmits(["click", "clickAuthor", "clickLike"]);
 </script>
 
@@ -15,7 +18,7 @@
     <!-- 图片 -->
     <div class="media-container">
       <VideoPlay v-if="!feed.isPic" />
-      <img :src="feed.mediaUrl" />
+      <Image :src="feed.cover" :width="feed.cover_w" :height="feed.cover_h" fit="contain"/>
     </div>
     <!-- 信息 -->
     <div class="feed-footer">
@@ -25,14 +28,14 @@
       <div class="author-wrapper">
         <!-- 作者名称头像 -->
         <div class="info-wrapper" @click.stop="$emit('clickAuthor') /* 阻止冒泡 */">
-          <img :src="feed.authorAvatarUrl" />
-          <span>{{ feed.authorName }}</span>
+          <Image :src="feed.author?.avatar" />
+          <span>{{ feed.author?.name }}</span>
         </div>
 
         <!-- 点赞数 -->
         <div class="like-wrapper" @click.stop="$emit('clickLike') /* 阻止冒泡 */">
           <Heart :class="{ 'like-active': feed.isLiked }" />
-          <span>{{ feed.likeCount }}</span>
+          <span>{{ feed.like_count }}</span>
         </div>
       </div>
     </div>
