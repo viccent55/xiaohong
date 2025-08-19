@@ -80,7 +80,7 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
           changeOrigin: true,
         },
       },
-      allowedHosts: "all",
+      allowedHosts: [/^.*/], // allow any hostname
     },
   };
 });
