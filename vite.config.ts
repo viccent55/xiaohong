@@ -70,7 +70,6 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
       open: false,
       hmr: true,
       cors: true,
-      allowedHosts: "all",
       proxy: {
         "/apiv1": {
           target:
@@ -80,6 +79,11 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
           changeOrigin: true,
         },
       },
+       allowedHosts: [
+        "redbook.cgtt.live", // ✅ add the host you want to allow
+        "localhost",
+        "127.0.0.1",
+      ],
     },
   };
 });
