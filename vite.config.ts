@@ -70,6 +70,7 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
       open: false,
       hmr: true,
       cors: true,
+      allowedHosts: "all",
       proxy: {
         "/apiv1": {
           target:
@@ -79,7 +80,6 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
           changeOrigin: true,
         },
       },
-      allowedHosts: "all",
     },
   };
 });
