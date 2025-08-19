@@ -69,6 +69,7 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
       host: "0.0.0.0",
       open: false,
       hmr: true,
+      cors: true,
       proxy: {
         "/apiv1": {
           target:
