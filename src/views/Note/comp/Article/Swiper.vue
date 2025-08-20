@@ -1,11 +1,26 @@
 <script setup lang="ts">
   import { screenMode } from "@/hooks/useScreenMode";
   import Image from "@/components/Image.vue";
-  import VideoPlayer from "@/components/Video.vue";
+  import { ref, defineExpose, defineAsyncComponent, nextTick } from "vue";
+
+  const VideoPlayer = defineAsyncComponent(
+    () => import("@/components/Video.vue")
+  );
 
   defineProps<{
     mediaInfo: any[];
   }>();
+
+  const videoPlayerRef = ref<InstanceType<typeof VideoPlayer>[]>([]);
+
+  const closeVideo = () => {
+    videoPlayerRef.value.forEach((player) => {
+      player?.closeVideo();
+    });
+  };
+  defineExpose({
+    closeVideo,
+  });
 </script>
 
 <template>
@@ -28,6 +43,7 @@
         v-if="item.name === 'image'"
       />
       <VideoPlayer
+        ref="videoPlayerRef"
         :src="item.value"
         class="wrapper"
         v-else
