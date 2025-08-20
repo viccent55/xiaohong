@@ -1,25 +1,29 @@
 <script setup lang="ts">
-  import type { ArticleInfo } from '@/types/info'
-  import Date from '../Date.vue'
-  import ReportButton from '../ReportButton.vue'
+  import type { ArticleInfo } from "@/types/info";
+  import Date from "../Date.vue";
+  import ReportButton from "../ReportButton.vue";
 
   defineProps<{
-    article: ArticleInfo
-  }>()
+    article: EmptyObjectType;
+  }>();
 
-  defineEmits(['click-report'])
+  defineEmits(["click-report"]);
 </script>
 
 <template>
   <div class="note-content">
-    <div class="title">{{ article.title }}</div>
-    <div class="content">{{ article.content }}</div>
+    <div class="title">{{ article?.title }}</div>
+    <div class="content">{{ article?.content }}</div>
     <div class="date-wrapper">
       <Date
         isAuthor
-        :date="article.date"
-        class="date" />
-      <ReportButton @click-report="$emit('click-report', article.id)" />
+        :date="{
+          date: article?.created_at,
+          location: article?.author?.location,
+        }"
+        class="date"
+      />
+      <ReportButton @click-report="$emit('click-report', article?.id)" />
     </div>
   </div>
 </template>

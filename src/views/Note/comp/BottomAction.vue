@@ -1,97 +1,119 @@
 <script setup lang="ts">
-  import { type ActionInfo } from '@/types/info'
-  import { ref, useTemplateRef } from 'vue'
+  import { type ActionInfo } from "@/types/info";
+  import { ref, useTemplateRef } from "vue";
 
   defineProps<{
-    action: ActionInfo
-    total: number
-  }>()
+    action: ActionInfo;
+    total: number;
+  }>();
 
-  const replayTo = ref<{ id: string; name?: string }>({ id: '' })
+  const replayTo = ref<{ id: string; name?: string }>({ id: "" });
 
   const emits = defineEmits([
-    'click-like',
-    'click-star',
-    'click-reply',
-    'click-share',
-    'click-reply-to',
-  ])
+    "click-like",
+    "click-star",
+    "click-reply",
+    "click-share",
+    "click-reply-to",
+  ]);
 
   const inputFocus = (id: string, to: string | null) => {
-    replayTo.value = { id }
+    replayTo.value = { id };
     if (to) {
-      replayTo.value.name = to
+      replayTo.value.name = to;
     }
-    inputRef.value?.focus()
-  }
+    inputRef.value?.focus();
+  };
 
   defineExpose({
     inputFocus,
-  })
+  });
 
-  const inputRef = useTemplateRef('input')
-  const inputValue = ref('')
-  const isFocusing = ref(false)
+  const inputRef = useTemplateRef("input");
+  const inputValue = ref("");
+  const isFocusing = ref(false);
 
   const clickReply = () => {
     // 没有输入内容就不发出事件
-    if (inputValue.value === '') return
-    emits('click-reply-to', replayTo.value.id, inputValue.value, replayTo.value)
-    inputValue.value = ''
-  }
+    if (inputValue.value === "") return;
+    emits(
+      "click-reply-to",
+      replayTo.value.id,
+      inputValue.value,
+      replayTo.value
+    );
+    inputValue.value = "";
+  };
 
   const cancelInput = () => {
-    isFocusing.value = false
-    inputValue.value = ''
+    isFocusing.value = false;
+    inputValue.value = "";
     replayTo.value = {
-      id: '',
-    }
-  }
+      id: "",
+    };
+  };
 </script>
 
 <template>
   <div class="bottom-action">
-    <div class="input-wrapper">
-      <input
-        v-model="inputValue"
-        ref="input"
-        type="text"
-        :placeholder="replayTo.name ? '回复@' + replayTo.name : '输入评论'"
-        @focus="isFocusing = true" />
+    <div class="flex align-center items-center gap-2">
+      <div class="input-wrapper">
+        <input
+          v-model="inputValue"
+          ref="input"
+          type="text"
+          :placeholder="replayTo.name ? '回复@' + replayTo.name : '输入评论'"
+          @focus="isFocusing = true"
+        />
+      </div>
+      <el-button
+        type="danger"
+        round
+        v-if="isFocusing"
+        @click="clickReply"
+      >
+        提交
+      </el-button>
+      <el-button
+        round
+        style="margin: 0"
+        v-if="isFocusing"
+        @click="cancelInput"
+      >
+        取消
+      </el-button>
     </div>
-    <button
-      v-if="isFocusing"
-      @click="clickReply">
-      提交
-    </button>
-    <button
-      v-if="isFocusing"
-      @click="cancelInput">
-      取消
-    </button>
     <div
       class="actions-container"
-      v-if="!isFocusing">
+      v-if="!isFocusing"
+    >
       <div
         class="action"
-        :class="{ 'like-active': action.isLiked }"
-        @click="$emit('click-like', action)">
-        <Heart /><span>{{ action.likeCount }}</span>
+        :class="{ 'like-active': action?.isLiked }"
+        @click="$emit('click-like', action)"
+      >
+        <Heart />
+        <span>{{ action?.likeCount }}</span>
       </div>
       <div
         class="action"
-        :class="{ 'star-active': action.isFavorited }"
-        @click="$emit('click-star', action)">
-        <Star /><span>{{ action.favoriteCount }}</span>
+        :class="{ 'star-active': action?.isFavorited }"
+        @click="$emit('click-star', action)"
+      >
+        <Star />
+        <span>{{ action?.favoriteCount }}</span>
       </div>
       <div
         class="action"
-        @click="$emit('click-reply')">
-        <ChatSquare /><span>{{ total }}</span>
+        @click="$emit('click-reply')"
+      >
+        <ChatSquare />
+        <span>{{ total }}</span>
       </div>
       <div
         class="action"
-        @click="$emit('click-share')">
+        @click="$emit('click-share')"
+      >
         <Share />
       </div>
     </div>
@@ -99,7 +121,7 @@
 </template>
 
 <style scoped lang="less">
-  @import '@/assets/styles/base.less';
+  @import "@/assets/styles/base.less";
 
   .bottom-action {
     background-color: var(--background-color);
@@ -136,15 +158,6 @@
       width: 100%;
       height: 100%;
     }
-  }
-
-  button {
-    white-space: nowrap;
-    line-height: 40px;
-    padding: 0 16px;
-    border-radius: 20px;
-    color: var(--background-color);
-    background-color: var(--primary-color);
   }
 
   .actions-container {

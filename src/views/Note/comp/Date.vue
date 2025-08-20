@@ -15,8 +15,8 @@
 <template>
   <div class="date">
     <span v-if="isAuthor">编辑于</span>
-    <span>{{ date.date }}</span>
-    <span>{{ date.location }}</span>
+    <span>{{ date?.date }}</span>
+    <span>{{ date?.location }}</span>
   </div>
 </template>
 

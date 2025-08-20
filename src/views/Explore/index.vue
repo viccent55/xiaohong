@@ -5,8 +5,8 @@
   import ExploreFeed from "./comp/ExploreFeed.vue";
   import ExploreLoading from "./comp/ExploreLoading.vue";
 
-  import { computed, onMounted, ref } from "vue";
-  import type { ExploreChannelItem, ExploreFLoatSetItem } from "@/types/item";
+  import { computed, onMounted, onUnmounted, ref } from "vue";
+  import type { ExploreFLoatSetItem } from "@/types/item";
   import type { ExploreFeedInfo } from "@/types/info";
   import { getExploreFeeds, getConfiguration } from "@/api/explore";
   import { ExploreFloatSetItems } from "@/common";
@@ -34,8 +34,38 @@
       (item) => item.label === "goto-top" && item.active
     );
   });
-  const freshFeedNum = 15; // 每次刷新数量
-  const loadMoreNum = 5; // 每次加载更多数量
+  // Note: These variables appear to be unused.
+  // const freshFeedNum = 15; // 每次刷新数量
+  // const loadMoreNum = 5; // 每次加载更多数量
+
+  // --- Start of changes for masonry layout ---
+
+  const numColumns = ref(4);
+  const columns = computed(() => {
+    const result: ExploreFeedInfo[][] = Array.from(
+      { length: numColumns.value },
+      () => []
+    );
+    feeds.value.forEach((feed, index) => {
+      result[index % numColumns.value].push(feed);
+    });
+    return result;
+  });
+
+  const calculateColumns = () => {
+    const width = window.innerWidth;
+    if (width > 1600) numColumns.value = 6;
+    else if (width > 1200) numColumns.value = 5;
+    else if (width > 992) numColumns.value = 4;
+    else if (width > 768) numColumns.value = 3;
+    else numColumns.value = 2;
+  };
+
+  onUnmounted(() => {
+    window.removeEventListener("resize", calculateColumns);
+  });
+
+  // --- End of changes for masonry layout ---
 
   // 回到顶部
   const backToTop = (smooth = true) => {
@@ -131,6 +161,8 @@
     }
   };
   onMounted(() => {
+    calculateColumns();
+    window.addEventListener("resize", calculateColumns);
     initConfig();
     freshFeeds();
   });
@@ -150,18 +182,27 @@
     <ExploreLoading :loading="loading" />
 
     <!-- 列表 -->
-    <ExploreContainer @get-more="handle.loadMoreFeeds">
-      <template
-        v-for="feed in feeds"
-        :key="feed.id"
+    <ExploreContainer
+      class="explore-container"
+      @get-more="handle.loadMoreFeeds"
+    >
+      <div
+        class="explore-column"
+        v-for="(column, index) in columns"
+        :key="`column-${index}`"
       >
-        <ExploreFeed
-          :feed="feed"
-          @click="handle.clickFeed(feed)"
-          @click-like="handle.clickLike(feed)"
-          @click-author="handle.clickAuthor(feed)"
-        />
-      </template>
+        <template
+          v-for="feed in column"
+          :key="feed.id"
+        >
+          <ExploreFeed
+            :feed="feed"
+            @click="handle.clickFeed(feed)"
+            @click-like="handle.clickLike(feed)"
+            @click-author="handle.clickAuthor(feed)"
+          />
+        </template>
+      </div>
     </ExploreContainer>
 
     <!-- 浮动按钮 -->
@@ -179,6 +220,20 @@
     width: 100%;
     height: 100%;
     padding: 0 24px;
+
+    .explore-container {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 24px;
+    }
+
+    .explore-column {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 0;
+      gap: 16px;
+    }
 
     .pc-mode({
       padding: @pc-padding;

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import Avatar from "@/components/Avatar.vue";
   import Heart from "@/components/global/Heart.vue";
   import Image from "@/components/Image.vue";
   import type { PropType } from "vue";
@@ -17,8 +18,10 @@
   <div class="feed-wrapper" @click="$emit('click')">
     <!-- 图片 -->
     <div class="media-container">
-      <VideoPlay v-if="!feed.isPic" />
-      <Image :src="feed.cover" :width="feed.cover_w" :height="feed.cover_h" fit="contain"/>
+    
+      <video-play class="absolute z-10 text-white" v-if="feed.mode == 1" />
+      <Picture class="absolute z-10 text-white" v-if="feed.mode == 2" />
+      <Image :src="feed.cover" :width="`${feed.cover_w}`"  :height="`${feed.cover_h}`" fit="cover"/>
     </div>
     <!-- 信息 -->
     <div class="feed-footer">
@@ -28,7 +31,8 @@
       <div class="author-wrapper">
         <!-- 作者名称头像 -->
         <div class="info-wrapper" @click.stop="$emit('clickAuthor') /* 阻止冒泡 */">
-          <Image :src="feed.author?.avatar" />
+           
+          <Avatar :src="feed.author?.avatar" />
           <span>{{ feed.author?.name }}</span>
         </div>
 
@@ -46,8 +50,6 @@
   .feed-wrapper {
     width: 100%;
     height: fit-content;
-    break-inside: avoid;
-    margin-bottom: 16px;
     background: var(--background-color);
     border-radius: 16px;
     // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

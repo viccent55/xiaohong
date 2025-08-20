@@ -13,7 +13,7 @@ export interface ExploreFeedInfo {
 // 用户信息
 export interface UserInfo {
   id: number; // 用户ID
-  name: string; // 用户名
+  nickname: string; // 用户名
   avatar: string; // 用户头像
   subscribed: boolean;
 }
@@ -50,7 +50,7 @@ export interface ActionInfo {
 // 媒体信息
 export interface MediaInfo {
   videoUrl?: string; // 视频地址
-  imageUrl: string[]; // 图片地址
+  imageUrl: any[]; // 图片地址
 }
 
 // 评论信息

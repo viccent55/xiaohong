@@ -1,53 +1,43 @@
 <script setup lang="ts">
-  import { type MediaInfo } from '@/types/info'
-  import { screenMode } from '@/hooks/useScreenMode'
-  import { useTemplateRef } from 'vue'
-
-  const videoRef = useTemplateRef('video')
+  import { screenMode } from "@/hooks/useScreenMode";
+  import Image from "@/components/Image.vue";
+  import VideoPlayer from "@/components/Video.vue";
 
   defineProps<{
-    mediaInfo: MediaInfo
-  }>()
-
-  defineEmits(['close-video'])
-
-  function closeVideo() {
-    videoRef.value?.pause()
-  }
-
-  defineExpose({
-    closeVideo,
-  })
+    mediaInfo: any[];
+  }>();
 </script>
 
 <template>
-  <div
-    class="wrapper"
-    v-if="mediaInfo.videoUrl">
-    <video
-      ref="video"
-      :src="mediaInfo.videoUrl"
-      controls
-      width="100%"></video>
-  </div>
   <el-carousel
-    v-else
     class="swiper"
     trigger="click"
-    :indicator-position="screenMode === 'pc' ? '' : 'outside'"
-    :autoplay="false">
+    :indicator-position="
+      mediaInfo?.length <= 1 ? 'none' : screenMode === 'pc' ? '' : 'outside'
+    "
+    :arrow="mediaInfo?.length <= 1 ? 'never' : 'hover'"
+    :autoplay="false"
+  >
     <el-carousel-item
-      v-for="item in mediaInfo.imageUrl"
-      :key="item">
-      <div class="wrapper">
-        <img :src="item" />
-      </div>
+      v-for="item in mediaInfo"
+      :key="item"
+    >
+      <Image
+        class="wrapper"
+        :src="item.value"
+        v-if="item.name === 'image'"
+      />
+      <VideoPlayer
+        :src="item.value"
+        class="wrapper"
+        v-else
+      ></VideoPlayer>
     </el-carousel-item>
   </el-carousel>
 </template>
 
 <style scoped lang="less">
-  @import '@/assets/styles/base.less';
+  @import "@/assets/styles/base.less";
 
   .swiper {
     width: 100%;

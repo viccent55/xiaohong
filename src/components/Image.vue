@@ -3,9 +3,9 @@
   import { useDecryption } from "@/composables/useDecryption";
   import { ElImage, ElIcon } from "element-plus";
   import {
-    Picture as IconPicture,
     Loading as IconLoading,
   } from "@element-plus/icons-vue";
+  import EmptImage from "@/assets/loading.jpg";
 
   const props = defineProps({
     src: {
@@ -13,18 +13,18 @@
       default: () => "",
     },
     width: {
-      type: String,
+      type: String || Number ,
       default: "100%",
     },
     height: {
-      type: String,
-      default: "100%",
+      type:  String || Number,
+      default: () => '100%',
     },
     fit: {
       type: String as PropType<
         "cover" | "fill" | "contain" | "none" | "scale-down"
       >,
-      default: "cover",
+      default: "contain",
     },
   });
 
@@ -64,7 +64,7 @@
 <template>
   <div
     class="image-container"
-    :style="{ width: props.width, height: props.height }"
+    :style="{ width: width, height: height }"
   >
     <el-image
       v-if="decryptedImage"
@@ -89,16 +89,13 @@
       <!-- Error Placeholder -->
       <template #error>
         <div class="image-slot">
-          <el-icon size="160"><IconPicture class="h-100" /></el-icon>
+          <el-image fit="contain" class="rounded-xl" :src="EmptImage"></el-image>
         </div>
       </template>
     </el-image>
-    <div
-      v-else
-      class="image-slot"
-    >
+    <div v-else class="image-slot ">
       <!-- Placeholder for when there is no src prop -->
-      <el-icon><IconPicture /></el-icon>
+      <img class="rounded-xl" :src="EmptImage"></img>
     </div>
   </div>
 </template>

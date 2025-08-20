@@ -12,7 +12,7 @@ import ElementPlus from "element-plus";
 import Heart from "./components/global/Heart.vue";
 
 // mock
-import "@/mock";
+// import "@/mock";
 
 const app = createApp(App);
 

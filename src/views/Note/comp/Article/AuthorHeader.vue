@@ -1,34 +1,37 @@
 <script setup lang="ts">
-  import CloseButton from '@/components/global/CloseButton.vue'
-  import FollowButton from '@/components/global/FollowButton.vue'
-  import { type UserInfo } from '@/types/info'
+  import Avatar from "@/components/Avatar.vue";
+  import CloseButton from "@/components/global/CloseButton.vue";
+  import FollowButton from "@/components/global/FollowButton.vue";
+  import { type UserInfo } from "@/types/info";
 
-  const props = defineProps<{ author: UserInfo }>()
+  const props = defineProps<{ author: UserInfo }>();
 
-  const emits = defineEmits(['click-close', 'click-author', 'click-follow'])
+  const emits = defineEmits(["click-close", "click-author", "click-follow"]);
 
   const clickFollow = () => {
-    emits('click-follow', props.author.id)
-  }
+    emits("click-follow", props.author.id);
+  };
 </script>
 
 <template>
   <div class="author-header">
     <CloseButton
       class="close-btn"
-      @click="$emit('click-close')" />
+      @click="$emit('click-close')"
+    />
     <a @click="$emit('click-author', props.author.id)">
-      <img :src="props.author.avatarUrl" />
-      <span>{{ props.author.name }}</span>
+      <Avatar :src="props.author?.avatar" />
+      <span>{{ props.author?.nickname }}</span>
     </a>
     <FollowButton
-      :is-follow="props.author.isFollow"
-      @click="clickFollow" />
+      :is-follow="props.author?.isFollow"
+      @click="clickFollow"
+    />
   </div>
 </template>
 
 <style scoped lang="less">
-  @import '@/assets/styles/base.less';
+  @import "@/assets/styles/base.less";
 
   .author-header {
     position: sticky;

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-  import { type ExploreChannelItem } from "@/types/item";
-
   defineProps<{
     items: Record<string, string>[];
     activeValue: string;

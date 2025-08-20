@@ -98,6 +98,7 @@
   });
   onMounted(() => {
     generateVisitCode();
+    noteDialog.closeNoteDialog();
     // 检查是否需要打开笔记
     // 延迟500ms后执行，因为此时路由查询参数可能还未更新
     setTimeout(() => {

@@ -53,6 +53,7 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
 
         workbox: {
           globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
+          navigateFallbackDenylist: [/\.m3u8$/, /\.ts$/],
         },
         devOptions: {
           enabled: process.env.NODE_ENV === "development",
@@ -79,7 +80,7 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
           changeOrigin: true,
         },
       },
-      allowedHosts: true
+      allowedHosts: true,
     },
     // server: {
     //   host: true,
