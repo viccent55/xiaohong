@@ -4,11 +4,11 @@
   import CommentContainer from "./comp/Comment/CommentContainer.vue";
   import AuthorHeader from "./comp/Article/AuthorHeader.vue";
   import BottomAction from "./comp/BottomAction.vue";
-  import Swiper from "./comp/Article/Swiper.vue";
+  
 
   import { useNoteDialog, noteDialogVisible } from "@/hooks/useNoteDialog";
   import { screenMode } from "@/hooks/useScreenMode";
-  import { computed, ref, useTemplateRef } from "vue";
+  import { computed, defineAsyncComponent, nextTick, ref, useTemplateRef } from "vue";
   import type { ActionInfo, CommentBlockInfo } from "@/types/info";
   import * as Api from "@/api/note";
   import { checkPermissions } from "@/hooks/usePermisions";
@@ -18,6 +18,7 @@
 
   const bottomRef = useTemplateRef("bottomActions");
   const noteDIalogRef = useTemplateRef("note-dialog");
+  const Swiper = defineAsyncComponent(() => import("./comp/Article/Swiper.vue"));
 
   const noteDialog = useNoteDialog();
 
@@ -207,11 +208,19 @@
       commentBlocks.value = res.data.commentBlocks;
     });
   };
+  const swiperInstanceRef = ref<InstanceType<typeof Swiper> | null>(null);
+  const onCloseNoteDialog =async () => {
+    await nextTick();
+    if (swiperInstanceRef.value) {
+      swiperInstanceRef.value.closeVideo();
+    }
+  };
 </script>
 
 <template>
   <el-dialog
     @open="onOpenNoteDialog"
+    @close="onCloseNoteDialog"
     v-model="noteDialogVisible"
     :fullscreen="screenMode !== 'pc'"
     width="80%"
@@ -225,7 +234,7 @@
         v-if="screenMode === 'pc'"
       >
         <Swiper
-          ref="swiper1"
+          ref="swiperInstanceRef"
           :media-info="media"
         />
       </div>
@@ -249,7 +258,7 @@
           v-if="screenMode !== 'pc'"
         >
           <Swiper
-            ref="swiper2"
+            ref="swiperInstanceRef"
             :media-info="media"
           />
         </div>
