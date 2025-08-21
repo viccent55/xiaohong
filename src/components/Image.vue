@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref, watchEffect, reactive, nextTick, type PropType } from "vue";
+  import { ref, watchEffect, reactive, nextTick, type PropType, computed } from "vue";
   import { useDecryption } from "@/composables/useDecryption";
   import { ElImage, ElIcon } from "element-plus";
   import {
@@ -13,18 +13,18 @@
       default: () => "",
     },
     width: {
-      type: String || Number ,
+      type: [String, Number],
       default: "100%",
     },
     height: {
-      type:  String || Number,
-      default: () => '100%',
+      type: [String, Number],
+      default: 'auto',
     },
     fit: {
       type: String as PropType<
         "cover" | "fill" | "contain" | "none" | "scale-down"
       >,
-      default: "contain",
+      default: "cover",
     },
   });
 
@@ -45,6 +45,19 @@
     isVertical: false,
   });
 
+  const imageStyle = computed(() => {
+    const style: { width: string; height: string; aspectRatio?: string } = {
+        width: '100%',
+        height: 'auto',
+    };
+    if (props.width && props.height && props.height !== 'auto' && Number(props.height) > 0) {
+      style.aspectRatio = `${props.width} / ${props.height}`;
+    } else {
+      style.aspectRatio = '1 / 1'; // Default to a square if dimensions are invalid
+    }
+    return style;
+  });
+
   const handleImageLoad = () => {
     // Wait for the next DOM update to ensure the image element is available
     nextTick(() => {
@@ -55,7 +68,7 @@
         state.isVertical = state.height > state.width;
         emit("imageDimensions", state);
       } else {
-        console.error("Could not find image element in the DOM.");
+        // console.error("Could not find image element in the DOM.");
       }
     });
   };
@@ -64,7 +77,7 @@
 <template>
   <div
     class="image-container"
-    :style="{ width: width, height: height }"
+    :style="imageStyle"
   >
     <el-image
       v-if="decryptedImage"
@@ -102,11 +115,14 @@
 
 <style scoped>
   .image-container {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
     border-radius: 4px;
+    width: 100%;
+    height: auto;
   }
 
   .el-image {
@@ -116,6 +132,9 @@
   }
 
   .image-slot {
+    position: absolute;
+    top: 0;
+    left: 0;
     display: flex;
     justify-content: center;
     align-items: center;

@@ -13,7 +13,7 @@
 <template>
   <div class="note-content">
     <div class="title">{{ article?.title }}</div>
-    <div class="content">{{ article?.content }}</div>
+    <div class="content line-clamp-3">{{ article?.content }}</div>
     <div class="date-wrapper">
       <Date
         isAuthor

@@ -291,7 +291,7 @@
         <!-- 评论区域 -->
         <BottomAction
           ref="bottomActions"
-          :action="article?.action"
+          :action="article"
           :total="total"
           @click-like="handle.clickLike"
           @click-star="handle.clickStar"

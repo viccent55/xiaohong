@@ -2,10 +2,9 @@
   import ExploreContainer from "./comp/ExploreContainer.vue";
   import ExploreFloatSet from "./comp/ExploreFloatSet.vue";
   import ExploreChannelBar from "./comp/ExploreChannelBar.vue";
-  import ExploreFeed from "./comp/ExploreFeed.vue";
   import ExploreLoading from "./comp/ExploreLoading.vue";
 
-  import { computed, onMounted, onUnmounted, ref } from "vue";
+  import { onMounted, ref } from "vue";
   import type { ExploreFLoatSetItem } from "@/types/item";
   import type { ExploreFeedInfo } from "@/types/info";
   import { getExploreFeeds, getConfiguration } from "@/api/explore";
@@ -29,43 +28,7 @@
   const feeds = ref<ExploreFeedInfo[]>([]);
   const floatItems = ref<ExploreFLoatSetItem[]>(ExploreFloatSetItems);
   const loading = ref(false);
-  const onlyPic = computed(() => {
-    return floatItems.value.some(
-      (item) => item.label === "goto-top" && item.active
-    );
-  });
-  // Note: These variables appear to be unused.
-  // const freshFeedNum = 15; // 每次刷新数量
-  // const loadMoreNum = 5; // 每次加载更多数量
-
-  // --- Start of changes for masonry layout ---
-
-  const numColumns = ref(4);
-  const columns = computed(() => {
-    const result: ExploreFeedInfo[][] = Array.from(
-      { length: numColumns.value },
-      () => []
-    );
-    feeds.value.forEach((feed, index) => {
-      result[index % numColumns.value].push(feed);
-    });
-    return result;
-  });
-
-  const calculateColumns = () => {
-    const width = window.innerWidth;
-    if (width > 1600) numColumns.value = 6;
-    else if (width > 1200) numColumns.value = 5;
-    else if (width > 992) numColumns.value = 4;
-    else if (width > 768) numColumns.value = 3;
-    else numColumns.value = 2;
-  };
-
-  onUnmounted(() => {
-    window.removeEventListener("resize", calculateColumns);
-  });
-
-  // --- End of changes for masonry layout ---
+  const isInitialLoading = ref(true);
 
   // 回到顶部
   const backToTop = (smooth = true) => {
@@ -79,6 +42,9 @@
   // 刷新列表
   const freshFeeds = () => {
     loading.value = true;
+    if (feeds.value.length === 0) {
+      isInitialLoading.value = true;
+    }
     backToTop(false);
     const request = {
       visitorCode: storeUser.visitCode,
@@ -93,12 +59,15 @@
       }
       feeds.value = res.data.data;
       loading.value = false;
+      isInitialLoading.value = false;
     });
   };
 
   const handle = {
     // 加载更多列表
     loadMoreFeeds() {
+      if (loading.value) return;
+      loading.value = true;
       getExploreFeeds({
         visitorCode: storeUser.visitCode,
         videos_id: storeUser.videos_id,
@@ -112,6 +81,7 @@
         if (res.data?.data.length > 0) {
           feeds.value.push(...res.data.data);
         }
+        loading.value = false;
       });
     },
     // 点击频道
@@ -161,8 +131,6 @@
     }
   };
   onMounted(() => {
-    calculateColumns();
-    window.addEventListener("resize", calculateColumns);
     initConfig();
     freshFeeds();
   });
@@ -178,32 +146,17 @@
       @click-item="handle.clickChannel"
     />
 
-    <!-- 加载 -->
-    <ExploreLoading :loading="loading" />
+    <!-- Loading indicator for loading more -->
+    <ExploreLoading :loading="loading && !isInitialLoading" />
 
     <!-- 列表 -->
     <ExploreContainer
       class="explore-container"
+      :items="feeds"
+      :is-loading="isInitialLoading"
       @get-more="handle.loadMoreFeeds"
-    >
-      <div
-        class="explore-column"
-        v-for="(column, index) in columns"
-        :key="`column-${index}`"
-      >
-        <template
-          v-for="feed in column"
-          :key="feed.id"
-        >
-          <ExploreFeed
-            :feed="feed"
-            @click="handle.clickFeed(feed)"
-            @click-like="handle.clickLike(feed)"
-            @click-author="handle.clickAuthor(feed)"
-          />
-        </template>
-      </div>
-    </ExploreContainer>
+      @click-item="handle.clickFeed"
+    />
 
     <!-- 浮动按钮 -->
     <ExploreFloatSet
@@ -220,20 +173,6 @@
     width: 100%;
     height: 100%;
     padding: 0 24px;
-
-    .explore-container {
-      display: flex;
-      flex-direction: row;
-      align-items: flex-start;
-      gap: 24px;
-    }
-
-    .explore-column {
-      display: flex;
-      flex-direction: column;
-      flex: 1 1 0;
-      gap: 16px;
-    }
 
     .pc-mode({
       padding: @pc-padding;

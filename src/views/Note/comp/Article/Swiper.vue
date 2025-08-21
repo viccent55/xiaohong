@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { screenMode } from "@/hooks/useScreenMode";
   import Image from "@/components/Image.vue";
-  import { ref, defineExpose, defineAsyncComponent, nextTick } from "vue";
+  import { ref, defineExpose, defineAsyncComponent } from "vue";
 
   const VideoPlayer = defineAsyncComponent(
     () => import("@/components/Video.vue")

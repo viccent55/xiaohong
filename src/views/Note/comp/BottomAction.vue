@@ -1,9 +1,8 @@
 <script setup lang="ts">
-  import { type ActionInfo } from "@/types/info";
   import { ref, useTemplateRef } from "vue";
 
   defineProps<{
-    action: ActionInfo;
+    action: EmptyObjectType;
     total: number;
   }>();
 
@@ -93,22 +92,22 @@
         @click="$emit('click-like', action)"
       >
         <Heart />
-        <span>{{ action?.likeCount }}</span>
+        <span>{{ action?.like_count }}</span>
       </div>
       <div
         class="action"
-        :class="{ 'star-active': action?.isFavorited }"
+        :class="{ 'star-active': action?.isLiked }"
         @click="$emit('click-star', action)"
       >
         <Star />
-        <span>{{ action?.favoriteCount }}</span>
+        <span>{{ action?.collect_count }}</span>
       </div>
       <div
         class="action"
         @click="$emit('click-reply')"
       >
         <ChatSquare />
-        <span>{{ total }}</span>
+        <span>{{ action?.comment_count }}</span>
       </div>
       <div
         class="action"
