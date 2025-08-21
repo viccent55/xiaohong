@@ -95,6 +95,7 @@
         width: 100%;
         display: flex;
         justify-content: space-between;
+        color: var(--text-color-secondary);
 
         span {
           font-size: 12px;
@@ -122,6 +123,7 @@
             width: 14px;
             height: 14px;
             margin-right: 2px;
+            fill: currentColor;
           }
         }
       }
