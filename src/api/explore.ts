@@ -1,5 +1,4 @@
-import type { ResponseConfig, ListConfig } from "@/types/axios";
-import type { ExploreFeedInfo } from "@/types/info";
+import type { ResponseConfig } from "@/types/axios";
 import axios from "@/utils/request";
 
 export function visitorCode(code: string) {

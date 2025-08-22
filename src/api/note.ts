@@ -44,27 +44,22 @@ export const unlike = (id: number): Promise<ResponseConfig<null>> => {
   return axios.post("/unlike", { id });
 };
 
-// 关注
-export const follow = (id: number): Promise<ResponseConfig<null>> => {
-  return axios.post("/follow", { id });
+export const subscribe = (id: number): Promise<ResponseConfig<EmptyObjectType>> => {
+  return axios.post("/member/subscribe", { id });
 };
 
-// 取消关注
-export const unfollow = (id: number): Promise<ResponseConfig<null>> => {
-  return axios.post("/unfollow", { id });
+export const unSubscribe = (id: number): Promise<ResponseConfig<null>> => {
+  return axios.post("/member/unfollow", { id });
 };
 
-// 收藏
 export const star = (id: number): Promise<ResponseConfig<null>> => {
   return axios.post("/star", { id });
 };
 
-// 取消收藏
 export const unstar = (id: number): Promise<ResponseConfig<null>> => {
   return axios.post("/unstar", { id });
 };
 
-// 举报
 export const report = (id: number): Promise<ResponseConfig<null>> => {
   return axios.post("/report", { id });
 };

@@ -4,7 +4,7 @@
   import ExploreChannelBar from "./comp/ExploreChannelBar.vue";
   import ExploreLoading from "./comp/ExploreLoading.vue";
 
-  import { onMounted, ref } from "vue";
+  import { computed, onMounted, ref } from "vue";
   import type { ExploreFLoatSetItem } from "@/types/item";
   import type { ExploreFeedInfo } from "@/types/info";
   import { getExploreFeeds, getConfiguration } from "@/api/explore";
@@ -24,7 +24,7 @@
   const store = useStore();
   const { configuration } = storeToRefs(store);
   const category = configuration.value.categories[0];
-  const channel = ref<string>(category?.name);
+  const channel = ref<string>(category?.id);
   const feeds = ref<ExploreFeedInfo[]>([]);
   const floatItems = ref<ExploreFLoatSetItem[]>(ExploreFloatSetItems);
   const loading = ref(false);
@@ -86,7 +86,7 @@
     },
     // 点击频道
     clickChannel(item: Record<string, string>) {
-      channel.value = item.name;
+      channel.value = item.value;
       freshFeeds();
     },
     // 点击浮动按钮
@@ -130,6 +130,12 @@
       store.configuration = response.data;
     }
   };
+  const categories = computed(() => {
+    return configuration.value.categories.map((item: EmptyObjectType) => ({
+      label: item.name,
+      value: item.id,
+    }));
+  });
   onMounted(() => {
     initConfig();
     freshFeeds();
@@ -141,7 +147,7 @@
     <!-- 频道导航 -->
 
     <ExploreChannelBar
-      :items="configuration.categories"
+      :items="categories"
       :active-value="channel"
       @click-item="handle.clickChannel"
     />

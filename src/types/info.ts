@@ -20,16 +20,18 @@ export interface UserInfo {
 
 // 用户详情信息
 export interface UserDetailInfo extends UserInfo {
+  avatar: string;
   nickname: string;
   email: number;
   slogan: number;
   inviter: number;
-  invite_code: number;
+  invite_code: string;
   status: boolean;
-  last_login: string;
+  last_login: number;
   created_at: string;
   updated_at: string;
   invite_count: number;
+  mode: number;
 }
 
 // 日期信息

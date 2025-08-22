@@ -14,7 +14,6 @@
   const self = computed(() => {
     return userStore.useId === props.user.id;
   });
-
   function clickFollow() {
     emits("click-follow", props.user);
   }
@@ -29,21 +28,17 @@
       <Image
         :src="user.avatar"
         class="avatar-wrapper"
+        fit="cover"
       />
     </div>
     <div class="basic-wrapper">
       <div class="base-info">
-        <!-- <img
-          :src="user.avatar"
-          width="100"
-          height="100"
-        /> -->
         <div class="name-wrapper">
-          <span class="name">{{ user.name }}</span>
+          <span class="name">{{ user?.nickname }}</span>
           <span class="id">小红书号: {{ user.id }}</span>
         </div>
       </div>
-      <div class="desc">{{ user.slogan || '还没有简介' }}</div>
+      <div class="desc">{{ user.slogan || "还没有简介" }}</div>
       <div class="interactions">
         <div class="action">
           <span>{{ user.subscribed }}</span>
@@ -59,6 +54,7 @@
         </div>
       </div>
     </div>
+
     <div
       class="button-wrapper"
       v-if="!self"

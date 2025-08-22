@@ -1,6 +1,8 @@
 <script setup lang="ts">
+  import type { ExploreChannelItem } from "@/types/item";
+
   defineProps<{
-    items: Record<string, string>[];
+    items: ExploreChannelItem[];
     activeValue: string;
   }>();
 
@@ -15,9 +17,9 @@
     >
       <span
         @click="$emit('click-item', item)"
-        :class="{ active: item.name === activeValue }"
+        :class="{ active: item.value === activeValue }"
       >
-        {{ item.name }}
+        {{ item.label }}
       </span>
     </template>
   </div>

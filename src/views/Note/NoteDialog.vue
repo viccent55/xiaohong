@@ -4,11 +4,16 @@
   import CommentContainer from "./comp/Comment/CommentContainer.vue";
   import AuthorHeader from "./comp/Article/AuthorHeader.vue";
   import BottomAction from "./comp/BottomAction.vue";
-  
 
   import { useNoteDialog, noteDialogVisible } from "@/hooks/useNoteDialog";
   import { screenMode } from "@/hooks/useScreenMode";
-  import { computed, defineAsyncComponent, nextTick, ref, useTemplateRef } from "vue";
+  import {
+    computed,
+    defineAsyncComponent,
+    nextTick,
+    ref,
+    useTemplateRef,
+  } from "vue";
   import type { ActionInfo, CommentBlockInfo } from "@/types/info";
   import * as Api from "@/api/note";
   import { checkPermissions } from "@/hooks/usePermisions";
@@ -18,7 +23,9 @@
 
   const bottomRef = useTemplateRef("bottomActions");
   const noteDIalogRef = useTemplateRef("note-dialog");
-  const Swiper = defineAsyncComponent(() => import("./comp/Article/Swiper.vue"));
+  const Swiper = defineAsyncComponent(
+    () => import("./comp/Article/Swiper.vue")
+  );
 
   const noteDialog = useNoteDialog();
 
@@ -48,18 +55,18 @@
       openPage(`http://localhost:5173/user/${id}`);
     },
     // 关注
-    clickFollow(id: string) {
+    clickFollow(id: number) {
       console.log("关注");
       checkPermissions(PERMISSION.User, () => {
-        if (article.value?.author.isFollow) {
-          Api.follow(id).then((res) => {
-            if (res.code !== 200) return;
-            article.value.author.isFollow = false;
+        if (article.value?.author.subscribe) {
+          Api.subscribe(id).then((res) => {
+            if (res.errcode !== 0) return;
+            article.value.author.subscribe = false;
           });
         } else {
-          Api.unfollow(id).then((res) => {
-            if (res.code !== 200) return;
-            article.value.author.isFollow = true;
+          Api.unSubscribe(id).then((res) => {
+            if (res.errcode !== 0) return;
+            article.value.author.unSubscribe = true;
           });
         }
       });
@@ -112,7 +119,7 @@
       });
     },
     // 举报
-    clickReport(id: string) {
+    clickReport(id: number) {
       console.log("举报");
       checkPermissions(PERMISSION.User, () => {
         Api.report(id).then((res) => {
@@ -209,7 +216,7 @@
     });
   };
   const swiperInstanceRef = ref<InstanceType<typeof Swiper> | null>(null);
-  const onCloseNoteDialog =async () => {
+  const onCloseNoteDialog = async () => {
     await nextTick();
     if (swiperInstanceRef.value) {
       swiperInstanceRef.value.closeVideo();

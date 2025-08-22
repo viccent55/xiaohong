@@ -35,9 +35,9 @@ export function logout(params?: object) {
 }
 
 export const getUserInfo = (
-  id: string
+  id: number
 ): Promise<ResponseConfig<UserDetailInfo>> => {
-  return service.get("/user/info", { params: { id } });
+  return service.post("/index/userInfomation", { mid: id });
 };
 
 export const setUserInfo = (
@@ -47,16 +47,14 @@ export const setUserInfo = (
 };
 // 获取笔记
 export const getNoteFeeds = (
-  id: string,
-  num: number
+  id: number
 ): Promise<ResponseConfig<ListConfig<EmptyObjectType>>> => {
-  return service.get("/member/myPost", { params: { id, num } });
+  return service.post("/index/userPosts", { mid: id });
 };
 
 // 获取收藏
 export const getStarFeeds = (
-  id: string,
-  num: number
+  id: number
 ): Promise<ResponseConfig<ListConfig<EmptyObjectType>>> => {
-  return service.get("/user/starfeeds", { params: { id, num } });
+  return service.post("/user/starfeeds", { mid: id });
 };

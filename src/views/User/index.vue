@@ -7,18 +7,17 @@
   import { useRoute } from "vue-router";
   import type { ExploreChannelItem } from "@/types/item";
   import { UserChannelItems } from "@/common";
-  import { getNoteFeeds, getStarFeeds, setUserInfo } from "@/api/user";
+  import { getNoteFeeds, getStarFeeds, getUserInfo } from "@/api/user";
   import type { ExploreFeedInfo, UserDetailInfo } from "@/types/info";
-  import { follow, report, unfollow } from "@/api/note";
+  import { subscribe, report, unSubscribe } from "@/api/note";
   import { useNoteDialog } from "@/hooks/useNoteDialog";
-  import { useUserStore } from "@/store/user";
 
   const route = useRoute();
   const noteDialog = useNoteDialog();
-  const { id } = route.params;
-  const storeUser = useUserStore();
+
   const channel = ref<string>(UserChannelItems[0].value);
-  const userInfo = ref(storeUser.userInfo);
+  const userInfo = ref(<UserDetailInfo>{});
+  const id = Number(route.params.id);
   // 笔记列表
   const noteFeeds = ref<EmptyObjectType[]>([]);
   // 收藏列表
@@ -40,20 +39,18 @@
 
   const getRes = {
     noteFeeds(num: number) {
-      const id_ = id as string;
       // 获取笔记
-      getNoteFeeds(id_, num).then((res) => {
-        console.log("res", res);
+      getNoteFeeds(id).then((res) => {
+        console.log("res1", res);
         if (res.errcode !== 0) return;
-        noteFeeds.value.push(...res.data.list);
+        noteFeeds.value.push(...res.data.items);
       });
     },
     starFeeds(num: number) {
-      const id_ = id as string;
       // 获取收藏
-      getStarFeeds(id_, num).then((res) => {
+      getStarFeeds(id).then((res) => {
         if (res.errcode !== 0) return;
-        starFeeds.value.push(...res.data.list);
+        starFeeds.value.push(...res.data.items);
       });
     },
   };
@@ -64,12 +61,12 @@
     },
     clickFollow(user: UserDetailInfo) {
       if (user.subscribed) {
-        unfollow(user.id).then((res) => {
+        unSubscribe(user.id).then((res) => {
           if (res.code !== 200) return;
           user.subscribed = false;
         });
       } else {
-        follow(user.id).then((res) => {
+        subscribe(user.id).then((res) => {
           if (res.code !== 200) return;
           user.subscribed = true;
         });
@@ -78,7 +75,7 @@
     clickReport(user: UserDetailInfo) {
       report(user.id);
     },
-    clickFeed(feed: ExploreFeedInfo) {
+    clickFeed(feed: EmptyObjectType) {
       noteDialog.openNoteDialog(feed.id);
     },
     clickMore() {
@@ -94,11 +91,10 @@
   };
   onMounted(() => {
     if (id) {
-      // const id_ = id as string;
-      // getUserInfo(id_ as string).then((res) => {
-      //   if (res.code !== 200) return;
-      //   userInfo.value = res.data;
-      // });
+      getUserInfo(id).then((res) => {
+        userInfo.value = JSON.parse(JSON.stringify(res));
+        console.log("userInfo", userInfo.value);
+      });
 
       getRes.noteFeeds(5);
     }
