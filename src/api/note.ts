@@ -31,7 +31,7 @@ export const reply = (
   content: string,
   to?: string
 ): Promise<ResponseConfig<CommentInfo>> => {
-  return axios.post("/reply", { id, to, content });
+  return axios.post("/member/comment", { item_id: id, content });
 };
 
 // 点赞

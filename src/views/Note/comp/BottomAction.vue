@@ -1,13 +1,22 @@
 <script setup lang="ts">
-  import { ref, useTemplateRef } from "vue";
+  import { ref, useTemplateRef, watchEffect } from "vue";
 
-  defineProps<{
+  const props = defineProps<{
     action: EmptyObjectType;
     total: number;
   }>();
 
-  const replayTo = ref<{ id: string; name?: string }>({ id: "" });
-
+  const replayTo = ref<{ id: string; name?: string }>({
+    id: "",
+    name: "",
+  });
+  watchEffect(() => {
+    const item = props.action;
+    if (item) {
+      replayTo.value.id = item.id;
+      replayTo.value.name = item.author?.name || "";
+    }
+  });
   const emits = defineEmits([
     "click-like",
     "click-star",

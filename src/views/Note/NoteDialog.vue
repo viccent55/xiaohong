@@ -131,8 +131,8 @@
     // 提交评论
     clickReplyTo(id: string, content: string, to?: string) {
       checkPermissions(PERMISSION.User, () => {
-        Api.reply(id, content, to || undefined).then((res) => {
-          if (res.code !== 200) return;
+        Api.reply(Number(id), content, to || undefined).then((res) => {
+          if (res.errcode != 0) return;
 
           const comment = res.data;
 
