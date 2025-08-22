@@ -1,21 +1,22 @@
 <script setup lang="ts">
-  import { type DateInfo } from '@/types/info'
+  import { type DateInfo } from "@/types/info";
+  import { formatTime } from "@/composables/useFormatTime";
 
   withDefaults(
     defineProps<{
-      date: DateInfo
-      isAuthor?: boolean
+      date: DateInfo;
+      isAuthor?: boolean;
     }>(),
     {
       isAuthor: false,
-    },
-  )
+    }
+  );
 </script>
 
 <template>
   <div class="date">
     <span v-if="isAuthor">编辑于</span>
-    <span>{{ date?.date }}</span>
+    <span>{{ formatTime(date?.date) }}</span>
     <span>{{ date?.location }}</span>
   </div>
 </template>
