@@ -10,7 +10,7 @@
   import type { NotificationInfo } from '@/types/info'
   import { getNotificationCount, getNotificationInfo } from '@/api/notification'
   import { useUserStore } from '@/store/user'
-  import { follow, unfollow } from '@/api/note'
+  import { subscribe, unSubscribe } from '@/api/note'
   import { useNoteDialog } from '@/hooks/useNoteDialog'
 
   const router = useRouter()
@@ -53,12 +53,12 @@
     clickFollow(info: NotificationInfo) {
       const user = info.user
       if (user.isFollow) {
-        unfollow(user.id).then(res => {
+        unSubscribe(user.id).then(res => {
           if (res.code !== 200) return
           user.isFollow = false
         })
       } else {
-        follow(user.id).then(res => {
+        subscribe(user.id).then(res => {
           if (res.code !== 200) return
           user.isFollow = true
         })

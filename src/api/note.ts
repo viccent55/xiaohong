@@ -53,7 +53,7 @@ export const unSubscribe = (id: number): Promise<ResponseConfig<null>> => {
 };
 
 export const star = (id: number): Promise<ResponseConfig<null>> => {
-  return axios.post("/star", { id });
+  return axios.post("/member/collect", { id });
 };
 
 export const unstar = (id: number): Promise<ResponseConfig<null>> => {

@@ -3,7 +3,7 @@
   import ExploreChannelBar from "../Explore/comp/ExploreChannelBar.vue";
   import ExploreFeed from "../Explore/comp/ExploreFeed.vue";
   import BottomMore from "@/components/global/BottomMore.vue";
-  import { computed, onMounted, ref } from "vue";
+  import { computed, onMounted, ref, inject } from "vue";
   import { useRoute } from "vue-router";
   import type { ExploreChannelItem } from "@/types/item";
   import { UserChannelItems } from "@/common";
@@ -11,9 +11,11 @@
   import type { ExploreFeedInfo, UserDetailInfo } from "@/types/info";
   import { subscribe, report, unSubscribe } from "@/api/note";
   import { useNoteDialog } from "@/hooks/useNoteDialog";
+  import MasonryWall from "@yeger/vue-masonry-wall";
 
   const route = useRoute();
   const noteDialog = useNoteDialog();
+  const scrollContainer: any = inject("scrollContainer");
 
   const channel = ref<string>(UserChannelItems[0].value);
   const userInfo = ref(<UserDetailInfo>{});
@@ -43,14 +45,14 @@
       getNoteFeeds(id).then((res) => {
         console.log("res1", res);
         if (res.errcode !== 0) return;
-        noteFeeds.value.push(...res.data.items);
+        noteFeeds.value = [...noteFeeds.value, ...res.data.items];
       });
     },
     starFeeds(num: number) {
       // 获取收藏
       getStarFeeds(id).then((res) => {
         if (res.errcode !== 0) return;
-        starFeeds.value.push(...res.data.items);
+        starFeeds.value = [...starFeeds.value, ...res.data.items];
       });
     },
   };
@@ -121,15 +123,22 @@
       <el-divider />
 
       <div class="container">
-        <template
-          v-for="feed in showFeeds"
-          :key="feed.id"
+        <MasonryWall
+          v-if="showFeeds.length > 0"
+          :items="showFeeds"
+          :column-width="200"
+          :gap="20"
+          item-key="id"
+          :scroll-container="scrollContainer"
+          :layout-animation-duration="500"
         >
-          <ExploreFeed
-            :feed="feed"
-            @click="handle.clickFeed(feed)"
-          />
-        </template>
+          <template #default="{ item }">
+            <ExploreFeed
+              :feed="item"
+              @click="handle.clickFeed(item)"
+            />
+          </template>
+        </MasonryWall>
       </div>
 
       <!-- <BottomMore
@@ -162,17 +171,6 @@
 
   .container {
     width: 100%;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
     padding: 0 32px;
-
-    @media (max-width: 500px) {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    @media (min-width: 1200px) {
-      grid-template-columns: repeat(5, 1fr);
-    }
   }
 </style>

@@ -79,7 +79,7 @@
           storeUser.videos_id = res.data.videos_id ?? "";
         }
         if (res.data?.data.length > 0) {
-          feeds.value.push(...res.data.data);
+          feeds.value = feeds.value.concat(res.data.data);
         }
         loading.value = false;
       });
@@ -160,6 +160,7 @@
       class="explore-container"
       :items="feeds"
       :is-loading="isInitialLoading"
+      :is-load-more="loading"
       @get-more="handle.loadMoreFeeds"
       @click-item="handle.clickFeed"
     />

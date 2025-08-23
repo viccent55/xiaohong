@@ -14,7 +14,7 @@
   import { openLoginDialog } from "./hooks/useLoginDialog";
   import { useNoteDialog } from "./hooks/useNoteDialog";
   import { PERMISSION } from "./common/permision";
-  import { computed, onBeforeMount, onMounted } from "vue";
+  import { computed, onBeforeMount, onMounted, ref, provide } from "vue";
   import type { DropdownItem, NavigationItem } from "./types/item";
   import { NavigationItems } from "./common";
   import { openPage } from "./service";
@@ -29,6 +29,9 @@
   const userStore = useUserStore();
   const noteDialog = useNoteDialog();
   const store = useStore();
+
+  const scrollContainer = ref<HTMLElement | null>(null);
+  provide("scrollContainer", scrollContainer);
 
   // 顶层组件监听屏幕大小变化
   listenResizeEvent();
@@ -67,6 +70,7 @@
           else router.push(item.href);
         });
       } else {
+       
         router.push(item.href);
       }
     } else {
@@ -117,7 +121,7 @@
         @click-nav-item="clickNavigationItem"
       ></Aside>
 
-      <div class="container">
+      <div class="container" ref="scrollContainer">
         <!-- <InstallPWA /> -->
         <router-view v-slot="{ Component }">
           <keep-alive>
