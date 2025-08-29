@@ -8,52 +8,52 @@ import {
 
 export const dropDownItems1: DropdownItem[] = [
   {
-    label: '创作服务',
+    name: '创作服务',
   },
   {
-    label: '直播管理',
+    name: '直播管理',
   },
   {
-    label: '电脑直播助手',
+    name: '电脑直播助手',
   },
 ]
 
 export const dropDownItems2: DropdownItem[] = [
   {
-    label: '专业号',
+    name: '专业号',
   },
   {
-    label: '推广合作',
+    name: '推广合作',
   },
   {
-    label: '蒲公英',
+    name: '蒲公英',
   },
   {
-    label: '商家入驻',
+    name: '商家入驻',
   },
   {
-    label: 'MCN入驻',
+    name: 'MCN入驻',
   },
 ]
 
 export const dropDownItems3: DropdownItem[] = [
   {
-    label: '关于小红书',
+    name: '关于小红书',
   },
   {
-    label: '隐私、协议',
+    name: '隐私、协议',
   },
   {
-    label: '帮助与客服',
+    name: '帮助与客服',
   },
   {
     divided: true,
     type: 'text',
-    label: '设置',
+    name: '设置',
     loginRequired: true,
   },
   {
-    label: '退出登录',
+    name: '退出登录',
     loginRequired: true,
   },
 ]

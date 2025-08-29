@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { setDefaultPermission } from "@/hooks/usePermisions";
 import { PERMISSION } from "@/common/permision";
 import { writeToken, removeToken, refreshToken } from "@/hooks/useJWT";
-import { closeLoginDialog, openLoginDialog } from "@/hooks/useLoginDialog";
+import { closeLoginDialog, openLoginDialog, loginDialogVisible } from "@/hooks/useLoginDialog";
 import { Session } from "@/utils/storage";
 import type { UserDetailInfo } from "@/types/info";
 
@@ -39,6 +39,11 @@ export const useUserStore = defineStore("user", {
       this.isLogin = false;
       // 打开登录弹窗
       openLoginDialog();
+    },
+  },
+  getters: {
+    loginDialogVisible: () => {
+      return loginDialogVisible.value;
     },
   },
   persist: {

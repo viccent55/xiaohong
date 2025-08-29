@@ -39,14 +39,14 @@
               v-if="item.type === 'text'"
               class="text"
             >
-              {{ item.label }}
+              {{ item.name }}
             </span>
             <div
               v-else
               class="link"
               @click="$emit('click-item', item)"
             >
-              {{ item.label }}
+              {{ item.name }}
               <span>
                 <el-icon class="icon"><TopRight /></el-icon>
               </span>

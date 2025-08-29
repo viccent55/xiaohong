@@ -23,6 +23,7 @@
   import { useStore } from "./store";
   import InstallPWA from "./components/global/InstallPWA.vue";
   import { generateCode } from "@/utils/toolsValidate";
+  import DialogPopupAds from "./components/DialogPopupAds.vue";
 
   const route = useRoute();
   const router = useRouter();
@@ -70,7 +71,6 @@
           else router.push(item.href);
         });
       } else {
-       
         router.push(item.href);
       }
     } else {
@@ -100,6 +100,24 @@
       openLoginDialog();
     }
   });
+  const ads = [
+    {
+      id: 14,
+      name: "吃瓜头条",
+      image:
+        "/image/675/4ed/62d8a26e31c13ca8f0add5a4ef43b25baae1b4a922017993ce2e7006cd.jpg",
+      url: "https://www.haij.net",
+      position: 4,
+    },
+    {
+      id: 15,
+      name: "吃瓜头条",
+      image:
+        "/image/bb6/835/10be5ca42f3d93b79c0cb11bbda51ef8b43e18cbd07b9c6255aee3c306.gif",
+      url: "https://www.haij.net",
+      position: 4,
+    },
+  ];
   onMounted(() => {
     generateVisitCode();
     // 检查是否需要打开笔记
@@ -121,8 +139,11 @@
         @click-nav-item="clickNavigationItem"
       ></Aside>
 
-      <div class="container" ref="scrollContainer">
-        <!-- <InstallPWA /> -->
+      <div
+        class="container"
+        ref="scrollContainer"
+      >
+        <InstallPWA v-show="!userStore.loginDialogVisible" />
         <router-view v-slot="{ Component }">
           <keep-alive>
             <component :is="Component" />
@@ -137,6 +158,10 @@
       ></Footer>
       <NoteDialog></NoteDialog>
       <LoginDialog></LoginDialog>
+      <DialogPopupAds
+        v-if="!userStore.loginDialogVisible"
+        :adverts="ads"
+      />
     </div>
   </div>
 </template>

@@ -23,7 +23,7 @@
   // 当前频道
   const store = useStore();
   const { configuration } = storeToRefs(store);
-  const category = configuration.value.categories[0];
+  const category = configuration.value.categories?.[0];
   const channel = ref<string>(category?.id);
   const feeds = ref<ExploreFeedInfo[]>([]);
   const floatItems = ref<ExploreFLoatSetItem[]>(ExploreFloatSetItems);
@@ -53,11 +53,14 @@
       video_offset: "",
       gallery_offset: "",
     };
+    console.log(request)
     getExploreFeeds(request).then((res) => {
-      if (res.data.videos_id) {
+
+      if (res.data?.videos_id) {
         storeUser.videos_id = res.data.videos_id;
       }
       feeds.value = res.data.data;
+     
       loading.value = false;
       isInitialLoading.value = false;
     });
@@ -131,7 +134,7 @@
     }
   };
   const categories = computed(() => {
-    return configuration.value.categories.map((item: EmptyObjectType) => ({
+    return configuration.value.categories?.map((item: EmptyObjectType) => ({
       label: item.name,
       value: item.id,
     }));

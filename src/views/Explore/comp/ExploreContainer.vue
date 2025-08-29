@@ -45,17 +45,37 @@
       }
     });
   };
+  const columnWidth = ref(230);
+  const gap = ref(28);
+  const feedsContainer = ref<HTMLElement | null>(null);
 
+  const updateColumnWidth = () => {
+    if (feedsContainer.value) {
+      // Use getBoundingClientRect().width for a more precise fractional value
+      // and Math.floor to prevent floating point rounding errors from breaking the layout.
+      const containerWidth = feedsContainer.value.getBoundingClientRect().width;
+      if (window.innerWidth <= 768) {
+        gap.value = 12;
+        columnWidth.value = Math.floor((containerWidth - gap.value) / 2);
+      } else {
+        gap.value = 28;
+        columnWidth.value = 230;
+      }
+    }
+  };
   onMounted(() => {
     if (scrollContainer.value) {
       scrollContainer.value.addEventListener("scroll", onScroll);
     }
+    updateColumnWidth();
+    window.addEventListener("resize", updateColumnWidth);
   });
 
   onUnmounted(() => {
     if (scrollContainer.value) {
       scrollContainer.value.removeEventListener("scroll", onScroll);
     }
+    window.removeEventListener("resize", updateColumnWidth);
   });
 
   const skeletonItems = computed(() => Array.from({ length: 10 }));
@@ -66,12 +86,12 @@
 </script>
 
 <template>
-  <div class="feeds-container">
+  <div class="feeds-container" ref="feedsContainer">
     <MasonryWall
       v-if="isLoading"
       :items="skeletonItems"
-      :column-width="230"
-      :gap="28"
+      :column-width="columnWidth"
+      :gap="gap"
       :scroll-container="scrollContainer"
     >
       <template #default>
@@ -81,8 +101,8 @@
     <MasonryWall
       v-else
       :items="items"
-      :column-width="230"
-      :gap="28"
+      :column-width="columnWidth"
+      :gap="gap"
       item-key="id"
       :scroll-container="scrollContainer"
       :layout-animation-duration="500"
@@ -97,8 +117,8 @@
     <MasonryWall
       v-if="isLoadMore"
       :items="skeletonItems"
-      :column-width="230"
-      :gap="28"
+      :column-width="columnWidth"
+      :gap="gap"
       :scroll-container="scrollContainer"
     >
       <template #default>

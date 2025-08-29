@@ -9,6 +9,7 @@
   const emits = defineEmits(["click-menu-item"]);
 
   const clickMenuItem = (item: DropdownItem) => {
+    console.log(item)
     emits("click-menu-item", item);
   };
 
@@ -62,7 +63,7 @@
       <!-- <960 -->
       <Dropdown
         @click-item="clickMenuItem"
-        :items="dropDownItems4"
+        :items="store.configuration.categories"
         placement="bottom-end"
         trigger="click"
       >

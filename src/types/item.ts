@@ -3,7 +3,7 @@
 export interface DropdownItem {
   type?: 'link' | 'text'
   divided?: boolean
-  label?: string
+  name?: string
   href?: string
   loginRequired?: boolean
 }
@@ -11,7 +11,7 @@ export interface DropdownItem {
 // 底部/侧面导航选项
 export interface NavigationItem {
   type: 'router-link' | 'external-link'
-  label: string
+  name: string
   icon: string
   href: string
 }

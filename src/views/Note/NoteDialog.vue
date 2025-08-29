@@ -14,7 +14,7 @@
     ref,
     useTemplateRef,
   } from "vue";
-  import type { ActionInfo, CommentBlockInfo } from "@/types/info";
+  import type { CommentBlockInfo } from "@/types/info";
   import * as Api from "@/api/note";
   import { checkPermissions } from "@/hooks/usePermisions";
   import { PERMISSION } from "@/common/permision";
@@ -72,23 +72,24 @@
       });
     },
     // 点赞
-    clickLike(item: ActionInfo, id?: string) {
+    clickLike(item: EmptyObjectType, id?: string) {
       console.log("点赞");
       checkPermissions(PERMISSION.User, () => {
         const id_ = id || article.value.id;
-
-        if (item.isLiked) {
+        item["isLiked"] = item.isLiked || false;
+        if (!item.isLiked) {
           Api.like(id_).then((res) => {
-            if (res.code !== 200) return;
-            item.isLiked = false;
-            item.likeCount -= 1;
+            if (res.errcode !== 0) return;
+            item.isLiked = true;
+            item.like_count += 1;
           });
         } else {
-          Api.unlike(id_).then((res) => {
-            if (res.code !== 200) return;
-            item.isLiked = true;
-            item.likeCount += 1;
-          });
+          item.isLiked = false;
+          item.like_count -= 1;
+          // Api.unlike(id_).then((res) => {
+          //   if (res.code !== 200) return;
+
+          // });
         }
       });
     },
@@ -98,22 +99,24 @@
       // TODO: 实现分享功能
     },
     // 收藏
-    clickStar(item: ActionInfo) {
+    clickStar(item: EmptyObjectType) {
       console.log("收藏");
       checkPermissions(PERMISSION.User, () => {
         const id = article.value.id;
-
+        item["isFavorited"] = item.isFavorited || false;
         if (item.isFavorited) {
-          Api.unstar(id).then((res) => {
-            if (res.code !== 200) return;
-            item.isFavorited = false;
-            if (item.favoriteCount) item.favoriteCount -= 1;
-          });
+          item.isFavorited = false;
+          if (item.collect_count) item.collect_count -= 1;
+          // Api.unstar(id).then((res) => {
+          //   if (res.errcode !== 0) return;
+          //   item.isFavorited = false;
+          //   if (item.collect_count) item.collect_count -= 1;
+          // });
         } else {
           Api.star(id).then((res) => {
-            if (res.code !== 200) return;
+            if (res.errcode !== 0) return;
             item.isFavorited = true;
-            if (item.favoriteCount) item.favoriteCount += 1;
+            if (item.collect_count) item.collect_count += 1;
           });
         }
       });
@@ -177,7 +180,7 @@
         const total_num = article.value.action.commentCount;
         // 将获取的评论数限制在5内
         const num_ = curr_num + 5 > total_num ? total_num - curr_num : 5;
-        Api.getComments(noteDialog.id.value, num_).then((res) => {
+        Api.getComments(Number(noteDialog.id.value), num_).then((res) => {
           if (res.code !== 200) return;
 
           const list = res.data;
