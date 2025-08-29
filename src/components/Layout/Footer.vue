@@ -1,32 +1,53 @@
 <script setup lang="ts">
-  import type { NavigationItem } from '@/types/item'
+  import type { NavigationItem } from "@/types/item";
+  import { dropDownItems3 } from "@/common";
 
-  defineEmits(['click-nav-item'])
-
+  defineEmits([
+    "click-menu-item", // 点击选项
+    "click-nav-item", // 点击选项
+  ]);
   defineProps<{
-    items: NavigationItem[]
-    activeItem?: NavigationItem
-  }>()
+    items: NavigationItem[];
+    activeItem?: NavigationItem;
+  }>();
 </script>
 
 <template>
   <div class="footer">
     <template
       v-for="item in items"
-      :key="item.label">
+      :key="item.name"
+    >
       <div
         class="channel-wrapper"
         :class="{ active: activeItem === item }"
-        @click="$emit('click-nav-item', item)">
-        <el-icon :size="24"><component :is="item.icon" /></el-icon>
-        <span>{{ item.label }}</span>
+      >
+        <div v-if="item.icon == 'Setting'">
+          <Dropdown
+            @click-item="(item) => $emit('click-menu-item', item)"
+            :items="dropDownItems3"
+            placement="top-start"
+            trigger="click"
+          >
+            <el-icon :size="24"><component :is="item.icon" /></el-icon>
+          </Dropdown>
+
+          <span>{{ item.name }}</span>
+        </div>
+        <div
+          v-else
+          @click="$emit('click-nav-item', item)"
+        >
+          <el-icon :size="24"><component :is="item.icon" /></el-icon>
+          <span>{{ item.name }}</span>
+        </div>
       </div>
     </template>
   </div>
 </template>
 
 <style scoped lang="less">
-  @import '@/assets/styles/base.less';
+  @import "@/assets/styles/base.less";
 
   .footer {
     z-index: 16px;

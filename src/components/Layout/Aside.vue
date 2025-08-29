@@ -31,7 +31,7 @@
     <template v-for="item in items_">
       <button :class="{ active: item === props.activeItem }" @click="$emit('click-nav-item', item)">
         <component :is="item.icon"></component>
-        <span>{{ item.label }}</span>
+        <span>{{ item.name }}</span>
       </button>
     </template>
     <!-- 登录按钮 -->
