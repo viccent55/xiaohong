@@ -1,20 +1,26 @@
 <script setup lang="ts">
-  import type { DropdownItem } from "@/types/item";
-  import Dropdown from "../global/Dropdown.vue";
   import { useStore } from "@/store";
-
-  import { dropDownItems1, dropDownItems2, dropDownItems4 } from "@/common";
+  import { computed, ref } from "vue";
+import DialogInfo from "../DialogInfo.vue";
 
   const store = useStore();
   const emits = defineEmits(["click-menu-item"]);
 
-  const clickMenuItem = (item: DropdownItem) => {
-    console.log(item)
-    emits("click-menu-item", item);
-  };
-
   const toggleDarkMode = () => {
     store.toggleDarkMode();
+  };
+
+  const menuItems = computed(() => {
+    return store.configuration?.header_menu_link
+      .split("\n")
+      .map((line: string) => {
+        const [name, page] = line.split("|");
+        return { name, page };
+      });
+  });
+  const dialgInfo = ref();
+  const openLoginDialog = (item: Record<string, string>) => {
+    dialgInfo.value.open(item)
   };
 </script>
 
@@ -44,24 +50,18 @@
         <el-icon v-else><Sunny /></el-icon>
       </el-button>
       <!-- >960 -->
-      <Dropdown
-        @click-item="clickMenuItem"
-        :items="dropDownItems1"
-        placement="bottom"
-      >
-        <button>创作中心</button>
-      </Dropdown>
-
-      <Dropdown
-        @click-item="clickMenuItem"
-        :items="dropDownItems2"
-        placement="bottom-end"
-      >
-        <button>业务合作</button>
-      </Dropdown>
+      <div class="flex">
+        <button
+          v-for="(item, index) in menuItems"
+          :key="index"
+          @click="openLoginDialog(item)"
+        >
+          {{ item.name }}
+        </button>
+      </div>
 
       <!-- <960 -->
-      <Dropdown
+      <!-- <Dropdown
         @click-item="clickMenuItem"
         :items="store.configuration.categories"
         placement="bottom-end"
@@ -70,8 +70,9 @@
         <button class="more-btn">
           <el-icon><MoreFilled /></el-icon>
         </button>
-      </Dropdown>
+      </Dropdown> -->
     </div>
+    <DialogInfo ref="dialgInfo"/>
   </div>
 </template>
 

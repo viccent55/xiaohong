@@ -63,10 +63,10 @@ a {
   text-decoration: underline;
 }
 
-a:hover {
+/* a:hover {
   color: #004499;
   text-decoration: underline;
-}
+} */
 
 a:visited {
   color: #551a8b;

@@ -66,31 +66,31 @@ export const dropDownItems4: DropdownItem[] = [
 
 export const NavigationItems: NavigationItem[] = [
   {
-    label: '发现',
+    name: '发现',
     icon: 'House',
     type: 'router-link',
     href: '/explore',
   },
   {
-    label: '发布',
+    name: '发布',
     icon: 'VideoPlay',
     type: 'external-link',
     href: 'https://creator.xiaohongshu.com/',
   },
   {
-    label: '通知',
+    name: '通知',
     icon: 'Picture',
     type: 'router-link',
     href: '/notification',
   },
   {
-    label: '我的',
+    name: '我的',
     icon: 'User',
     type: 'router-link',
     href: '/user',
   },
   {
-    label: '会员中心',
+    name: '会员中心',
     icon: 'Setting',
     type: 'router-link',
     href: '/member',

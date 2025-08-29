@@ -234,7 +234,7 @@
     v-model="noteDialogVisible"
     :fullscreen="screenMode !== 'pc'"
     width="80%"
-    style="max-width: 1100px"
+    style="max-width: 1100px; padding: 0; border-radius: 16px"
     :show-close="false"
     align-center
   >

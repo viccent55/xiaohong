@@ -18,12 +18,12 @@ export interface NavigationItem {
 
 //浏览频道选项
 export interface ExploreChannelItem {
-  label: string
+  name: string
   value: string
 }
 
 export interface ExploreFLoatSetItem {
   icon: string
-  label: string
+  name: string
   active: boolean
 }

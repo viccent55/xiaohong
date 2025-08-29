@@ -14,7 +14,7 @@
 </script>
 
 <template>
-  <div class="author-header">
+  <div class="author-header rounded-r-2xl">
     <CloseButton
       class="close-btn"
       @click="$emit('click-close')"

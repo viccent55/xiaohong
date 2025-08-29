@@ -82,7 +82,7 @@
     justify-content: space-between;
     align-items: center;
     font-weight: 500;
-    background-color: var(--background-color-dark);
+    // background-color: var(--background-color-dark);
 
     .btn-base();
 

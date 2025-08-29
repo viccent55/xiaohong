@@ -82,7 +82,7 @@
   const clickDropdownItem = (item: DropdownItem) => {
     console.log(item);
 
-    if (item.label === "退出登录") {
+    if (item.name === "退出登录") {
       useUserStore().logout();
     } else {
       openPage("https://www.xiaohongshu.com");
@@ -100,24 +100,7 @@
       openLoginDialog();
     }
   });
-  const ads = [
-    {
-      id: 14,
-      name: "吃瓜头条",
-      image:
-        "/image/675/4ed/62d8a26e31c13ca8f0add5a4ef43b25baae1b4a922017993ce2e7006cd.jpg",
-      url: "https://www.haij.net",
-      position: 4,
-    },
-    {
-      id: 15,
-      name: "吃瓜头条",
-      image:
-        "/image/bb6/835/10be5ca42f3d93b79c0cb11bbda51ef8b43e18cbd07b9c6255aee3c306.gif",
-      url: "https://www.haij.net",
-      position: 4,
-    },
-  ];
+
   onMounted(() => {
     generateVisitCode();
     // 检查是否需要打开笔记
@@ -160,7 +143,7 @@
       <LoginDialog></LoginDialog>
       <DialogPopupAds
         v-if="!userStore.loginDialogVisible"
-        :adverts="ads"
+        :adverts="store.homePopupAds"
       />
     </div>
   </div>

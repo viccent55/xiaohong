@@ -1,75 +1,102 @@
 <script setup lang="ts">
-  import Dropdown from '../global/Dropdown.vue'
-  import { dropDownItems3 } from '@/common'
-  import { computed } from 'vue'
-  import { useUserStore } from '@/store/user'
-  import { openLoginDialog } from '@/hooks/useLoginDialog'
-  import type { NavigationItem } from '@/types/item'
-
-  const userStore = useUserStore()
+  import Dropdown from "../global/Dropdown.vue";
+  import { dropDownItems3 } from "@/common";
+  import { computed, onMounted } from "vue";
+  import { useUserStore } from "@/store/user";
+  import { openLoginDialog } from "@/hooks/useLoginDialog";
+  import type { NavigationItem } from "@/types/item";
+  import SocialNetwork from "@/components/SocialNetwork.vue";
+  import AppLink from "@/components/AppLink.vue";
+  import useHome from "@/composables/useHome";
+  import { useStore } from "@/store";
+  const userStore = useUserStore();
 
   defineEmits([
-    'click-menu-item', // 点击选项
-    'click-nav-item', // 点击选项
-  ])
+    "click-menu-item", // 点击选项
+    "click-nav-item", // 点击选项
+  ]);
 
   const props = defineProps<{
-    items: NavigationItem[]
-    activeItem?: NavigationItem
-  }>()
+    items: NavigationItem[];
+    activeItem?: NavigationItem;
+  }>();
 
-  const items_ = computed(() => {
-    if (props.items.length > 0)
-      return props.items.slice(0, userStore.isLogin ? 4 : 3)
-  })
+  const store = useStore();
+
+  const { getAdsPosition } = useHome();
+  onMounted(() => {
+    getAdsPosition(2);
+  });
 </script>
 
 <template>
-  <div class="aside">
-    <!-- 按钮组 -->
-    <!-- prettier-ignore -->
-    <template v-for="item in items_">
-      <button :class="{ active: item === props.activeItem }" @click="$emit('click-nav-item', item)">
-        <component :is="item.icon"></component>
-        <span>{{ item.name }}</span>
-      </button>
-    </template>
+  <div class="aside flex flex-col gap-5">
+    <SocialNetwork />
     <!-- 登录按钮 -->
     <button
       class="login-btn"
       v-if="!userStore.isLogin"
-      @click="openLoginDialog">
+      @click="openLoginDialog"
+    >
       <span>登录</span>
     </button>
 
+    <!-- <el-button
+      type="danger"
+      @click="openLoginDialog"
+    >
+      <span>下载</span>
+    </el-button> -->
+    <el-button
+      type="warning"
+      style="margin: 0"
+      @click="openLoginDialog"
+    >
+      <span>其他的</span>
+    </el-button>
     <!-- 浮动框 -->
     <div
       class="float-box"
       @click="openLoginDialog"
-      v-if="!userStore.isLogin">
-      <span >马上登录即可</span>
-      <span class="flex ga-2"><Pointer />刷到更懂你的优质内容</span>
-      <span class="flex ga-2"><Position />搜索最新种草、拔草信息</span>
-      <span class="flex ga-2"><Star />查看收藏、点赞笔记</span>
-      <span class="flex ga-2"><ChatSquare />与他人更好地互动、交流</span>
+      v-if="!userStore.isLogin"
+    >
+      <span>马上登录即可</span>
+      <span class="flex ga-2">
+        <Pointer />
+        刷到更懂你的优质内容
+      </span>
+      <span class="flex ga-2">
+        <Position />
+        搜索最新种草、拔草信息
+      </span>
+      <span class="flex ga-2">
+        <Star />
+        查看收藏、点赞笔记
+      </span>
+      <span class="flex ga-2">
+        <ChatSquare />
+        与他人更好地互动、交流
+      </span>
     </div>
+    <AppLink :apps="store?.recommendAds || []" />
 
     <!-- 更多菜单 -->
     <Dropdown
-      @click-item="item => $emit('click-menu-item', item)"
+      @click-item="(item) => $emit('click-menu-item', item)"
       :items="dropDownItems3"
       placement="top-start"
-      trigger="click">
+      trigger="click"
+    >
       <button>
         <MoreFilled />
         <span>更多</span>
       </button>
     </Dropdown>
-  </div class="aside">
+  </div>
 </template>
 
 <style scoped lang="less">
-  @import '@/assets/styles/base.less';
+  @import "@/assets/styles/base.less";
 
   .aside {
     margin-top: 72px;

@@ -18,6 +18,8 @@ export const useStore = defineStore("store", {
       tg_business: "",
       categories: [],
     },
+    homePopupAds: [] as EmptyArrayType,
+    recommendAds: [] as EmptyArrayType,
   }),
   actions: {
     initMode() {

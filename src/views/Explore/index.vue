@@ -17,20 +17,20 @@
   import { useUserStore } from "@/store/user";
   import { useStore } from "@/store/index";
   import { storeToRefs } from "pinia";
+import useHome from "@/composables/useHome";
 
   const noteDialog = useNoteDialog();
 
   // 当前频道
   const store = useStore();
   const { configuration } = storeToRefs(store);
-  const category = configuration.value.categories?.[0];
-  const channel = ref<string>(category?.id);
+  const channel = ref<string>("001");
   const feeds = ref<ExploreFeedInfo[]>([]);
   const floatItems = ref<ExploreFLoatSetItem[]>(ExploreFloatSetItems);
   const loading = ref(false);
   const isInitialLoading = ref(true);
+  const { getAdsPosition } = useHome();
 
-  // 回到顶部
   const backToTop = (smooth = true) => {
     const el = document.querySelector(".container");
     if (el) {
@@ -53,14 +53,13 @@
       video_offset: "",
       gallery_offset: "",
     };
-    console.log(request)
+    console.log(request);
     getExploreFeeds(request).then((res) => {
-
       if (res.data?.videos_id) {
         storeUser.videos_id = res.data.videos_id;
       }
       feeds.value = res.data.data;
-     
+
       loading.value = false;
       isInitialLoading.value = false;
     });
@@ -94,7 +93,7 @@
     },
     // 点击浮动按钮
     clickFLoatItem(item: ExploreFLoatSetItem) {
-      if (item.label === "goto-top") {
+      if (item.name === "goto-top") {
         return backToTop();
       }
       freshFeeds();
@@ -134,14 +133,21 @@
     }
   };
   const categories = computed(() => {
-    return configuration.value.categories?.map((item: EmptyObjectType) => ({
-      label: item.name,
-      value: item.id,
-    }));
+    return [
+      {
+        name: "发现",
+        value: "001",
+      },
+      ...configuration.value.categories?.map((item: EmptyObjectType) => ({
+        name: item.name,
+        value: item.id,
+      })),
+    ];
   });
   onMounted(() => {
     initConfig();
     freshFeeds();
+    getAdsPosition(1)
   });
 </script>
 

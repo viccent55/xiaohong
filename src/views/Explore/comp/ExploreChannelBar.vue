@@ -19,7 +19,7 @@
         @click="$emit('click-item', item)"
         :class="{ active: item.value === activeValue }"
       >
-        {{ item.label }}
+        {{ item.name }}
       </span>
     </template>
   </div>

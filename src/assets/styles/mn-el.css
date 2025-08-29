@@ -2,9 +2,9 @@
 
 /* 弹窗 */
 .el-dialog {
-  padding: 0 !important;
-  border-radius: 16px !important;
-  overflow: hidden !important;
+  /* padding: 0 !important; */
+  /* border-radius: 16px !important; */
+  /* overflow: hidden !important; */
   background-color: var(--background-color) !important;
 }
 
