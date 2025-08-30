@@ -3,7 +3,7 @@ export interface ResponseConfig<T> {
   msg: string;
   errcode: number;
   info?: string;
-  data: T[];
+  data: [];
 }
 
 export interface ListConfig<T> {

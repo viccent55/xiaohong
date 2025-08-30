@@ -8,3 +8,16 @@ export function gePostionAds(
     position: id,
   });
 }
+
+export function adsClick(id: number): Promise<ResponseConfig<EmptyObjectType>> {
+  return axios.post("/advert/click", {
+    id: id,
+  });
+}
+export function itemAdClick(
+  id: number
+): Promise<ResponseConfig<EmptyObjectType>> {
+  return axios.post("/advert/itemAdClick", {
+    id: id,
+  });
+}

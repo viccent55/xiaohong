@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import AdvertSlot from "@/components/AdvertSlot.vue";
   import Avatar from "@/components/Avatar.vue";
   import Heart from "@/components/global/Heart.vue";
   import Image from "@/components/Image.vue";
@@ -16,12 +17,19 @@
 <template>
   <!-- prettier-ignore -->
   <div class="feed-wrapper" @click="$emit('click')">
-    <!-- 图片 -->
     <div class="media-container">
-    
       <video-play class="absolute z-10 text-white" v-if="feed.mode == 1" />
       <Picture class="absolute z-10 text-white" v-if="feed.mode == 2" />
-      <Image :src="feed.cover" :width="`${feed.cover_w}`"  :height="`${feed.cover_h}`" fit="cover"/>
+      <div v-if="feed.mode === 3"
+     class="absolute right-2 top-4 z-10 bg-yellow-400  text-xs font-semibold px-2 py-0.5 rounded-full shadow animate-bounce"> Ads</div>
+      <AdvertSlot v-if="feed.mode === 3" :advert="{
+        id: feed?.advert.id,
+        name: feed?.advert.name,
+        image: feed?.cover,
+        url: feed?.advert.value
+
+      }" :width="`${feed.cover_w}`"  :height="`${feed.cover_h}`" />
+      <Image v-else :src="feed.cover" :width="`${feed.cover_w}`"  :height="`${feed.cover_h}`" fit="cover"/>
     </div>
     <!-- 信息 -->
     <div class="feed-footer">
@@ -31,8 +39,10 @@
       <div class="author-wrapper">
         <!-- 作者名称头像 -->
         <div class="info-wrapper" @click.stop="$emit('clickAuthor') /* 阻止冒泡 */">
-           
+        
+          <a :href="feed.author?.id ? `/user/${feed.author?.id}` : '#'">
           <Avatar :src="feed.author?.avatar" />
+          </a>
           <span>{{ feed.author?.name }}</span>
         </div>
 

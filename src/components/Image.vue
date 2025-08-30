@@ -85,6 +85,8 @@
     v-if="decryptedImage"
     :src="decryptedImage"
     :fit="props.fit"
+    :width="width"
+    :height="height"
     class="decrypted-image"
     @load="handleImageLoad"
   >
@@ -104,6 +106,8 @@
     <template #error>
       <div class="image-slot">
         <el-image
+          :width="width"
+          :height="height"
           fit="contain"
           class="rounded-xl"
           :src="EmptImage"

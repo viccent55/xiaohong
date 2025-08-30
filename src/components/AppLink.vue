@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { ElCard } from "element-plus";
   import Image from "./Image.vue";
+  import AdvertSlot from "./AdvertSlot.vue";
   // props for dynamic apps
   defineProps<{
     apps: {
@@ -9,6 +10,7 @@
       url: string;
     }[];
   }>();
+  defineEmits(["item-click"]);
 </script>
 
 <template>
@@ -24,10 +26,15 @@
         target="_blank"
         rel="noopener noreferrer"
         class="flex flex-col items-center space-y-2 hover:opacity-80"
+        @click="$emit('item-click', app)"
       >
-        <Image
-          :src="app.image"
-          :alt="app.name"
+        <AdvertSlot
+          :advert="{
+            title: app.name,
+            image: app.image,
+            url: app?.url,
+          }"
+          fit="cover"
           style="width: 32px; height: 32px"
         />
         <span class="text-xs text-gray-700">{{ app.name }}</span>

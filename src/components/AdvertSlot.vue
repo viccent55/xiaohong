@@ -6,13 +6,17 @@
       type: Object,
       required: true,
     },
-    heightImage: {
+    height: {
       type: String || Number,
       default: "120px",
     },
-    class: {
+    width: {
+      type: String || Number,
+      default: "100%",
+    },
+    fit: {
       type: String,
-      default: () => "",
+      default: "cover",
     },
   });
 </script>
@@ -31,8 +35,9 @@
       <Image
         :src="advert?.image"
         :alt="advert?.title"
-        height="auto"
-        contain
+        :width="width"
+        :height="height"
+        fit="cover"
       />
     </a>
   </el-card>

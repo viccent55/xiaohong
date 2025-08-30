@@ -1,22 +1,24 @@
 <script setup lang="ts">
-  import type { ExploreFLoatSetItem } from '@/types/item'
+  import type { ExploreFLoatSetItem } from "@/types/item";
 
   defineProps<{
-    items: ExploreFLoatSetItem[]
-  }>()
+    items: ExploreFLoatSetItem[];
+  }>();
 
-  defineEmits(['click-item'])
+  defineEmits(["click-item"]);
 </script>
 
 <template>
   <div class="float-set">
     <template
       v-for="item in items"
-      :key="item.label">
+      :key="item.label"
+    >
       <div
         class="item"
         :class="{ active: item.active }"
-        @click="$emit('click-item', item)">
+        @click="$emit('click-item', item)"
+      >
         <component :is="item.icon" />
       </div>
     </template>
@@ -24,10 +26,10 @@
 </template>
 
 <style scoped lang="less">
-  @import '@/assets/styles/base.less';
+  @import "@/assets/styles/base.less";
 
   .float-set {
-    z-index: 16px;
+    z-index: 16;
     position: absolute;
     bottom: 24px;
     gap: 8px;

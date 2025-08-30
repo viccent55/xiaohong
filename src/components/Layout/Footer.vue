@@ -50,7 +50,7 @@
   @import "@/assets/styles/base.less";
 
   .footer {
-    z-index: 16px;
+    z-index: 16;
     position: fixed;
     bottom: 0;
     left: 0;

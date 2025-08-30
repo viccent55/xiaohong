@@ -15,21 +15,22 @@
   import { useNoteDialog } from "./hooks/useNoteDialog";
   import { PERMISSION } from "./common/permision";
   import { computed, onBeforeMount, onMounted, ref, provide } from "vue";
-  import type { DropdownItem, NavigationItem } from "./types/item";
+  import type { NavigationItem } from "./types/item";
   import { NavigationItems } from "./common";
   import { openPage } from "./service";
   import { useRouter, useRoute } from "vue-router";
   import { useUserStore } from "./store/user";
   import { useStore } from "./store";
   import InstallPWA from "./components/global/InstallPWA.vue";
-  import { generateCode } from "@/utils/toolsValidate";
   import DialogPopupAds from "./components/DialogPopupAds.vue";
+  import useHome from "./composables/useHome";
 
   const route = useRoute();
   const router = useRouter();
   const userStore = useUserStore();
   const noteDialog = useNoteDialog();
   const store = useStore();
+  const { generateVisitCode } = useHome();
 
   const scrollContainer = ref<HTMLElement | null>(null);
   provide("scrollContainer", scrollContainer);
@@ -78,14 +79,9 @@
     }
   };
 
-
-  const generateVisitCode = () => {
-    if (!storeUser.visitCode) {
-      storeUser.visitCode = generateCode();
-    }
-  };
   onBeforeMount(async () => {
     // 尝试登录
+    generateVisitCode();
     store.initMode();
     if (!storeUser.isLogin) {
       openLoginDialog();
@@ -93,7 +89,6 @@
   });
 
   onMounted(() => {
-    generateVisitCode();
     // 检查是否需要打开笔记
     // 延迟500ms后执行，因为此时路由查询参数可能还未更新
     setTimeout(() => {

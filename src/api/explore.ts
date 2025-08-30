@@ -8,14 +8,10 @@ export function visitorCode(code: string) {
 }
 
 // 获取推荐列表
-export function getExploreFeeds(params: {
-  visitorCode: string;
-  videos_id: string;
-  galleries_id: string;
-  video_offset: string;
-  gallery_offset: string;
-}): Promise<ResponseConfig<EmptyObjectType>> {
-  return axios.post("/item/explore", params);
+export function getExploreFeeds(
+  params: object
+): Promise<ResponseConfig<EmptyObjectType>> {
+  return axios.post("/item/recommend", params);
 }
 
 // 获取用户信息
@@ -28,4 +24,18 @@ export function getUserInfo(params: {
 // getConfiguration
 export function getConfiguration(): Promise<ResponseConfig<EmptyObjectType>> {
   return axios.get("/index/config");
+}
+
+// Visitor
+export function newVisitor(
+  params: object
+): Promise<ResponseConfig<EmptyObjectType>> {
+  return axios.post("/index/newVisitor", params);
+}
+
+// Active Visitor
+export function activeVisitor(
+  params: object
+): Promise<ResponseConfig<EmptyObjectType>> {
+  return axios.post("/index/activeVisitor", params);
 }

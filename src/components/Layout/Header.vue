@@ -45,7 +45,7 @@
 <template>
   <div class="header">
     <!-- prettier-ignore -->
-    <a><img src="/logo.png" alt="logo" /></a>
+    <a href="/"><img src="/logo.png" alt="logo" /></a>
 
     <div class="input-wrapper">
       <input

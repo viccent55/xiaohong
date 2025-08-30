@@ -18,6 +18,7 @@
   import { useStore } from "@/store/index";
   import { storeToRefs } from "pinia";
   import useHome from "@/composables/useHome";
+import { itemAdClick } from "@/api/advertisment";
 
   const noteDialog = useNoteDialog();
 
@@ -28,8 +29,10 @@
   const feeds = ref<ExploreFeedInfo[]>([]);
   const floatItems = ref<ExploreFLoatSetItem[]>(ExploreFloatSetItems);
   const loading = ref(false);
+  const page = ref(1);
+  const isNoMore = ref(false);
   const isInitialLoading = ref(true);
-  const { getAdsPosition } = useHome();
+  const { getAdsPosition, checkVisitor } = useHome();
 
   const backToTop = (smooth = true) => {
     const el = document.querySelector(".container");
@@ -47,19 +50,14 @@
     }
     backToTop(false);
     const request = {
+      visitor: storeUser.visitCode,
+      page: page.value,
       visitorCode: storeUser.visitCode,
-      videos_id: storeUser.videos_id,
-      galleries_id: "",
-      video_offset: "",
-      gallery_offset: "",
+      category: store.channel,
+      limit: 30,
     };
-    console.log(request);
     getExploreFeeds(request).then((res) => {
-      if (res.data?.videos_id) {
-        storeUser.videos_id = res.data.videos_id;
-      }
-      feeds.value = res.data.data;
-
+      feeds.value = res.data;
       loading.value = false;
       isInitialLoading.value = false;
     });
@@ -68,20 +66,20 @@
   const handle = {
     // 加载更多列表
     loadMoreFeeds() {
-      if (loading.value) return;
+      if (loading.value || isNoMore.value) return;
       loading.value = true;
-      getExploreFeeds({
+      const request = {
+        visitor: storeUser.visitCode,
+        page: page.value++,
         visitorCode: storeUser.visitCode,
-        videos_id: storeUser.videos_id,
-        galleries_id: "",
-        video_offset: "",
-        gallery_offset: "",
-      }).then((res) => {
-        if (res.data.videos_id) {
-          storeUser.videos_id = res.data.videos_id ?? "";
-        }
-        if (res.data?.data.length > 0) {
-          feeds.value = feeds.value.concat(res.data.data);
+        category: store.channel,
+        limit: 30,
+      };
+      getExploreFeeds(request).then((res) => {
+        if (res.errcode === 0 && res.data.length > 0) {
+          feeds.value = [...feeds.value, ...res.data];
+        } else if (res.errcode == -1) {
+          isNoMore.value = true;
         }
         loading.value = false;
       });
@@ -101,7 +99,11 @@
     },
     // 点击Feed
     clickFeed(item: ExploreFeedInfo) {
-      noteDialog.openNoteDialog(String(item.id));
+      if (item.mode === 3) {
+        itemAdClick(item.id);
+      } else {
+        noteDialog.openNoteDialog(String(item.id));
+      }
     },
     // 点击Like
     clickLike(item: ExploreFeedInfo) {
@@ -153,6 +155,7 @@
     }
   );
   onMounted(() => {
+    checkVisitor();
     initConfig();
     freshFeeds();
     getAdsPosition(1);
@@ -180,7 +183,15 @@
       @get-more="handle.loadMoreFeeds"
       @click-item="handle.clickFeed"
     />
-
+    <div
+      class="flex justify-center text-xl py-2"
+      v-if="isNoMore"
+    >
+      <el-empty
+        :image-size="120"
+        description="没有更多了"
+      />
+    </div>
     <!-- 浮动按钮 -->
     <ExploreFloatSet
       :items="floatItems"

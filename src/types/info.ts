@@ -8,6 +8,9 @@ export interface ExploreFeedInfo {
   authorAvatarUrl: string; // 作者头像
   likeCount: number; // 点赞数
   isLiked: boolean; // 是否点赞
+  mode: number; // 模式
+  url: string; // URL
+  link: string
 }
 
 // 用户信息

@@ -9,6 +9,7 @@
   import AppLink from "@/components/AppLink.vue";
   import useHome from "@/composables/useHome";
   import { useStore } from "@/store";
+import { adsClick } from "@/api/advertisment";
   const userStore = useUserStore();
 
   defineEmits([
@@ -16,7 +17,7 @@
     "click-nav-item", // 点击选项
   ]);
 
-  const props = defineProps<{
+  defineProps<{
     items: NavigationItem[];
     activeItem?: NavigationItem;
   }>();
@@ -24,6 +25,11 @@
   const store = useStore();
 
   const { getAdsPosition } = useHome();
+
+  const itemClick = (item: EmptyObjectType) => {
+
+    adsClick(item.id)
+  };
   onMounted(() => {
     getAdsPosition(2);
   });
@@ -78,7 +84,11 @@
         与他人更好地互动、交流
       </span>
     </div>
-    <AppLink :apps="store?.recommendAds || []" />
+    <AppLink
+      :apps="store?.recommendAds"
+      v-if="store?.recommendAds?.length > 0"
+      @item-click="itemClick"
+    />
 
     <!-- 更多菜单 -->
     <Dropdown
