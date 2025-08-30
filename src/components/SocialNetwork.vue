@@ -22,7 +22,9 @@
           rel="noopener noreferrer"
           type="primary"
         >
-          {{ store.configuration?.domain_latest }}
+          <span class="text-xs">
+            {{ store.configuration?.domain_latest }}
+          </span>
         </el-link>
       </div>
       <div class="text-sm">
@@ -33,7 +35,7 @@
           rel="noopener noreferrer"
           type="primary"
         >
-          <span class="text-sm">
+          <span class="text-xs">
             {{ store.configuration?.domain_next }}
           </span>
         </el-link>
@@ -46,7 +48,7 @@
           rel="noopener noreferrer"
           type="primary"
         >
-          <span class="text-sm">
+          <span class="text-xs">
             {{ store.configuration?.domain_latest }}
           </span>
         </el-link>
@@ -58,7 +60,7 @@
           rel="noopener noreferrer"
           type="primary"
         >
-          <span class="text-sm">
+          <span class="text-xs">
             {{ store.configuration?.email }}
           </span>
         </el-link>
