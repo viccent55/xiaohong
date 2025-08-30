@@ -25,6 +25,21 @@
   const openLoginDialog = (item: Record<string, string>) => {
     dialgInfo.value.open(item);
   };
+  const categories = computed(() => {
+    return [
+      {
+        name: "发现",
+        value: "001",
+      },
+      ...store.configuration?.categories?.map((item: EmptyObjectType) => ({
+        name: item.name,
+        value: item.id,
+      })),
+    ];
+  });
+  const clickMenuItem = (item: Record<string, string>) => {
+    store.channel = item.value;
+  };
 </script>
 
 <template>
@@ -44,6 +59,7 @@
     <div class="button-wrapper">
       <!-- Dark mode toggle -->
       <el-button
+        class="mr-1"
         circle
         @click="toggleDarkMode"
         title="切换主题"
@@ -64,17 +80,19 @@
       </div>
 
       <!-- <960 -->
-      <!-- <Dropdown
+
+      <Dropdown
         @click-item="clickMenuItem"
-        :items="store.configuration.categories"
+        :items="categories"
         placement="bottom-end"
         trigger="click"
       >
         <button class="more-btn">
           <el-icon><MoreFilled /></el-icon>
         </button>
-      </Dropdown> -->
+      </Dropdown>
     </div>
+
     <DialogInfo ref="dialgInfo" />
   </div>
 </template>
@@ -170,13 +188,13 @@
     align-items: center;
 
     > :nth-child(2),
-    > :nth-child(3) {
+    > {
       .mobile-mode({
         display: none;
       });
     }
 
-    > :nth-child(4) {
+    > :nth-child(3) {
       .pc-mode({
         display: none;
       });

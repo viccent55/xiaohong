@@ -4,7 +4,7 @@
   import ExploreChannelBar from "./comp/ExploreChannelBar.vue";
   import ExploreLoading from "./comp/ExploreLoading.vue";
 
-  import { computed, onMounted, ref } from "vue";
+  import { computed, onMounted, ref, watch } from "vue";
   import type { ExploreFLoatSetItem } from "@/types/item";
   import type { ExploreFeedInfo } from "@/types/info";
   import { getExploreFeeds, getConfiguration } from "@/api/explore";
@@ -17,14 +17,14 @@
   import { useUserStore } from "@/store/user";
   import { useStore } from "@/store/index";
   import { storeToRefs } from "pinia";
-import useHome from "@/composables/useHome";
+  import useHome from "@/composables/useHome";
 
   const noteDialog = useNoteDialog();
 
   // 当前频道
   const store = useStore();
-  const { configuration } = storeToRefs(store);
-  const channel = ref<string>("001");
+  const { configuration, channel } = storeToRefs(store);
+  const indexChannel = ref<string>(channel.value);
   const feeds = ref<ExploreFeedInfo[]>([]);
   const floatItems = ref<ExploreFLoatSetItem[]>(ExploreFloatSetItems);
   const loading = ref(false);
@@ -88,8 +88,9 @@ import useHome from "@/composables/useHome";
     },
     // 点击频道
     clickChannel(item: Record<string, string>) {
-      channel.value = item.value;
-      freshFeeds();
+      indexChannel.value = item.value;
+      store.channel = item.value;
+      // freshFeeds();
     },
     // 点击浮动按钮
     clickFLoatItem(item: ExploreFLoatSetItem) {
@@ -144,20 +145,26 @@ import useHome from "@/composables/useHome";
       })),
     ];
   });
+  watch(
+    () => channel.value,
+    (v) => {
+      indexChannel.value = v;
+      freshFeeds();
+    }
+  );
   onMounted(() => {
     initConfig();
     freshFeeds();
-    getAdsPosition(1)
+    getAdsPosition(1);
   });
 </script>
 
 <template>
   <div class="explore-wrapper">
     <!-- 频道导航 -->
-
     <ExploreChannelBar
       :items="categories"
-      :active-value="channel"
+      :active-value="indexChannel"
       @click-item="handle.clickChannel"
     />
 

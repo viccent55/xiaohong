@@ -78,16 +78,7 @@
     }
   };
 
-  // 点击菜单项
-  const clickDropdownItem = (item: DropdownItem) => {
-    console.log(item);
 
-    if (item.name === "退出登录") {
-      useUserStore().logout();
-    } else {
-      openPage("https://www.xiaohongshu.com");
-    }
-  };
   const generateVisitCode = () => {
     if (!storeUser.visitCode) {
       storeUser.visitCode = generateCode();
@@ -114,11 +105,10 @@
 <template>
   <div class="app-center-wrapper">
     <div class="app-container">
-      <Header @click-menu-item="clickDropdownItem"></Header>
+      <Header></Header>
       <Aside
         :items="NavigationItems"
         :active-item="navigationItem"
-        @click-menu-item="clickDropdownItem"
         @click-nav-item="clickNavigationItem"
       ></Aside>
 
