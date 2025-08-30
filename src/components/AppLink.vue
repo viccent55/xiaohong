@@ -14,7 +14,7 @@
 <template>
   <el-card
     shadow="never"
-    class="rounded-xl border border-gray-200"
+    class="rounded-xl border border-gray-200 card"
   >
     <div class="grid grid-cols-2 gap-2 justify-items-center">
       <a
@@ -35,3 +35,8 @@
     </div>
   </el-card>
 </template>
+<style>
+  .card .el-card__body {
+    padding: 10px;
+  }
+</style>

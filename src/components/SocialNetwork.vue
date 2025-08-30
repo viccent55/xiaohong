@@ -8,13 +8,13 @@
 <template>
   <el-card
     shadow="never"
-    class="rounded-xl border"
+    class="rounded-xl border card"
   >
     <div class="space-y-2">
-      <h1 class="text-lg no-underline text-center">
-        {{ store.configuration?.name || "no-title" }}
+      <h1 class="text-lg no-underline text-center mt-0">
+        {{ store.configuration?.name || "最新地址" }}
       </h1>
-      <div>
+      <div class="text-sm">
         最新地址：
         <el-link
           :href="store.configuration?.home_url"
@@ -25,7 +25,7 @@
           {{ store.configuration?.domain_latest }}
         </el-link>
       </div>
-      <div>
+      <div class="text-sm">
         备用地址：
         <el-link
           :href="store.configuration?.domain_next"
@@ -33,10 +33,12 @@
           rel="noopener noreferrer"
           type="primary"
         >
-          {{ store.configuration?.domain_next }}
+          <span class="text-sm">
+            {{ store.configuration?.domain_next }}
+          </span>
         </el-link>
       </div>
-      <div>
+      <div class="text-sm">
         永久域名：
         <el-link
           :href="store.configuration?.domain_latest"
@@ -44,17 +46,21 @@
           rel="noopener noreferrer"
           type="primary"
         >
-          {{ store.configuration?.domain_latest }}
+          <span class="text-sm">
+            {{ store.configuration?.domain_latest }}
+          </span>
         </el-link>
       </div>
-      <div>
+      <div class="text-sm">
         防失联邮箱：
         <el-link
           :href="`mailto:` + store.configuration?.email"
           rel="noopener noreferrer"
           type="primary"
         >
-          {{ store.configuration?.email }}
+          <span class="text-sm">
+            {{ store.configuration?.email }}
+          </span>
         </el-link>
       </div>
     </div>
@@ -142,3 +148,8 @@
     </div>
   </el-card>
 </template>
+<style>
+  .card .el-card__body {
+    padding: 16px 10px;
+  }
+</style>

@@ -128,7 +128,7 @@
     margin-bottom: 8px;
     .btn-large();
 
-    color: var(--text-color-dark);
+    // color: var(--text-color-dark);
 
     svg {
       width: 24px;
