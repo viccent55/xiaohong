@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { useStore } from "@/store";
   import { computed, ref } from "vue";
-import DialogInfo from "../DialogInfo.vue";
+  import DialogInfo from "../DialogInfo.vue";
 
   const store = useStore();
   const emits = defineEmits(["click-menu-item"]);
@@ -11,16 +11,19 @@ import DialogInfo from "../DialogInfo.vue";
   };
 
   const menuItems = computed(() => {
-    return store.configuration?.header_menu_link
+    const links = store.configuration?.header_menu_link || ""; // fallback empty string
+    return links
       .split("\n")
+      .filter((line: string) => line.includes("|")) // avoid bad lines
       .map((line: string) => {
         const [name, page] = line.split("|");
-        return { name, page };
+        return { name: name.trim(), page: page.trim() };
       });
   });
+
   const dialgInfo = ref();
   const openLoginDialog = (item: Record<string, string>) => {
-    dialgInfo.value.open(item)
+    dialgInfo.value.open(item);
   };
 </script>
 
@@ -72,7 +75,7 @@ import DialogInfo from "../DialogInfo.vue";
         </button>
       </Dropdown> -->
     </div>
-    <DialogInfo ref="dialgInfo"/>
+    <DialogInfo ref="dialgInfo" />
   </div>
 </template>
 
