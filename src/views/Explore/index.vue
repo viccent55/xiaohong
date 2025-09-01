@@ -50,12 +50,15 @@
     }
     backToTop(false);
     const request = {
+      ...(store.mode !== "0"
+        ? { mode: store.mode } // if mode != '0' → add only mode
+        : channel.value !== "001"
+        ? { category: Number(store.channel) } // else if channel != "001" → add category
+        : {}),
       visitor: storeUser.visitCode,
       page: page.value,
       visitorCode: storeUser.visitCode,
       limit: 30,
-      ...(channel.value !== "001" && { category: Number(store.channel) }),
-      ...(store.mode !== "0" && { mode: store.mode }),
     };
     getExploreFeeds(request).then((res) => {
       feeds.value = res.data;
@@ -64,8 +67,18 @@
     });
   };
   watch(
-    () => mode.value,
-    () => {
+    () => [mode.value, channel.value],
+    ([newMode, newChannel], [oldMode, oldChannel]) => {
+      if (newMode !== oldMode) {
+        // handle mode change
+        console.log("mode changed:", oldMode, "→", newMode);
+      }
+      if (newChannel !== oldChannel) {
+        // handle channel change
+        console.log("channel changed:", oldChannel, "→", newChannel);
+        indexChannel.value = newChannel;
+      }
+      page.value = 1;
       freshFeeds();
     }
   );
@@ -74,9 +87,10 @@
     loadMoreFeeds() {
       if (loading.value || isNoMore.value) return;
       loading.value = true;
+      page.value++;
       const request = {
         visitor: storeUser.visitCode,
-        page: page.value++,
+        page: page.value,
         visitorCode: storeUser.visitCode,
         limit: 30,
         ...(channel.value !== "001" && { category: Number(store.channel) }),
@@ -95,6 +109,7 @@
     clickChannel(item: Record<string, string>) {
       indexChannel.value = item.value;
       store.channel = item.value;
+      store.mode = "0";
       // freshFeeds();
     },
     // 点击浮动按钮
@@ -154,13 +169,7 @@
       })),
     ];
   });
-  watch(
-    () => channel.value,
-    (v) => {
-      indexChannel.value = v;
-      freshFeeds();
-    }
-  );
+
   onMounted(() => {
     checkVisitor();
     initConfig();

@@ -46,12 +46,6 @@ export const useStore = defineStore("store", {
   },
   // persist: true,
   persist: {
-    pick: [
-      "isDarkmode",
-      "configuration",
-      "homePopupAds",
-      "homePopupAds",
-      "channel",
-    ],
+    pick: ["isDarkmode", "configuration", "homePopupAds", "homePopupAds"],
   },
 });
