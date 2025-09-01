@@ -57,7 +57,7 @@ instance.interceptors.response.use(
       return response.data;
     }
 
-    if ([401, 403, 500].includes(response.status)) {
+    if ([401, 403, 500, 401001].includes(response.status)) {
       const userStore = useUserStore();
       userStore.logout();
       return Promise.reject(response.data);
