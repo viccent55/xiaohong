@@ -72,7 +72,7 @@ const viteConfig = defineConfig((mode) => {
         "/apiv1": {
           target:
             mode.command === "serve"
-              ? env.VITE_API_URL_LOC
+              ? env.VITE_API_URL_PROD
               : env.VITE_API_URL_PROD,
           changeOrigin: true,
         },
