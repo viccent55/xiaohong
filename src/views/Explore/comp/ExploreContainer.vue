@@ -48,6 +48,7 @@
   };
 
   const { updateColumnWidth, columnWidth, gap, feedsContainer } = useVariable();
+
   onMounted(() => {
     if (scrollContainer.value) {
       scrollContainer.value.addEventListener("scroll", onScroll);

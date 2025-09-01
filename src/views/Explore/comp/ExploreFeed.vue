@@ -1,17 +1,36 @@
 <script setup lang="ts">
+  import { PERMISSION } from "@/common/permision";
   import AdvertSlot from "@/components/AdvertSlot.vue";
   import Avatar from "@/components/Avatar.vue";
   import Heart from "@/components/global/Heart.vue";
   import Image from "@/components/Image.vue";
+  import { checkPermissions } from "@/hooks/usePermisions";
   import type { PropType } from "vue";
+  import * as Api from "@/api/note";
 
-  defineProps({
+  const props = defineProps({
     feed: {
       type: Object as PropType<EmptyObjectType>,
       default: () => [],
     },
   });
-  defineEmits(["click", "clickAuthor", "clickLike"]);
+  const onClickLike = async (feed: EmptyObjectType) => {
+    checkPermissions(PERMISSION.User, () => {
+      const id_ = feed.id;
+      Api.like(id_).then((res) => {
+        if (res.errcode == 0) {
+          feed.isLike = !feed.isLike;
+          if (!feed.isLike) {
+            feed.like_count++;
+          } else {
+            feed.like_count--;
+          }
+        }
+      });
+    });
+  };
+
+  defineEmits(["click", "clickAuthor"]);
 </script>
 
 <template>
@@ -47,8 +66,8 @@
         </div>
 
         <!-- 点赞数 -->
-        <div class="like-wrapper" @click.stop="$emit('clickLike') /* 阻止冒泡 */">
-          <Heart :class="{ 'like-active': feed.isLiked }" />
+        <div class="like-wrapper" @click.stop="onClickLike(feed)">
+          <Heart :class="{ 'text-red-500': feed.isLike }" />
           <span>{{ feed.like_count }}</span>
         </div>
       </div>

@@ -69,16 +69,17 @@
     clickLike(item: EmptyObjectType) {
       console.log("点赞");
       checkPermissions(PERMISSION.User, () => {
-        const id_ = article.value.id;
+        const id_ = item.id;
         Api.like(id_).then((res) => {
-          if (res.errcode !== 0) return;
-          article.value.isLike = !article.value.isLike;
+          if (res.errcode == 0) {
+            item.isLike = !item.isLike;
+            if (!item.isLike) {
+              item.like_count++;
+            } else {
+              item.like_count--;
+            }
+          }
         });
-        if (!article.value.isLike) {
-          item.like_count++;
-        } else {
-          item.like_count--;
-        }
       });
     },
     // 分享
@@ -90,16 +91,17 @@
     clickStar(item: EmptyObjectType) {
       console.log("收藏");
       checkPermissions(PERMISSION.User, () => {
-        const id = article.value.id;
-        Api.star(id).then((res) => {
-          if (res.errcode !== 0) return;
-          item.isStar = !item.isStar;
+        const id_ = article.value.id;
+        Api.like(id_).then((res) => {
+          if (res.errcode == 0) {
+            item.isStar = !item.isStar;
+            if (!item.isStar) {
+              item.collect_count++;
+            } else {
+              item.collect_count--;
+            }
+          }
         });
-        if (!article.value.isStar) {
-          item.collect_count++;
-        } else {
-          item.collect_count--;
-        }
       });
     },
     // 举报

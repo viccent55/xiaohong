@@ -41,7 +41,7 @@
       <div class="desc">{{ user.slogan || "还没有简介" }}</div>
       <div class="interactions">
         <div class="action">
-          <span>{{ user.subscribed }}</span>
+          <span>{{ user?.subscribed }}</span>
           <span>关注</span>
         </div>
         <div class="action">
@@ -60,7 +60,7 @@
       v-if="!self"
     >
       <FollowButton
-        :is-follow="user.subscribed"
+        :is-follow="user.isFollow"
         @click="clickFollow"
       />
       <ReportButton @click-report="clickReport" />

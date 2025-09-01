@@ -39,6 +39,7 @@
     >
       <Image
         class="wrapper"
+        fit="contain"
         :src="item.value"
         v-if="item.name === 'image'"
       />
@@ -46,7 +47,7 @@
         ref="videoPlayerRef"
         :src="item.value"
         class="wrapper"
-        v-else
+        v-if="item.name === 'video'"
       ></VideoPlayer>
     </el-carousel-item>
   </el-carousel>
@@ -74,5 +75,4 @@
     height: 100%;
     object-fit: contain;
   }
-
 </style>

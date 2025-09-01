@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import * as Api from "@/api/note";
   import UserInfo from "./UserInfo.vue";
   import ExploreChannelBar from "../Explore/comp/ExploreChannelBar.vue";
   import ExploreFeed from "../Explore/comp/ExploreFeed.vue";
@@ -13,6 +14,8 @@
   import { useNoteDialog } from "@/hooks/useNoteDialog";
   import MasonryWall from "@yeger/vue-masonry-wall";
   import useVariable from "@/composables/useVariable";
+  import { checkPermissions } from "@/hooks/usePermisions";
+  import { PERMISSION } from "@/common/permision";
 
   const route = useRoute();
   const noteDialog = useNoteDialog();
@@ -62,17 +65,13 @@
       channel.value = item.value;
     },
     clickFollow(user: UserDetailInfo) {
-      // if (user.subscribed) {
-      //   unSubscribe(user.id).then((res) => {
-      //     if (res.code !== 200) return;
-      //     user.subscribed = false;
-      //   });
-      // } else {
-      //   subscribe(user.id).then((res) => {
-      //     if (res.code !== 200) return;
-      //     user.subscribed = true;
-      //   });
-      // }
+      console.log("关注", id);
+      checkPermissions(PERMISSION.User, () => {
+        Api.follow(id).then((res) => {
+          if (res.errcode !== 0) return;
+          user.isFollow = !user.isFollow;
+        });
+      });
     },
     clickReport(user: UserDetailInfo) {
       report(user.id);
