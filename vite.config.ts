@@ -9,11 +9,6 @@ import { VitePWA } from "vite-plugin-pwa";
 // https://vite.dev/config/
 const viteConfig = defineConfig((mode) => {
   const env = loadEnv(mode.mode, process.cwd());
-  let isProduction = false;
-  if (mode.mode === "server") {
-    isProduction = true;
-  }
-
   return {
     root: process.cwd(),
     plugins: [
@@ -76,7 +71,10 @@ const viteConfig = defineConfig((mode) => {
       hmr: true,
       proxy: {
         "/apiv1": {
-          target: isProduction ? env.VITE_API_URL_PROD : env.VITE_API_URL_LOC,
+          target:
+            mode.command === "serve"
+              ? env.VITE_API_URL_PROD
+              : env.VITE_API_URL_LOC,
           changeOrigin: true,
         },
       },
