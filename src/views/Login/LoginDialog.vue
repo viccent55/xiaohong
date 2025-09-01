@@ -4,21 +4,13 @@
   import { reactive, ref, watch } from "vue";
   import { loginDialogVisible, closeLoginDialog } from "@/hooks/useLoginDialog";
   import { screenMode } from "@/hooks/useScreenMode";
-  import { getQrcode } from "@/api/login";
   import { useUserStore } from "@/store/user";
   import { ElMessage } from "element-plus";
   import { login, register, veryCode } from "@/api/user";
 
   // state
   const dialogMode = ref<"all" | "left" | "right">();
-  // 表单
-  const form = reactive({
-    qrcode: "",
-    phone: "",
-    captcha: "",
-    agreeProtocol: false,
-    timer: 0,
-  });
+
   const state = reactive({
     login: {
       email: "",
@@ -29,13 +21,10 @@
       password: "",
       password_repeat: "",
       invite_code: "",
-    },
-    codeVerify: {
-      isShowEmail: false,
-      email: "",
-      code: "",
+      visitor: "",
     },
     isLogin: true,
+    code: "",
   });
   // 监听屏幕宽度变化
   watch(
@@ -57,46 +46,8 @@
   // 关闭
   const handleClose = () => {
     closeLoginDialog();
-    form.agreeProtocol = false;
-    form.qrcode = "";
-    form.phone = "";
-    form.captcha = "";
   };
-  // 获取二维码
-  const getQRCode = () => {
-    console.log("获取验证码");
-    getQrcode().then((res) => {
-      Qrcode.toDataURL(res.data, (err, url) => {
-        if (err) {
-          console.error(err);
-        } else {
-          form.qrcode = url;
-        }
-      });
-    });
-  };
-  // 获取验证码
-  const onVerifyCode = async () => {
-    if (!state.codeVerify.email) {
-      state.codeVerify.isShowEmail = true;
-      ElMessage.warning("请输入您的电子邮件");
-      return;
-    }
-    if (!state.codeVerify.code) {
-      return ElMessage.warning("请输入您的代码!");
-    }
-    const request = {
-      email: state.codeVerify.email,
-      code: state.codeVerify.code,
-    };
-    const response = await veryCode(request);
-    if (response.errcode === 0) {
-      ElMessage.success("代码验证成功!");
-    } else {
-      ElMessage.error(response.info);
-    }
-    console.log(response);
-  };
+
   const storeUser = useUserStore();
   // 登录
   const onLogin = async () => {
@@ -110,7 +61,6 @@
     }
     try {
       const response = await login(state.login);
-      console.log(response);
       if (response.errcode === 0) {
         storeUser.login(response.data?.token, response.data?.userinfo);
         ElMessage.success("登录成功");
@@ -122,7 +72,7 @@
       console.error("Error during login:", error);
     }
   };
-  const onRegister = async () => {
+  const onPrepareRegister = async () => {
     if (!state.register.email) {
       ElMessage.warning("请输入您的电子邮件");
       return;
@@ -136,10 +86,35 @@
       return;
     }
     try {
+      state.register.visitor = storeUser.visitCode;
       const response = await register(state.register);
       if (response.errcode === 0) {
-        ElMessage.success("代码已发送至您的邮箱!");
-        state.codeVerify.email = state.register.email;
+        ElMessage.success("请检查您的电子邮件以获取代码!");
+      } else {
+        ElMessage.error(response.info);
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
+  };
+  const onVerifyRegister = async () => {
+    if (!state.register.email) {
+      ElMessage.warning("请输入您的电子邮件");
+      return;
+    }
+    if (!state.code) {
+      ElMessage.warning("请输入您的代码");
+      return;
+    }
+
+    try {
+      const response = await veryCode({
+        email: state.register.email,
+        code: state.code,
+      });
+      if (response.errcode === 0) {
+        ElMessage.success(response.info);
+        closeLoginDialog();
       } else {
         ElMessage.error(response.info);
       }
@@ -151,13 +126,8 @@
     if (state.isLogin) {
       onLogin();
     } else {
-      onRegister();
+      onPrepareRegister();
     }
-  };
-  // 切换模式
-  const switchDialogMode = () => {
-    console.log("切换模式");
-    dialogMode.value = dialogMode.value === "left" ? "right" : "left";
   };
 </script>
 
@@ -175,38 +145,6 @@
         class="close-btn"
         @click="handleClose"
       />
-
-      <!-- 扫码登录区域 -->
-      <!-- prettier-ignore -->
-      <div class="left" v-if="dialogMode !== 'right'">
-        <div class="header">
-          <h1>登录后推荐更懂你的笔记</h1>
-          <img src="/logo.png">
-        </div>
-
-        <div class="code-area">
-          <div class="qrcode-wrapper" @click.stop="getQRCode">
-            <span v-if="!form.qrcode">获取二维码</span>
-            <img v-else :src="form.qrcode"  />
-          </div>
-          <div class="tip flex gap-2  items-center">
-           <div class="flex  gap-1">
-            <span>可用 </span>
-            <img width="18px" height="18px" src="@/assets/svg/小红书.svg" />
-            <span> 小红书</span></div>
-            或 
-           <div class="flex gap-2 items-center">
-            <img width="18px" height="18px"  src="@/assets/svg/微信.svg" /> 
-             <span>微信</span>
-           </div>
-           <div>
-             扫码
-           </div>
-          </div>
-           <div class="mt-10">小红书如何扫码</div>
-        </div>
-        
-      </div>
 
       <!-- 手机号登录区域 -->
       <div
@@ -249,7 +187,11 @@
           label-position="left"
           label-width="auto"
         >
-          <el-form-item label="电子邮件">
+          <el-form-item>
+            <template #label>
+              <span class="text-red-500 mr-1">*</span>
+              电子邮件
+            </template>
             <el-input
               v-model="state.register.email"
               type="email"
@@ -257,10 +199,11 @@
               size="large"
             />
           </el-form-item>
-          <el-form-item
-            label="密码"
-            size="large"
-          >
+          <el-form-item size="large">
+            <template #label>
+              <span class="text-red-500 mr-1">*</span>
+              密码
+            </template>
             <el-input
               v-model="state.register.password"
               size="large"
@@ -268,7 +211,11 @@
               show-password
             />
           </el-form-item>
-          <el-form-item label="重复密码">
+          <el-form-item>
+            <template #label>
+              <span class="text-red-500 mr-1">*</span>
+              重复密码
+            </template>
             <el-input
               v-model="state.register.password_repeat"
               type="password"
@@ -277,53 +224,51 @@
             />
           </el-form-item>
           <el-form-item
-            label="邀请码"
+            label=""
             size="large"
           >
+            <template #label>
+              <span class="ml-3">邀请码</span>
+            </template>
             <el-input
               v-model="state.register.invite_code"
               size="large"
               type="password"
             />
           </el-form-item>
-          <div class="flex justify-end text-end w-100 mb-5">
-            <el-button
-              type="danger"
-              class="w-[100px]"
-              @click="onRegister"
-            >
-              注册
-            </el-button>
-          </div>
 
-          <el-form-item
-            label="电子邮件"
-            v-if="state.codeVerify.isShowEmail"
-          >
+          <el-form-item>
+            <template #label>
+              <span class="text-red-500 mr-1">*</span>
+              邮箱验证码
+            </template>
             <el-input
-              v-model="state.codeVerify.email"
-              type="email"
-              label="电子邮件"
-              size="large"
-            />
-          </el-form-item>
-          <el-form-item label="代码">
-            <el-input
-              v-model="state.codeVerify.code"
-              placeholder="请输入您的代码"
+              v-model="state.code"
+              placeholder="输入您的代码"
               size="large"
               type="text"
             >
               <template #append>
                 <el-button
                   type="danger"
-                  @click="onVerifyCode"
+                  @click="onPrepareRegister"
                 >
-                  确认码
+                  获取验证码
                 </el-button>
               </template>
             </el-input>
           </el-form-item>
+          <div class="flex justify-end text-end w-100 mb-5">
+            <el-button
+              type="danger"
+              size="large"
+              class="w-full"
+              round
+              @click="onVerifyRegister"
+            >
+              注册
+            </el-button>
+          </div>
         </el-form>
         <button
           class="input"
@@ -349,10 +294,6 @@
           <span>我已阅读并同意相关协议</span>
         </div> -->
         <span class="bottom-tip">新用户可直接登录</span>
-      </div>
-
-      <div class="bottom">
-        <button @click="switchDialogMode">切换</button>
       </div>
     </div>
   </el-dialog>
@@ -556,10 +497,6 @@
         margin-left: 8px;
         font-size: 14px;
       }
-    }
-
-    @media (min-width: @pad-width) {
-      border-left: 1px solid var(--border-color);
     }
   }
 
