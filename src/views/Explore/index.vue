@@ -57,7 +57,6 @@
         : {}),
       visitor: storeUser.visitCode,
       page: page.value,
-      visitorCode: storeUser.visitCode,
       limit: 30,
     };
     getExploreFeeds(request).then((res) => {
@@ -91,7 +90,6 @@
       const request = {
         visitor: storeUser.visitCode,
         page: page.value,
-        visitorCode: storeUser.visitCode,
         limit: 30,
         ...(channel.value !== "001" && { category: Number(store.channel) }),
         ...(store.mode !== "0" && { mode: store.mode }),

@@ -20,6 +20,7 @@
   import { PERMISSION } from "@/common/permision";
   import { openPage } from "@/service";
   import { ElMessage } from "element-plus";
+  import { useUserStore } from "@/store/user";
 
   const bottomRef = useTemplateRef("bottomActions");
   const noteDIalogRef = useTemplateRef("note-dialog");
@@ -209,14 +210,16 @@
       });
     },
   };
-
+  const storeUser = useUserStore();
   // 打开弹窗时执行
   const onOpenNoteDialog = async () => {
     if (noteDIalogRef.value) noteDIalogRef.value.scrollTop = 0;
-    Api.getNoteDetail(Number(noteDialog.id.value)).then((res) => {
-      article.value = res.data;
-      commentBlocks.value = res.data.commentBlocks;
-    });
+    Api.getNoteDetail(Number(noteDialog.id.value), storeUser?.visitCode).then(
+      (res) => {
+        article.value = res.data;
+        commentBlocks.value = res.data.commentBlocks;
+      }
+    );
   };
   const swiperInstanceRef = ref<InstanceType<typeof Swiper> | null>(null);
   const onCloseNoteDialog = async () => {

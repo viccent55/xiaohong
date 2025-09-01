@@ -38,7 +38,7 @@
   .skeleton-media-container {
     width: 100%;
     // Give it a random aspect ratio to mimic real content
-    aspect-ratio: 1 / 1.2;
+    aspect-ratio: 1.4 / 1.2;
     background-color: #eee;
     border-radius: 16px;
     margin-bottom: 12px;

@@ -4,9 +4,10 @@ import type { CommentBlockInfo, CommentInfo } from "@/types/info";
 
 // 获取文章细节
 export const getNoteDetail = (
-  id: number
+  id: number,
+  visitor: string
 ): Promise<ResponseConfig<EmptyObjectType>> => {
-  return axios.post("/item/detail", { id: id });
+  return axios.post("/item/detail", { id, visitor });
 };
 
 // 获取评论
@@ -44,7 +45,9 @@ export const unlike = (id: number): Promise<ResponseConfig<null>> => {
   return axios.post("/unlike", { id });
 };
 
-export const subscribe = (id: number): Promise<ResponseConfig<EmptyObjectType>> => {
+export const subscribe = (
+  id: number
+): Promise<ResponseConfig<EmptyObjectType>> => {
   return axios.post("/member/subscribe", { id });
 };
 

@@ -86,8 +86,11 @@
 </script>
 
 <template>
-  <div class="feeds-container" ref="feedsContainer">
-    <MasonryWall
+  <div
+    class="feeds-container"
+    ref="feedsContainer"
+  >
+    <!-- <MasonryWall
       v-if="isLoading"
       :items="skeletonItems"
       :column-width="columnWidth"
@@ -97,9 +100,8 @@
       <template #default>
         <ExploreFeedSkeleton />
       </template>
-    </MasonryWall>
+    </MasonryWall> -->
     <MasonryWall
-      v-else
       :items="items"
       :column-width="columnWidth"
       :gap="gap"
@@ -114,6 +116,7 @@
         />
       </template>
     </MasonryWall>
+    <!-- Loading indicator for loading more -->
     <MasonryWall
       v-if="isLoadMore"
       :items="skeletonItems"

@@ -92,7 +92,10 @@
   >
     <!-- Loading Placeholder -->
     <template #placeholder>
-      <div class="image-slot">
+      <div
+        class="image-slot object-contain"
+        :style="imageStyle"
+      >
         <el-icon
           class="is-loading"
           size="260"
@@ -120,7 +123,11 @@
     v-else
     class="image-slot"
   >
-    <img
+    <el-image
+      :width="width"
+      :height="height"
+      fit="contain"
+      :style="imageStyle"
       class="rounded-xl"
       :src="EmptImage"
     />

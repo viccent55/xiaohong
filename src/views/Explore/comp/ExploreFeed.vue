@@ -21,7 +21,7 @@
       <video-play class="absolute z-10 text-white" v-if="feed.mode == 1" />
       <Picture class="absolute z-10 text-white" v-if="feed.mode == 2" />
       <div v-if="feed.mode === 3"
-     class="absolute right-2 top-4 z-10 bg-yellow-400  text-xs font-semibold px-2 py-0.5 rounded-full shadow animate-bounce"> Ads</div>
+     class="absolute right-2 top-4 z-10 bg-yellow-400  text-xs font-semibold px-2 py-0.5 rounded-full shadow animate-bounce"> 广告</div>
       <AdvertSlot v-if="feed.mode === 3" :advert="{
         id: feed?.advert.id,
         name: feed?.advert.name,

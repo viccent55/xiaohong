@@ -47,6 +47,6 @@ export const useUserStore = defineStore("user", {
     },
   },
   persist: {
-    pick: ["visitCode", "userInfo", "isLogin", "useId", "videos_id"],
+    pick: ["visitCode", "userInfo", "isLogin", "useId"],
   },
 });
