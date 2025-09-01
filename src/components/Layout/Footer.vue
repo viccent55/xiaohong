@@ -20,7 +20,7 @@
     >
       <div
         class="channel-wrapper"
-        :class="{ active: activeItem === item }"
+        :class="{ active: activeItem?.mode === item.mode }"
       >
         <div v-if="item.icon == 'Setting'">
           <Dropdown
@@ -38,7 +38,7 @@
           v-else
           @click="$emit('click-nav-item', item)"
         >
-          <el-icon :size="24"><component :is="item.icon" /></el-icon>
+          <el-icon :size="24"><component :is="item.icon"/></el-icon>
           <span>{{ item.name }}</span>
         </div>
       </div>
@@ -72,8 +72,8 @@
     align-items: center;
     cursor: pointer;
 
-    &.active {
-      color: var(--text-color-dark);
+    &.active i{
+      color: var(--primary-color)!important;
       font-weight: 600;
     }
 

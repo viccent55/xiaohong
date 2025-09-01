@@ -21,6 +21,7 @@ export const useStore = defineStore("store", {
     homePopupAds: [] as EmptyArrayType,
     recommendAds: [] as EmptyArrayType,
     channel: "001",
+    mode: '0'
   }),
   actions: {
     initMode() {

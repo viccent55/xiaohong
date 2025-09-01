@@ -52,30 +52,27 @@
   setDefaultRejectCallback(openLoginDialog);
 
   // 导航索引
-  const navigationItem = computed(() => {
-    return (
-      NavigationItems.find((item) => item.href === route.path) ||
-      (route.path == `/user/${userStore.useId}`
-        ? NavigationItems[3]
-        : undefined) ||
-      undefined
-    );
-  });
+  const navigationItem = computed(
+    () => NavigationItems.find((item) => item.mode === store.mode) || "0"
+  );
 
   // 点击导航项
   const clickNavigationItem = (item: NavigationItem) => {
     if (item.type === "router-link") {
-      if (item.href !== "/explore") {
+      if (item.mode == "0") {
+        store.mode = "0";
+        router.push("/");
+      } else if (item.mode == "#") {
         checkPermissions(PERMISSION.User, () => {
-          if (item.href == "/user")
-            router.push({ path: `${item.href}/${userStore.useId}` });
-          else router.push(item.href);
+          router.push({ path: `/user/${userStore.useId}` });
         });
       } else {
-        router.push(item.href);
+        console.log(item);
+        store.mode = item.mode;
+        // router.push(item.href);
       }
     } else {
-      openPage(item.href);
+      // openPage(item.href);
     }
   };
 

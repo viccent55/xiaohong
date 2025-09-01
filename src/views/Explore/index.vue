@@ -18,13 +18,13 @@
   import { useStore } from "@/store/index";
   import { storeToRefs } from "pinia";
   import useHome from "@/composables/useHome";
-import { itemAdClick } from "@/api/advertisment";
+  import { itemAdClick } from "@/api/advertisment";
 
   const noteDialog = useNoteDialog();
 
   // 当前频道
   const store = useStore();
-  const { configuration, channel } = storeToRefs(store);
+  const { configuration, channel, mode } = storeToRefs(store);
   const indexChannel = ref<string>(channel.value);
   const feeds = ref<ExploreFeedInfo[]>([]);
   const floatItems = ref<ExploreFLoatSetItem[]>(ExploreFloatSetItems);
@@ -45,7 +45,7 @@ import { itemAdClick } from "@/api/advertisment";
   // 刷新列表
   const freshFeeds = () => {
     loading.value = true;
-    if (feeds.value.length === 0) {
+    if (!feeds.value?.length) {
       isInitialLoading.value = true;
     }
     backToTop(false);
@@ -53,8 +53,9 @@ import { itemAdClick } from "@/api/advertisment";
       visitor: storeUser.visitCode,
       page: page.value,
       visitorCode: storeUser.visitCode,
-      category: store.channel,
       limit: 30,
+      ...(channel.value !== "001" && { category: store.channel }),
+      ...(store.mode !== "0" && { mode: store.mode }),
     };
     getExploreFeeds(request).then((res) => {
       feeds.value = res.data;
@@ -62,7 +63,12 @@ import { itemAdClick } from "@/api/advertisment";
       isInitialLoading.value = false;
     });
   };
-
+  watch(
+    () => mode.value,
+    () => {
+      freshFeeds();
+    }
+  );
   const handle = {
     // 加载更多列表
     loadMoreFeeds() {

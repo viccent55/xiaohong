@@ -69,32 +69,32 @@ export const NavigationItems: NavigationItem[] = [
     name: '发现',
     icon: 'House',
     type: 'router-link',
-    href: '/explore',
+    mode: '0',
   },
   {
     name: '发布',
     icon: 'VideoPlay',
-    type: 'external-link',
-    href: 'https://creator.xiaohongshu.com/',
+    type: 'router-link',
+    mode: '1',
   },
   {
     name: '通知',
     icon: 'Picture',
     type: 'router-link',
-    href: '/notification',
+    mode: '2',
   },
   {
     name: '我的',
     icon: 'User',
     type: 'router-link',
-    href: '/user',
+    mode: '#',
   },
-  {
-    name: '会员中心',
-    icon: 'Setting',
-    type: 'router-link',
-    href: '/member',
-  },
+  // {
+  //   name: '会员中心',
+  //   icon: 'Setting',
+  //   type: 'router-link',
+  //   href: '/member',
+  // },
 ]
 
 export const ExploreChannelItems: EmptyArrayType = [
@@ -147,12 +147,12 @@ export const ExploreChannelItems: EmptyArrayType = [
 export const ExploreFloatSetItems: ExploreFLoatSetItem[] = [
   {
     icon: 'Top',
-    label: 'goto-top',
+    name: 'goto-top',
     active: false,
   },
   {
     icon: 'Refresh',
-    label: 'refresh',
+    name: 'refresh',
     active: false,
   },
 ]
@@ -199,26 +199,26 @@ export const DefaultUserDetailInfo: UserDetailInfo = {
 
 export const NotificationChannelItems: ExploreChannelItem[] = [
   {
-    label: '评论和@',
+    name: '评论和@',
     value: 'comment',
   },
   {
-    label: '赞和收藏',
+    name: '赞和收藏',
     value: 'like',
   },
   {
-    label: '新增关注',
+    name: '新增关注',
     value: 'follow',
   },
 ]
 
 export const UserChannelItems: ExploreChannelItem[] = [
   {
-    label: '笔记',
+    name: '笔记',
     value: 'note',
   },
   {
-    label: '收藏',
+    name: '收藏',
     value: 'star',
   },
 ]
