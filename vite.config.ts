@@ -7,9 +7,8 @@ import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 // https://vite.dev/config/
-const viteConfig = defineConfig(({ mode, command }) => {
-  const env = loadEnv(mode, process.cwd());
-
+const viteConfig = defineConfig((mode: ConfigEnv) => {
+  const env = loadEnv(mode.mode, process.cwd());
   return {
     root: process.cwd(),
     plugins: [
@@ -54,7 +53,6 @@ const viteConfig = defineConfig(({ mode, command }) => {
 
         workbox: {
           globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
-          navigateFallbackDenylist: [/\.m3u8$/, /\.ts$/],
         },
         devOptions: {
           enabled: process.env.NODE_ENV === "development",
@@ -68,23 +66,20 @@ const viteConfig = defineConfig(({ mode, command }) => {
       },
     },
     server: {
-      host: true,
+      host: "0.0.0.0",
       open: false,
+      hmr: true,
       proxy: {
         "/apiv1": {
-          target: env.VITE_API_URL_LOC, 
+          target:
+            mode.command === "serve"
+              ? env.VITE_API_URL_PROD
+              : env.VITE_API_URL_LOC,
           changeOrigin: true,
         },
       },
       allowedHosts: true,
     },
-    // server: {
-    //   host: true,
-    //   strictPort: false,
-    //   cors: true, // ✅ allow cross-origin requests
-    //   hmr: true, // ✅ hot module replacement
-    //   allowedHosts: "all",
-    // },
   };
 });
 
