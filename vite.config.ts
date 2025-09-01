@@ -72,7 +72,7 @@ const viteConfig = defineConfig((mode) => {
       proxy: {
         "/apiv1": {
           target:
-            mode.mode === "server"
+            process.env.NODE_ENV !== "development"
               ? env.VITE_API_URL_PROD
               : env.VITE_API_URL_LOC,
           changeOrigin: true,
