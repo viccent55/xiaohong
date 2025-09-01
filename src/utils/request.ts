@@ -3,6 +3,7 @@ import { useUserStore } from "@/store/user";
 import { appendToken } from "@/hooks/useJWT";
 import { encrypt, decrypt, makeSign } from "@/utils/crypto";
 import dayjs from "dayjs";
+import { ElMessage } from "element-plus";
 
 const instance: AxiosInstance = axios.create({
   baseURL: "/apiv1",
@@ -45,6 +46,11 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (response) => {
+    if (response.data.errcode === 401001) {
+      const userStore = useUserStore();
+      userStore.logout();
+      ElMessage.error(response.data.info);
+    }
     if (response.status === 200) {
       // decrypt only if response contains "data"
       if (response.data?.data) {
@@ -57,12 +63,11 @@ instance.interceptors.response.use(
       return response.data;
     }
 
-    if ([401, 403, 500, 401001].includes(response.status)) {
+    if ([401, 403, 500].includes(response.status)) {
       const userStore = useUserStore();
       userStore.logout();
       return Promise.reject(response.data);
     }
-
     return Promise.reject(response.data);
   },
   (error) => {
