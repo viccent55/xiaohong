@@ -21,7 +21,7 @@ export const useStore = defineStore("store", {
     homePopupAds: [] as EmptyArrayType,
     recommendAds: [] as EmptyArrayType,
     channel: "001",
-    mode: '0'
+    mode: "0",
   }),
   actions: {
     initMode() {
@@ -44,5 +44,14 @@ export const useStore = defineStore("store", {
       }
     },
   },
-  persist: true,
+  // persist: true,
+  persist: {
+    pick: [
+      "isDarkmode",
+      "configuration",
+      "homePopupAds",
+      "homePopupAds",
+      "channel",
+    ],
+  },
 });

@@ -59,17 +59,13 @@
   // 点击导航项
   const clickNavigationItem = (item: NavigationItem) => {
     if (item.type === "router-link") {
-      if (item.mode == "0") {
-        store.mode = "0";
+      store.mode = item.mode;
+      if (item.mode != "#") {
         router.push("/");
-      } else if (item.mode == "#") {
+      } else {
         checkPermissions(PERMISSION.User, () => {
           router.push({ path: `/user/${userStore.useId}` });
         });
-      } else {
-        console.log(item);
-        store.mode = item.mode;
-        // router.push(item.href);
       }
     } else {
       // openPage(item.href);

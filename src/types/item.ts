@@ -13,7 +13,7 @@ export interface NavigationItem {
   type: 'router-link' | 'external-link'
   name: string
   icon: string
-  href: string
+  mode: string
 }
 
 //浏览频道选项

@@ -54,7 +54,7 @@
       page: page.value,
       visitorCode: storeUser.visitCode,
       limit: 30,
-      ...(channel.value !== "001" && { category: store.channel }),
+      ...(channel.value !== "001" && { category: Number(store.channel) }),
       ...(store.mode !== "0" && { mode: store.mode }),
     };
     getExploreFeeds(request).then((res) => {
@@ -78,8 +78,9 @@
         visitor: storeUser.visitCode,
         page: page.value++,
         visitorCode: storeUser.visitCode,
-        category: store.channel,
         limit: 30,
+        ...(channel.value !== "001" && { category: Number(store.channel) }),
+        ...(store.mode !== "0" && { mode: store.mode }),
       };
       getExploreFeeds(request).then((res) => {
         if (res.errcode === 0 && res.data.length > 0) {

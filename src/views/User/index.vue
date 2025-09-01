@@ -43,16 +43,15 @@
     noteFeeds(num: number) {
       // 获取笔记
       getNoteFeeds(id).then((res) => {
-        console.log("res1", res);
         if (res.errcode !== 0) return;
-        noteFeeds.value = [...noteFeeds.value, ...res.data.items];
+        noteFeeds.value = [...noteFeeds.value, ...res.data?.items];
       });
     },
     starFeeds(num: number) {
       // 获取收藏
       getStarFeeds(id).then((res) => {
         if (res.errcode !== 0) return;
-        starFeeds.value = [...starFeeds.value, ...res.data.items];
+        starFeeds.value = [...starFeeds.value, ...res.data?.items];
       });
     },
   };
@@ -124,7 +123,7 @@
 
       <div class="container">
         <MasonryWall
-          v-if="showFeeds.length > 0"
+          v-if="showFeeds?.length > 0"
           :items="showFeeds"
           :column-width="200"
           :gap="20"
