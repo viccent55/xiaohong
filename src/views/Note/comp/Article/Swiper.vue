@@ -30,7 +30,7 @@
     :indicator-position="
       mediaInfo?.length <= 1 ? 'none' : screenMode === 'pc' ? '' : 'outside'
     "
-    :arrow="mediaInfo?.length <= 1 ? 'never' : 'hover'"
+    :arrow="mediaInfo?.length <= 1 ? 'never' : 'always'"
     :autoplay="false"
   >
     <el-carousel-item
@@ -74,4 +74,5 @@
     height: 100%;
     object-fit: contain;
   }
+
 </style>
