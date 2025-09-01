@@ -97,7 +97,7 @@
     >
       <div
         class="action"
-        :class="{ 'like-active': action?.isLiked }"
+        :class="{ 'like-active': action?.isLike }"
         @click="$emit('click-like', action)"
       >
         <Heart />
@@ -105,7 +105,7 @@
       </div>
       <div
         class="action"
-        :class="{ 'star-active': action?.isFavorited }"
+        :class="{ 'star-active': action?.isStar }"
         @click="$emit('click-star', action)"
       >
         <Star />

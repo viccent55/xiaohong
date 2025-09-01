@@ -15,7 +15,7 @@ export const getComments = (
   id: number,
   num: number
 ): Promise<ResponseConfig<CommentBlockInfo[]>> => {
-  return axios.get("/comments", { params: { id, num } });
+  return axios.get("/member/comments", { params: { id, num } });
 };
 
 // 获取回复
@@ -37,22 +37,18 @@ export const reply = (
 
 // 点赞
 export const like = (id: number): Promise<ResponseConfig<null>> => {
-  return axios.post("/like", { id });
+  return axios.post("/member/like", { id });
 };
 
-// 取消点赞
-export const unlike = (id: number): Promise<ResponseConfig<null>> => {
-  return axios.post("/unlike", { id });
-};
 
-export const subscribe = (
+export const follow = (
   id: number
 ): Promise<ResponseConfig<EmptyObjectType>> => {
-  return axios.post("/member/subscribe", { id });
+  return axios.post("/member/follow", { owner: id });
 };
 
-export const unSubscribe = (id: number): Promise<ResponseConfig<null>> => {
-  return axios.post("/member/unfollow", { id });
+export const unFollow = (id: number): Promise<ResponseConfig<null>> => {
+  return axios.post("/member/unFollow", { id });
 };
 
 export const star = (id: number): Promise<ResponseConfig<null>> => {

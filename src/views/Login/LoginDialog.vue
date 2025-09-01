@@ -164,7 +164,7 @@
 <template>
   <el-dialog
     v-model="loginDialogVisible"
-    width="fit-content"
+    :width="screenMode === 'phone' ? '90%' : 'fit-content'"
     style="border-radius: 16px"
     :show-close="false"
     align-center
@@ -403,6 +403,11 @@
     justify-content: center;
     align-items: center;
 
+    .mobile-mode({
+    min-width: 100%;
+    padding: 20px 0;
+  });
+
     .header {
       width: 100%;
       padding: 32px 24px 16px;
@@ -483,6 +488,10 @@
     justify-content: center;
     align-items: center;
 
+    .mobile-mode({
+    min-width: 100%;
+  });
+
     h1 {
       margin-top: 48px;
       font-size: 18px;
@@ -493,6 +502,10 @@
       width: 300px;
       height: 48px;
       .btn-large();
+
+      .mobile-mode({
+      width: 90%;
+    });
 
       input {
         width: 100%;

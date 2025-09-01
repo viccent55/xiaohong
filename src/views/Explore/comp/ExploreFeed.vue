@@ -23,10 +23,10 @@
       <div v-if="feed.mode === 3"
      class="absolute right-2 top-4 z-10 bg-yellow-400  text-xs font-semibold px-2 py-0.5 rounded-full shadow animate-bounce"> 广告</div>
       <AdvertSlot v-if="feed.mode === 3" :advert="{
-        id: feed?.advert.id,
-        name: feed?.advert.name,
+        id: feed?.advert?.id,
+        name: feed?.advert?.name,
         image: feed?.cover,
-        url: feed?.advert.value
+        url: feed?.advert?.value
 
       }" :width="`${feed.cover_w}`"  :height="`${feed.cover_h}`" />
       <Image v-else :src="feed.cover" :width="`${feed.cover_w}`"  :height="`${feed.cover_h}`" fit="cover"/>

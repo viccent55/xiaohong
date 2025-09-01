@@ -1,9 +1,9 @@
 import { useWindowSize } from "@vueuse/core";
 import { useStore } from "@/store";
 import { useRoute, useRouter } from "vue-router";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
-const useVaraible = () => {
+const useVariable = () => {
   const { width } = useWindowSize();
   const store = useStore();
   const route = useRoute();
@@ -24,8 +24,8 @@ const useVaraible = () => {
       typeof timestamp === "number"
         ? new Date(timestamp * 1000) // seconds → ms
         : typeof timestamp === "string" && /^\d+$/.test(timestamp)
-          ? new Date(parseInt(timestamp) * 1000)
-          : new Date(timestamp);
+        ? new Date(parseInt(timestamp) * 1000)
+        : new Date(timestamp);
 
     const now = new Date();
     const diffMs = now.getTime() - createdAt.getTime();
@@ -43,6 +43,23 @@ const useVaraible = () => {
       return createdAt.toLocaleDateString();
     }
   };
+  const feedsContainer = ref<HTMLElement | null>(null);
+  const columnWidth = ref(230);
+  const gap = ref(28);
+  const updateColumnWidth = () => {
+    if (feedsContainer.value) {
+      // Use getBoundingClientRect().width for a more precise fractional value
+      // and Math.floor to prevent floating point rounding errors from breaking the layout.
+      const containerWidth = feedsContainer.value.getBoundingClientRect().width;
+      if (window.innerWidth <= 768) {
+        gap.value = 12;
+        columnWidth.value = Math.floor((containerWidth - gap.value) / 2);
+      } else {
+        gap.value = 28;
+        columnWidth.value = 230;
+      }
+    }
+  };
   return {
     isMobileSm,
     isMobile,
@@ -53,6 +70,10 @@ const useVaraible = () => {
     onCopy,
     formatTime,
     width,
+    updateColumnWidth,
+    columnWidth,
+    gap,
+    feedsContainer,
   };
 };
-export default useVaraible;
+export default useVariable;

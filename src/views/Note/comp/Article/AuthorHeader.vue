@@ -23,8 +23,9 @@
       <Avatar :src="props.author?.avatar" />
       <span>{{ props.author?.nickname }}</span>
     </a>
+    
     <FollowButton
-      :is-follow="props.author?.isFollow"
+      :is-follow="author?.isFollow"
       @click="clickFollow"
     />
   </div>

@@ -3,15 +3,16 @@
   import ExploreChannelBar from "../Explore/comp/ExploreChannelBar.vue";
   import ExploreFeed from "../Explore/comp/ExploreFeed.vue";
   import BottomMore from "@/components/global/BottomMore.vue";
-  import { computed, onMounted, ref, inject } from "vue";
+  import { computed, onMounted, ref, inject, nextTick } from "vue";
   import { useRoute } from "vue-router";
   import type { ExploreChannelItem } from "@/types/item";
   import { UserChannelItems } from "@/common";
   import { getNoteFeeds, getStarFeeds, getUserInfo } from "@/api/user";
   import type { ExploreFeedInfo, UserDetailInfo } from "@/types/info";
-  import { subscribe, report, unSubscribe } from "@/api/note";
+  import { report } from "@/api/note";
   import { useNoteDialog } from "@/hooks/useNoteDialog";
   import MasonryWall from "@yeger/vue-masonry-wall";
+  import useVariable from "@/composables/useVariable";
 
   const route = useRoute();
   const noteDialog = useNoteDialog();
@@ -61,17 +62,17 @@
       channel.value = item.value;
     },
     clickFollow(user: UserDetailInfo) {
-      if (user.subscribed) {
-        unSubscribe(user.id).then((res) => {
-          if (res.code !== 200) return;
-          user.subscribed = false;
-        });
-      } else {
-        subscribe(user.id).then((res) => {
-          if (res.code !== 200) return;
-          user.subscribed = true;
-        });
-      }
+      // if (user.subscribed) {
+      //   unSubscribe(user.id).then((res) => {
+      //     if (res.code !== 200) return;
+      //     user.subscribed = false;
+      //   });
+      // } else {
+      //   subscribe(user.id).then((res) => {
+      //     if (res.code !== 200) return;
+      //     user.subscribed = true;
+      //   });
+      // }
     },
     clickReport(user: UserDetailInfo) {
       report(user.id);
@@ -90,6 +91,9 @@
   const updateUserInfo = async () => {
     // await setUserInfo();
   };
+
+  const { updateColumnWidth, columnWidth, gap, feedsContainer } = useVariable();
+
   onMounted(() => {
     if (id) {
       getUserInfo(id).then((res) => {
@@ -99,6 +103,10 @@
 
       getRes.noteFeeds(5);
     }
+    nextTick(() => {
+      updateColumnWidth();
+    });
+    window.addEventListener("resize", updateColumnWidth);
   });
 </script>
 
@@ -120,24 +128,25 @@
       </div>
 
       <el-divider />
-
       <div class="container">
-        <MasonryWall
-          v-if="showFeeds?.length > 0"
-          :items="showFeeds"
-          :column-width="200"
-          :gap="20"
-          item-key="id"
-          :scroll-container="scrollContainer"
-          :layout-animation-duration="500"
-        >
-          <template #default="{ item }">
-            <ExploreFeed
-              :feed="item"
-              @click="handle.clickFeed(item)"
-            />
-          </template>
-        </MasonryWall>
+        <div ref="feedsContainer">
+          <MasonryWall
+            v-if="showFeeds?.length > 0"
+            :items="showFeeds ?? []"
+            :column-width="columnWidth"
+            :gap="gap"
+            item-key="id"
+            :scroll-container="scrollContainer"
+            :layout-animation-duration="500"
+          >
+            <template #default="{ item }">
+              <ExploreFeed
+                :feed="item"
+                @click="handle.clickFeed(item)"
+              />
+            </template>
+          </MasonryWall>
+        </div>
       </div>
 
       <!-- <BottomMore
@@ -170,6 +179,6 @@
 
   .container {
     width: 100%;
-    padding: 0 32px;
+    padding: 0 16px;
   }
 </style>

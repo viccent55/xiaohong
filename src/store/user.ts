@@ -2,7 +2,11 @@ import { defineStore } from "pinia";
 import { setDefaultPermission } from "@/hooks/usePermisions";
 import { PERMISSION } from "@/common/permision";
 import { writeToken, removeToken, refreshToken } from "@/hooks/useJWT";
-import { closeLoginDialog, openLoginDialog, loginDialogVisible } from "@/hooks/useLoginDialog";
+import {
+  closeLoginDialog,
+  openLoginDialog,
+  loginDialogVisible,
+} from "@/hooks/useLoginDialog";
 import { Session } from "@/utils/storage";
 import type { UserDetailInfo } from "@/types/info";
 
@@ -13,6 +17,10 @@ export const useUserStore = defineStore("user", {
     userInfo: {} as UserDetailInfo,
     visitCode: "",
     videos_id: "",
+    token: {
+      access_token: "",
+      refresh_token: "",
+    },
   }),
   actions: {
     // 使用token登录或密码登录
@@ -20,8 +28,11 @@ export const useUserStore = defineStore("user", {
       token: { access_token: string; refresh_token: string },
       userInfo: UserDetailInfo
     ) {
-      Session.set("access_token", token.access_token);
-      Session.set("refresh_token", token.refresh_token);
+      this.token = {
+        access_token: token.access_token,
+        refresh_token: token.refresh_token,
+      };
+
       this.isLogin = true;
       this.userInfo = userInfo;
       this.useId = this.userInfo.id;
@@ -47,6 +58,6 @@ export const useUserStore = defineStore("user", {
     },
   },
   persist: {
-    pick: ["visitCode", "userInfo", "isLogin", "useId"],
+    pick: ["visitCode", "userInfo", "isLogin", "useId", "token"],
   },
 });

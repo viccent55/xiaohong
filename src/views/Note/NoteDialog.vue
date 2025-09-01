@@ -52,45 +52,32 @@
   const handle = {
     // 查看作者主页
     clickAuthor(id: string) {
-      console.log("点击作者");
-      openPage(`http://localhost:5173/user/${id}`);
+      const url = `${window.location.origin}/user/${id}`;
+      openPage(url);
     },
     // 关注
     clickFollow(id: number) {
-      console.log("关注");
+      console.log("关注", id);
       checkPermissions(PERMISSION.User, () => {
-        if (article.value?.author.subscribe) {
-          Api.subscribe(id).then((res) => {
-            if (res.errcode !== 0) return;
-            article.value.author.subscribe = false;
-          });
-        } else {
-          Api.unSubscribe(id).then((res) => {
-            if (res.errcode !== 0) return;
-            article.value.author.unSubscribe = true;
-          });
-        }
+        Api.follow(id).then((res) => {
+          if (res.errcode !== 0) return;
+          article.value.isFollow = !article.value.isFollow;
+        });
       });
     },
     // 点赞
-    clickLike(item: EmptyObjectType, id?: string) {
+    clickLike(item: EmptyObjectType) {
       console.log("点赞");
       checkPermissions(PERMISSION.User, () => {
-        const id_ = id || article.value.id;
-        item["isLiked"] = item.isLiked || false;
-        if (!item.isLiked) {
-          Api.like(id_).then((res) => {
-            if (res.errcode !== 0) return;
-            item.isLiked = true;
-            item.like_count += 1;
-          });
+        const id_ = article.value.id;
+        Api.like(id_).then((res) => {
+          if (res.errcode !== 0) return;
+          article.value.isLike = !article.value.isLike;
+        });
+        if (!article.value.isLike) {
+          item.like_count++;
         } else {
-          item.isLiked = false;
-          item.like_count -= 1;
-          // Api.unlike(id_).then((res) => {
-          //   if (res.code !== 200) return;
-
-          // });
+          item.like_count--;
         }
       });
     },
@@ -104,21 +91,14 @@
       console.log("收藏");
       checkPermissions(PERMISSION.User, () => {
         const id = article.value.id;
-        item["isFavorited"] = item.isFavorited || false;
-        if (item.isFavorited) {
-          item.isFavorited = false;
-          if (item.collect_count) item.collect_count -= 1;
-          // Api.unstar(id).then((res) => {
-          //   if (res.errcode !== 0) return;
-          //   item.isFavorited = false;
-          //   if (item.collect_count) item.collect_count -= 1;
-          // });
+        Api.star(id).then((res) => {
+          if (res.errcode !== 0) return;
+          item.isStar = !item.isStar;
+        });
+        if (!article.value.isStar) {
+          item.collect_count++;
         } else {
-          Api.star(id).then((res) => {
-            if (res.errcode !== 0) return;
-            item.isFavorited = true;
-            if (item.collect_count) item.collect_count += 1;
-          });
+          item.collect_count--;
         }
       });
     },
@@ -259,7 +239,10 @@
       >
         <!-- 作者信息 -->
         <AuthorHeader
-          :author="article?.author"
+          :author="{
+            ...article?.author,
+            isFollow: article.isFollow,
+          }"
           @click-close="noteDialog.closeNoteDialog"
           @click-author="handle.clickAuthor"
           @click-follow="handle.clickFollow"

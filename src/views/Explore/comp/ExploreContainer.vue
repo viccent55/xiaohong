@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import {
-    ref,
+    nextTick,
     computed,
     onMounted,
     onUnmounted,
@@ -10,6 +10,7 @@
   import ExploreFeed from "./ExploreFeed.vue";
   import ExploreFeedSkeleton from "./ExploreFeedSkeleton.vue";
   import MasonryWall from "@yeger/vue-masonry-wall";
+  import useVariable from "@/composables/useVariable";
 
   const props = defineProps({
     items: {
@@ -45,29 +46,15 @@
       }
     });
   };
-  const columnWidth = ref(230);
-  const gap = ref(28);
-  const feedsContainer = ref<HTMLElement | null>(null);
 
-  const updateColumnWidth = () => {
-    if (feedsContainer.value) {
-      // Use getBoundingClientRect().width for a more precise fractional value
-      // and Math.floor to prevent floating point rounding errors from breaking the layout.
-      const containerWidth = feedsContainer.value.getBoundingClientRect().width;
-      if (window.innerWidth <= 768) {
-        gap.value = 12;
-        columnWidth.value = Math.floor((containerWidth - gap.value) / 2);
-      } else {
-        gap.value = 28;
-        columnWidth.value = 230;
-      }
-    }
-  };
+  const { updateColumnWidth, columnWidth, gap, feedsContainer } = useVariable();
   onMounted(() => {
     if (scrollContainer.value) {
       scrollContainer.value.addEventListener("scroll", onScroll);
     }
-    updateColumnWidth();
+    nextTick(() => {
+      updateColumnWidth();
+    });
     window.addEventListener("resize", updateColumnWidth);
   });
 
@@ -102,7 +89,7 @@
       </template>
     </MasonryWall> -->
     <MasonryWall
-      :items="items"
+      :items="items ?? []"
       :column-width="columnWidth"
       :gap="gap"
       item-key="id"

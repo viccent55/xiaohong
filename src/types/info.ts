@@ -10,7 +10,7 @@ export interface ExploreFeedInfo {
   isLiked: boolean; // 是否点赞
   mode: number; // 模式
   url: string; // URL
-  link: string
+  link: string;
 }
 
 // 用户信息
@@ -18,7 +18,7 @@ export interface UserInfo {
   id: number; // 用户ID
   nickname: string; // 用户名
   avatar: string; // 用户头像
-  subscribed: boolean;
+  isFollow: boolean;
 }
 
 // 用户详情信息
