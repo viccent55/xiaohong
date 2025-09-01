@@ -5,9 +5,7 @@ import { encrypt, decrypt, makeSign } from "@/utils/crypto";
 import dayjs from "dayjs";
 
 const instance: AxiosInstance = axios.create({
-  baseURL: !import.meta.env.DEV
-    ? import.meta.env.VITE_API_URL_PROD // uses Vite proxy
-    : "/apiv1",
+  baseURL: "/apiv1",
   timeout: 10000,
   withCredentials: true,
   headers: { "Content-Type": "application/json" },
