@@ -61,6 +61,7 @@
     if (item.type === "router-link") {
       store.mode = item.mode;
       if (item.mode != "#") {
+        store.channel = "001";
         router.push("/");
       } else {
         checkPermissions(PERMISSION.User, () => {
