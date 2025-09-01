@@ -7,7 +7,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 // https://vite.dev/config/
-const viteConfig = defineConfig(({mode, command}) => {
+const viteConfig = defineConfig(({ mode, command }) => {
   const env = loadEnv(mode, process.cwd());
 
   return {
@@ -72,10 +72,7 @@ const viteConfig = defineConfig(({mode, command}) => {
       open: false,
       proxy: {
         "/apiv1": {
-          target:
-            command === "serve"
-              ? env.VITE_API_URL_LOC // use local when running vite dev
-              : env.VITE_API_URL_PROD, // use prod when running vite build/preview
+          target: env.VITE_API_URL_LOC, 
           changeOrigin: true,
         },
       },

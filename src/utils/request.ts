@@ -1,6 +1,8 @@
 import axios, { type AxiosInstance } from "axios";
 import { useUserStore } from "@/store/user";
 import { appendToken } from "@/hooks/useJWT";
+import { encrypt, decrypt, makeSign } from "@/utils/crypto";
+import dayjs from "dayjs";
 
 const instance: AxiosInstance = axios.create({
   baseURL: "/apiv1",
@@ -18,6 +20,21 @@ instance.interceptors.request.use(
     //   "\ntoken:",
     //   config.headers.Authorization
     // );
+    // const client = "pwa";
+    // const timestamp = dayjs().unix();
+    // // If body data exists → encrypt it
+    // if (config.data) {
+    //   const encryptedData = encrypt(config.data);
+    //   const sign = makeSign(client, timestamp, encryptedData);
+
+    //   // overwrite request body
+    //   config.data = {
+    //     client,
+    //     timestamp,
+    //     data: encryptedData,
+    //     sign,
+    //   };
+    // }
     return config;
   },
   (error) => {
@@ -28,22 +45,29 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (response) => {
-    // console.log(`Response: ${response.config.url}\n`, response.data);
-    // 正常响应
     if (response.status === 200) {
+      // decrypt only if response contains "data"
+      if (response.data?.data) {
+        try {
+          // response.data.data = decrypt(response.data.data);
+        } catch (e) {
+          console.warn("Decryption failed:", e);
+        }
+      }
       return response.data;
     }
-    // 未登录或登录过期
-    if (response.status === 401 || response.status === 403) {
+
+    if ([401, 403, 500].includes(response.status)) {
       const userStore = useUserStore();
       userStore.logout();
-
       return Promise.reject(response.data);
     }
+
     return Promise.reject(response.data);
   },
   (error) => {
-    console.log(error);
+    console.error(error);
+    return Promise.reject(error);
   }
 );
 
