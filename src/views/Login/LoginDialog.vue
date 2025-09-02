@@ -22,6 +22,7 @@
       password_repeat: "",
       invite_code: "",
       visitor: "",
+      subscribed: 0,
     },
     isLogin: true,
     code: "",
@@ -151,7 +152,7 @@
         class="right"
         v-if="dialogMode !== 'left'"
       >
-        <h1>手机号登录</h1>
+        <h1>{{ state.isLogin ? "邮箱登录" : "邮箱注册" }}</h1>
         <el-form
           class="p-10 pb-0 w-full"
           ref="form"
@@ -253,12 +254,12 @@
                   type="danger"
                   @click="onPrepareRegister"
                 >
-                  获取验证码
+                  获取
                 </el-button>
               </template>
             </el-input>
           </el-form-item>
-          <div class="flex justify-end text-end w-100 mb-5">
+          <div class="flex flex-col justify-end text-end w-100 mb-5">
             <el-button
               type="danger"
               size="large"
@@ -268,6 +269,19 @@
             >
               注册
             </el-button>
+            <el-checkbox
+              v-model="state.register.subscribed"
+              class="mt-2"
+              :true-label="1"
+              :false-label="0"
+            >
+              <template #default>
+                <span class="text-sm text-gray-500">订阅邮箱</span>
+                <span class="ml-1 text-sm text-sky-800">
+                  接收最新域名地址 永不失联
+                </span>
+              </template>
+            </el-checkbox>
           </div>
         </el-form>
         <button
@@ -293,7 +307,6 @@
           />
           <span>我已阅读并同意相关协议</span>
         </div> -->
-        <span class="bottom-tip">新用户可直接登录</span>
       </div>
     </div>
   </el-dialog>
