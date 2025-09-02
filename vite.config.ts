@@ -75,14 +75,11 @@ const viteConfig = defineConfig((mode) => {
         },
       },
       allowedHosts: true,
-      hmr:
-        process.env.NODE_ENV === "development"
-          ? true // let vite auto-manage in local
-          : {
-              protocol: "wss",
-              host: "redbook.cgtt.live",
-              port: 5173,
-            },
+      hmr: {
+        protocol: "wss",
+        host: "redbook.cgtt.live",
+        port: 5173,
+      },
     },
   };
 });
