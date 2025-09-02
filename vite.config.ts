@@ -70,16 +70,22 @@ const viteConfig = defineConfig((mode) => {
       open: false,
       proxy: {
         "/apiv1": {
-          target: env.VITE_API_URL_PROD, 
+          target:
+            process.env.NODE_ENV === "development"
+              ? env.VITE_API_URL_LOC
+              : env.VITE_API_URL_PRD,
           changeOrigin: true,
         },
       },
       allowedHosts: true,
-      hmr: {
-        protocol: "ws", // or "ws" if not using HTTPS
-        host: "redbook.cgtt.live",
-        port: 5173, // same as dev server
-      },
+      hmr:
+        process.env.NODE_ENV === "development"
+          ? true // let vite auto-manage in local
+          : {
+              protocol: "wss",
+              host: "redbook.cgtt.live",
+              port: 5173,
+            },
     },
   };
 });
