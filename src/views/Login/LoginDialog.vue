@@ -188,7 +188,7 @@
           label-position="left"
           label-width="auto"
         >
-          <el-form-item class="mb-0">
+          <el-form-item style="margin-bottom: 0">
             <template #label>
               <span class="text-red-500 mr-1">*</span>
               电子邮件
@@ -207,7 +207,10 @@
               :false-label="0"
             >
               <template #default>
-                <div style="white-space: normal;">
+                <div
+                  class="md:mt-0 mt-3"
+                  style="white-space: normal"
+                >
                   <span class="text-xs text-gray-500">订阅邮箱</span>
                   <span class="ml-1 text-xs text-sky-800">
                     接收最新域名地址 永不失联
