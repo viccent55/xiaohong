@@ -188,7 +188,7 @@
           label-position="left"
           label-width="auto"
         >
-          <el-form-item>
+          <el-form-item class="mb-0">
             <template #label>
               <span class="text-red-500 mr-1">*</span>
               电子邮件
@@ -199,6 +199,22 @@
               label="电子邮件"
               size="large"
             />
+          </el-form-item>
+          <el-form-item label=" ">
+            <el-checkbox
+              v-model="state.register.subscribed"
+              :true-label="1"
+              :false-label="0"
+            >
+              <template #default>
+                <div style="white-space: normal;">
+                  <span class="text-xs text-gray-500">订阅邮箱</span>
+                  <span class="ml-1 text-xs text-sky-800">
+                    接收最新域名地址 永不失联
+                  </span>
+                </div>
+              </template>
+            </el-checkbox>
           </el-form-item>
           <el-form-item size="large">
             <template #label>
@@ -269,19 +285,6 @@
             >
               注册
             </el-button>
-            <el-checkbox
-              v-model="state.register.subscribed"
-              class="mt-2"
-              :true-label="1"
-              :false-label="0"
-            >
-              <template #default>
-                <span class="text-sm text-gray-500">订阅邮箱</span>
-                <span class="ml-1 text-sm text-sky-800">
-                  接收最新域名地址 永不失联
-                </span>
-              </template>
-            </el-checkbox>
           </div>
         </el-form>
         <button
