@@ -88,6 +88,7 @@
     />
 
     <el-button
+     v-if="userStore.isLogin"
       size="large"
       round
       @click="$router.push(`/user/${userStore.useId}`)"
@@ -98,6 +99,7 @@
         <span>轮廓</span>
       </div>
     </el-button>
+    <div v-else></div>
     <!-- <Dropdown
       @click-item="(item) => $emit('click-menu-item', item)"
       :items="dropDownItems3"
