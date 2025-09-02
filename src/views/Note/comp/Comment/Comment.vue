@@ -1,45 +1,48 @@
 <script setup lang="ts">
-  import Date from '../Date.vue'
-  import InterAction from './InterAction.vue'
-  import ReportButton from '../ReportButton.vue'
-
-  import { type CommentInfo } from '@/types/info'
+  import Date from "../Date.vue";
+  import InterAction from "./InterAction.vue";
+  import ReportButton from "../ReportButton.vue";
 
   defineProps<{
-    comment: CommentInfo
-  }>()
+    comment: EmptyObjectType;
+  }>();
 
   defineEmits([
-    'click-like', // 点赞
-    'click-avatar', // 点击头像
-    'click-reply', // 点击回复
-    'click-report', // 点击举报
-  ])
+    "click-like", // 点赞
+    "click-avatar", // 点击头像
+    "click-reply", // 点击回复
+    "click-report", // 点击举报
+  ]);
 </script>
 
 <template>
   <div class="comment">
     <div
       class="avatar"
-      :class="{ 'with-reply': comment.replyTo }">
-      <img
-        :src="comment.author.avatar"
-        @click="$emit('click-avatar', comment.author.id)" />
+      :class="{ 'with-reply': comment?.replyTo }"
+    >
+      <el-avatar>
+        <Image
+          :src="comment?.avatar"
+          @click="$emit('click-avatar', comment?.author?.id)"
+        />
+      </el-avatar>
     </div>
     <div class="right">
       <!-- prettier-ignore -->
       <div class="author-wrapper">
-        <span class="name">{{ comment.author.name }}</span>
-        <span class="name" v-if="comment.replyTo">></span>
-        <span class="name" v-if="comment.replyTo">{{ comment.replyTo }}</span>
-        <ReportButton @click-report="$emit('click-report', comment.id)" />
+        <span class="name">{{ comment?.author?.name }}</span>
+        <span class="name" v-if="comment?.replyTo">></span>
+        <span class="name" v-if="comment?.replyTo">{{ comment.replyTo }}</span>
+        <!-- <ReportButton @click-report="$emit('click-report', comment?.id)" /> -->
       </div>
-      <span class="content">{{ comment.content }}</span>
-      <Date :date="comment.date" />
-      <InterAction
+      <span class="content">{{ comment?.content }}</span>
+      <Date :date="comment?.date" />
+      <!-- <InterAction
         :action="comment.action"
-        @click-comment="$emit('click-reply', comment.id, comment.author.name)"
-        @click-like="$emit('click-like', comment.action, comment.id)" />
+        @click-comment="$emit('click-reply', comment?.id, comment?.author?.name)"
+        @click-like="$emit('click-like', comment?.action, comment?.id)"
+      /> -->
     </div>
   </div>
 </template>
@@ -72,7 +75,7 @@
     }
 
     > :not(:first-child) {
-      margin-top: 8px;
+      margin-top: 2px;
     }
   }
 

@@ -5,8 +5,8 @@
   import { loginDialogVisible, closeLoginDialog } from "@/hooks/useLoginDialog";
   import { screenMode } from "@/hooks/useScreenMode";
   import { useUserStore } from "@/store/user";
-  import { ElMessage } from "element-plus";
-  import { login, register, veryCode } from "@/api/user";
+  import { ElMessage, ElMessageBox } from "element-plus";
+  import { login, register, veryCode, forgotPassword } from "@/api/user";
 
   // state
   const dialogMode = ref<"all" | "left" | "right">();
@@ -129,6 +129,29 @@
     } else {
       onPrepareRegister();
     }
+  };
+
+  const openFogotDialog = () => {
+    ElMessageBox.prompt("请输入您的电子邮件", "@:邮件", {
+      confirmButtonText: "取消",
+      cancelButtonText: "取消",
+      inputPattern:
+        /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+      inputErrorMessage: "Invalid Email",
+    })
+      .then(({ value }) => {
+        forgotPassword(value)
+        ElMessage({
+          type: "success",
+          message: `邮件已发送至您的邮箱:${value}`,
+        });
+      })
+      .catch(() => {
+        // ElMessage({
+        //   type: "info",
+        //   message: "输入已取消",
+        // });
+      });
   };
 </script>
 
@@ -305,6 +328,17 @@
           >
             {{ state.isLogin ? "请注册" : "登录" }}
           </div>
+        </div>
+        <div>
+          <el-button
+            @click="openFogotDialog"
+            href="#"
+            class="border-none"
+            size="default"
+            link
+          >
+            <span>忘记密码了吗？</span>
+          </el-button>
         </div>
         <!-- <div class="other">
           <input

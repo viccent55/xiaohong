@@ -59,8 +59,15 @@ export const getStarFeeds = (
   return service.post("/user/starfeeds", { mid: id });
 };
 
-export function subscribe(
+export function changePassword(
   params?: object
 ): Promise<ResponseConfig<EmptyObjectType>> {
-  return service.post("/member/subscribe");
+  return service.post("/member/resetPassword", params);
+}
+export function forgotPassword(
+  email?: string
+): Promise<ResponseConfig<EmptyObjectType>> {
+  return service.post("/index/forgotPassword", {
+    email,
+  });
 }

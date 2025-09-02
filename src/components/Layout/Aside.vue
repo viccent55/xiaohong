@@ -55,7 +55,7 @@
       style="margin: 0"
       @click="openLoginDialog"
     >
-      <span>其他的</span>
+      <span>App下载</span>
     </el-button>
     <!-- 浮动框 -->
     <!-- <div
@@ -96,7 +96,7 @@
       <div class="flex gap-2 items-center">
         <User />
 
-        <span>轮廓</span>
+        <span>个人中心</span>
       </div>
     </el-button>
     <div v-else></div>

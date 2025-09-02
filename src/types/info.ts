@@ -35,6 +35,7 @@ export interface UserDetailInfo extends UserInfo {
   updated_at: string;
   invite_count: number;
   mode: number;
+  subscribed: number;
 }
 
 // 日期信息
@@ -46,10 +47,10 @@ export interface DateInfo {
 // 操作信息
 export interface ActionInfo {
   commentCount: number; // 评论数
-  likeCount: number; // 点赞数
-  favoriteCount?: number; // 收藏数
-  isLiked?: boolean; // 是否点赞
-  isFavorited?: boolean; // 是否收藏
+  like_count: number; // 点赞数
+  collect_count?: number; // 收藏数
+  isLike?: boolean; // 是否点赞
+  isStar?: boolean; // 是否收藏
 }
 
 // 媒体信息

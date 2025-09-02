@@ -31,7 +31,7 @@
     <slot name="content"></slot>
     <div class="total">共 {{ total }} 条评论</div>
     <slot></slot>
-    <div
+    <!-- <div
       class="gain-more"
       v-if="!userStore.isLogin">
       登录以查看更多评论
@@ -40,7 +40,7 @@
       class="gain-more"
       v-if="fulled">
       --End--
-    </div>
+    </div> -->
   </div>
 </template>
 

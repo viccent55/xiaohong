@@ -100,9 +100,7 @@
       getRes.noteFeeds(5);
     }
   });
-  const updateUserInfo = async () => {
-    // await setUserInfo();
-  };
+
   onMounted(() => {
     nextTick(() => {
       updateColumnWidth();
@@ -118,6 +116,7 @@
         :user="userInfo"
         @click-follow="handle.clickFollow"
         @click-report="handle.clickReport"
+        @refresh="getUserInfo(id)"
       />
 
       <div class="channel-wrpper">

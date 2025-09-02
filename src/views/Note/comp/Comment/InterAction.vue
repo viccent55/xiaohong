@@ -1,21 +1,26 @@
 <script setup lang="ts">
-  import { type ActionInfo } from '@/types/info'
+  import { type ActionInfo } from "@/types/info";
 
   defineProps<{
-    action: ActionInfo
-  }>()
+    action: ActionInfo;
+  }>();
 
-  defineEmits(['click-like', 'click-comment'])
+  defineEmits(["click-like", "click-comment"]);
 </script>
 
 <template>
   <div class="inter-action">
     <a
       @click="$emit('click-like')"
-      :class="{ 'like-active': action.isLiked }"
-      ><Heart /> {{ action.likeCount }}</a
+      :class="{ 'like-active': action?.isLike }"
     >
-    <a @click="$emit('click-comment')"><ChatSquare />回复</a>
+      <Heart />
+      {{ action?.like_count }}
+    </a>
+    <a @click="$emit('click-comment')">
+      <ChatSquare />
+      回复
+    </a>
   </div>
 </template>
 

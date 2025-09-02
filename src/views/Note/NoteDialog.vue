@@ -41,7 +41,7 @@
   });
   // 媒体信息
   const media = computed(() => {
-    return article.value.fields;
+    return article.value?.fields;
   });
   const getComments = async () => {
     if (!noteDialog.id.value) return;
@@ -134,7 +134,9 @@
         Api.reply(id, content, 0).then((res) => {
           if (res.errcode != 0) return;
           const comment = res.data;
+          article.value.comment_count++;
           console.log("res => ", comment);
+          getComments();
           // if (comment.replyTo) {
           //   commentBlocks.value.forEach((block) => {
           //     let index = block.commentList.findIndex((c) => c.id == id);
@@ -163,8 +165,7 @@
         // 获取文章的总评论块数
         const total_num = article.value.action.commentCount;
         // 将获取的评论数限制在5内
-        const num_ = curr_num + 5 > total_num ? total_num - curr_num : 5;
-        Api.getComments(Number(noteDialog.id.value), num_).then((res) => {
+        Api.getComments(Number(noteDialog.id.value)).then((res) => {
           if (res.code !== 200) return;
 
           const list = res.data;
@@ -244,7 +245,7 @@
         <AuthorHeader
           :author="{
             ...article?.author,
-            isFollow: article.isFollow,
+            isFollow: article?.isFollow,
           }"
           @click-close="noteDialog.closeNoteDialog"
           @click-author="handle.clickAuthor"
@@ -275,9 +276,12 @@
           :total="total"
           @more-comments="handle.getMoreComments"
         >
-          <template v-for="block in commentBlocks">
+          <template
+            v-for="(block, index) in commentBlocks"
+            :key="index"
+          >
             <CommentBlock
-              :comments="block"
+              :comment="block"
               @click-author="handle.clickAuthor"
               @click-like="handle.clickLike"
               @click-replay="handle.clickReply"

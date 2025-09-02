@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import ReportButton from "../Note/comp/ReportButton.vue";
   import FollowButton from "@/components/global/FollowButton.vue";
+  import Dialog from "./Dialog.vue";
 
   import type { UserDetailInfo } from "@/types/info";
   import { useUserStore } from "@/store/user";
@@ -8,7 +9,7 @@
   import Image from "@/components/Image.vue";
 
   const props = defineProps<{ user: UserDetailInfo }>();
-  const emits = defineEmits(["click-follow", "click-report"]);
+  const emits = defineEmits(["click-follow", "click-report", "refresh"]);
   const userStore = useUserStore();
 
   const self = computed(() => {
@@ -31,12 +32,13 @@
         fit="cover"
       />
     </div>
-    <div class="basic-wrapper">
-      <div class="base-info">
+    <div class="basic-wrapper min-w-[300px]">
+      <div class="base-info items-start justify-between">
         <div class="name-wrapper">
           <span class="name">{{ user?.nickname }}</span>
           <span class="id">小红书号: {{ user.id }}</span>
         </div>
+        <Dialog v-if="self" :user="user" @refresh="emits('refresh')" />
       </div>
       <div class="desc">{{ user.slogan || "还没有简介" }}</div>
       <div class="interactions">
@@ -115,7 +117,7 @@
 
   .base-info {
     display: flex;
-
+    align-items: center;
     .name-wrapper {
       display: flex;
       flex-direction: column;
