@@ -68,7 +68,6 @@ const viteConfig = defineConfig((mode) => {
     server: {
       host: "0.0.0.0",
       open: false,
-      hmr: true,
       proxy: {
         "/apiv1": {
           target: env.VITE_API_URL_PROD, 
@@ -76,11 +75,11 @@ const viteConfig = defineConfig((mode) => {
         },
       },
       allowedHosts: true,
-      // hmr: {
-      //   protocol: "wss", // or "ws" if not using HTTPS
-      //   host: "redbook.cgtt.live",
-      //   port: 5173, // same as dev server
-      // },
+      hmr: {
+        protocol: "ws", // or "ws" if not using HTTPS
+        host: "redbook.cgtt.live",
+        port: 5173, // same as dev server
+      },
     },
   };
 });
