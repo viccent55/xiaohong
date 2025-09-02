@@ -3,6 +3,7 @@
   import { ElDialog } from "element-plus";
   import { getPageInfo } from "@/api/pageinfo";
   import { Close } from "@element-plus/icons-vue";
+  import { screenMode } from "@/hooks/useScreenMode";
 
   const dialogVisible = ref(false);
   const loading = ref(false);
@@ -46,6 +47,7 @@
     v-model="dialogVisible"
     :before-close="handleClose"
     :show-close="false"
+    :width="screenMode === 'phone' ? '90%' : 'fit-content'"
   >
     <template #header="{ close, titleId, titleClass }">
       <div class="flex justify-end pr-1">

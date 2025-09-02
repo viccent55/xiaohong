@@ -80,8 +80,36 @@
       </div>
 
       <!-- <960 -->
-
-      <Dropdown
+      <el-dropdown trigger="click">
+        <button class="more-btn">
+          <el-icon><MoreFilled /></el-icon>
+        </button>
+        <template #dropdown>
+          <el-dropdown-menu width="200px">
+            <el-dropdown-item
+              v-for="(item, index) in categories"
+              :key="index"
+              @click="clickMenuItem"
+            >
+              <span class="p-1 text-base">{{ item.name }}</span>
+            </el-dropdown-item>
+            <el-divider></el-divider>
+            <el-dropdown-item
+              v-for="(item, index) in menuItems"
+              :key="index"
+            >
+              <span
+                class="text-base p-1"
+                :key="index"
+                @click="openLoginDialog(item)"
+              >
+                {{ item.name }}
+              </span>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+      <!-- <Dropdown
         @click-item="clickMenuItem"
         :items="categories"
         placement="bottom-end"
@@ -90,7 +118,7 @@
         <button class="more-btn">
           <el-icon><MoreFilled /></el-icon>
         </button>
-      </Dropdown>
+      </Dropdown> -->
     </div>
 
     <DialogInfo ref="dialgInfo" />

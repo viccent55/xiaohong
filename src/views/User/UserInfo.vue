@@ -5,6 +5,7 @@
 
   import type { UserDetailInfo } from "@/types/info";
   import { useUserStore } from "@/store/user";
+  import md5 from "crypto-js/md5";
   import { computed } from "vue";
   import Image from "@/components/Image.vue";
 
@@ -14,6 +15,11 @@
 
   const self = computed(() => {
     return userStore.useId === props.user.id;
+  });
+
+  const gravatarUrl = computed(() => {
+    const emailHash = props.user.email ? md5(props.user.email.toString()) : "";
+    return `https://cravatar.cn/avatar/${emailHash}`;
   });
   function clickFollow() {
     emits("click-follow", props.user);
@@ -26,7 +32,13 @@
 <template>
   <div class="info-wrapper">
     <div class="avatar-wrapper">
+      <img
+        v-if="!user.avatar || user.avatar == '/avatar/user/header.png'"
+        :src="gravatarUrl"
+        fit="cover"
+      />
       <Image
+        v-else
         :src="user.avatar"
         class="avatar-wrapper"
         fit="cover"
@@ -38,7 +50,11 @@
           <span class="name">{{ user?.nickname }}</span>
           <span class="id">小红书号: {{ user.id }}</span>
         </div>
-        <Dialog v-if="self" :user="user" @refresh="emits('refresh')" />
+        <Dialog
+          v-if="self"
+          :user="user"
+          @refresh="emits('refresh')"
+        />
       </div>
       <div class="desc">{{ user.slogan || "还没有简介" }}</div>
       <div class="interactions">
@@ -111,7 +127,11 @@
     }
 
     .phone-mode({
-      display: none;
+      min-width: 72px;
+      max-width: 72px;
+      min-height: 72px;
+      max-height: 72px;
+      margin-right: 16px;
     });
   }
 
@@ -122,20 +142,6 @@
       display: flex;
       flex-direction: column;
       width: 100px;
-    }
-
-    img {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      border: 1px solid var(--border-color);
-      object-fit: cover;
-      display: none;
-      margin-right: 16px;
-
-      .phone-mode({
-        display: block;
-      });
     }
 
     .name {

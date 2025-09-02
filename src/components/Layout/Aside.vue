@@ -29,6 +29,9 @@
   const itemClick = (item: EmptyObjectType) => {
     adsClick(item.id);
   };
+  const openAppUrl = () => {
+    window.open(store.configuration?.download_app_url);
+  };
   onMounted(() => {
     getAdsPosition(2);
   });
@@ -53,7 +56,7 @@
       size="large"
       round
       style="margin: 0"
-      @click="openLoginDialog"
+      @click="openAppUrl"
     >
       <span>App下载</span>
     </el-button>
@@ -88,7 +91,7 @@
     />
 
     <el-button
-     v-if="userStore.isLogin"
+      v-if="userStore.isLogin"
       size="large"
       round
       @click="$router.push(`/user/${userStore.useId}`)"

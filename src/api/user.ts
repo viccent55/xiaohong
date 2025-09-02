@@ -71,3 +71,8 @@ export function forgotPassword(
     email,
   });
 }
+export function resetPassword(
+  params?: object
+): Promise<ResponseConfig<EmptyObjectType>> {
+  return service.post("/index/setPassword", params);
+}

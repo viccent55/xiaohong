@@ -5,8 +5,9 @@
   import { loginDialogVisible, closeLoginDialog } from "@/hooks/useLoginDialog";
   import { screenMode } from "@/hooks/useScreenMode";
   import { useUserStore } from "@/store/user";
-  import { ElMessage, ElMessageBox } from "element-plus";
-  import { login, register, veryCode, forgotPassword } from "@/api/user";
+  import { ElMessage } from "element-plus";
+  import { login, register, veryCode } from "@/api/user";
+  import ForgotPassword from "./ForgotPassword.vue";
 
   // state
   const dialogMode = ref<"all" | "left" | "right">();
@@ -46,6 +47,7 @@
   );
   // 关闭
   const handleClose = () => {
+    state.isLogin = true;
     closeLoginDialog();
   };
 
@@ -131,27 +133,10 @@
     }
   };
 
+  const forgotPasswordRef = ref();
   const openFogotDialog = () => {
-    ElMessageBox.prompt("请输入您的电子邮件", "@:邮件", {
-      confirmButtonText: "取消",
-      cancelButtonText: "取消",
-      inputPattern:
-        /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
-      inputErrorMessage: "Invalid Email",
-    })
-      .then(({ value }) => {
-        forgotPassword(value)
-        ElMessage({
-          type: "success",
-          message: `邮件已发送至您的邮箱:${value}`,
-        });
-      })
-      .catch(() => {
-        // ElMessage({
-        //   type: "info",
-        //   message: "输入已取消",
-        // });
-      });
+    loginDialogVisible.value = false;
+    forgotPasswordRef.value.openDialog();
   };
 </script>
 
@@ -162,6 +147,7 @@
     style="border-radius: 16px"
     :show-close="false"
     align-center
+    @close="handleClose"
   >
     <div class="login-dialog">
       <!-- 关闭按钮 -->
@@ -350,6 +336,10 @@
       </div>
     </div>
   </el-dialog>
+  <ForgotPassword
+    ref="forgotPasswordRef"
+    @open="loginDialogVisible = true"
+  />
 </template>
 
 <style scoped lang="less">
