@@ -43,6 +43,13 @@
   const media = computed(() => {
     return article.value.fields;
   });
+  const getComments = async () => {
+    if (!noteDialog.id.value) return;
+    Api.getComments(noteDialog.id.value).then((res) => {
+      if (res.errcode !== 0) return;
+      commentBlocks.value = res.data;
+    });
+  };
   // 评论块是否加载我完
   const blockFulled = computed(() => {
     return article.value?.action?.commentCount <= commentBlocks.value?.length;
@@ -122,32 +129,26 @@
       });
     },
     // 提交评论
-    clickReplyTo(id: string, content: string, to?: string) {
+    clickReplyTo(id: string, content: string, to = {}) {
       checkPermissions(PERMISSION.User, () => {
-        Api.reply(Number(id), content, to || undefined).then((res) => {
+        Api.reply(id, content, 0).then((res) => {
           if (res.errcode != 0) return;
-
           const comment = res.data;
-
-          // 回复
-          if (comment.replyTo) {
-            commentBlocks.value.forEach((block) => {
-              // 找到对应评论块
-              let index = block.commentList.findIndex((c) => c.id == id);
-
-              // 将评论插入对应评论后面
-              if (index !== -1) block.commentList.splice(index + 1, 0, comment);
-            });
-          }
-          // 评论
-          else {
-            const block = {
-              commentList: [comment],
-              totalCommentCount: 1,
-            };
-            // 新评论块插入最前面
-            commentBlocks.value = [block, ...commentBlocks.value];
-          }
+          console.log("res => ", comment);
+          // if (comment.replyTo) {
+          //   commentBlocks.value.forEach((block) => {
+          //     let index = block.commentList.findIndex((c) => c.id == id);
+          //     if (index !== -1) block.commentList.splice(index + 1, 0, comment);
+          //   });
+          // }
+          // else {
+          //   const block = {
+          //     commentList: [comment],
+          //     totalCommentCount: 1,
+          //   };
+          //   // 新评论块插入最前面
+          //   commentBlocks.value = [block, ...commentBlocks.value];
+          // }
 
           article.value.totalCommentCount += 1;
         });
@@ -199,7 +200,7 @@
     Api.getNoteDetail(Number(noteDialog.id.value), storeUser?.visitCode).then(
       (res) => {
         article.value = res.data;
-        commentBlocks.value = res.data.commentBlocks;
+        getComments();
       }
     );
   };

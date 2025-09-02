@@ -23,7 +23,7 @@
       class="avatar"
       :class="{ 'with-reply': comment.replyTo }">
       <img
-        :src="comment.author.avatarUrl"
+        :src="comment.author.avatar"
         @click="$emit('click-avatar', comment.author.id)" />
     </div>
     <div class="right">

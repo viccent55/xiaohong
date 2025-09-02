@@ -4,7 +4,7 @@
   import ExploreChannelBar from "../Explore/comp/ExploreChannelBar.vue";
   import ExploreFeed from "../Explore/comp/ExploreFeed.vue";
   import BottomMore from "@/components/global/BottomMore.vue";
-  import { computed, onMounted, ref, inject, nextTick } from "vue";
+  import { computed, onMounted, ref, inject, nextTick, watchEffect } from "vue";
   import { useRoute } from "vue-router";
   import type { ExploreChannelItem } from "@/types/item";
   import { UserChannelItems } from "@/common";
@@ -20,10 +20,11 @@
   const route = useRoute();
   const noteDialog = useNoteDialog();
   const scrollContainer: any = inject("scrollContainer");
+  const { updateColumnWidth, columnWidth, gap, feedsContainer } = useVariable();
 
   const channel = ref<string>(UserChannelItems[0].value);
   const userInfo = ref(<UserDetailInfo>{});
-  const id = Number(route.params.id);
+  const id = computed(() => Number(route.params.id));
   // 笔记列表
   const noteFeeds = ref<EmptyObjectType[]>([]);
   // 收藏列表
@@ -46,14 +47,14 @@
   const getRes = {
     noteFeeds(num: number) {
       // 获取笔记
-      getNoteFeeds(id).then((res) => {
+      getNoteFeeds(id.value).then((res) => {
         if (res.errcode !== 0) return;
         noteFeeds.value = [...noteFeeds.value, ...res.data?.items];
       });
     },
     starFeeds(num: number) {
       // 获取收藏
-      getStarFeeds(id).then((res) => {
+      getStarFeeds(id.value).then((res) => {
         if (res.errcode !== 0) return;
         starFeeds.value = [...starFeeds.value, ...res.data?.items];
       });
@@ -65,9 +66,9 @@
       channel.value = item.value;
     },
     clickFollow(user: UserDetailInfo) {
-      console.log("关注", id);
+      console.log("关注", id.value);
       checkPermissions(PERMISSION.User, () => {
-        Api.follow(id).then((res) => {
+        Api.follow(id.value).then((res) => {
           if (res.errcode !== 0) return;
           user.isFollow = !user.isFollow;
         });
@@ -87,21 +88,22 @@
       }
     },
   };
+
+  watchEffect(() => {
+    if (id.value) {
+      getUserInfo(id.value).then((res) => {
+        userInfo.value = JSON.parse(JSON.stringify(res));
+      });
+      noteFeeds.value = [];
+      starFeeds.value = [];
+      // getRes.starFeeds(5);
+      getRes.noteFeeds(5);
+    }
+  });
   const updateUserInfo = async () => {
     // await setUserInfo();
   };
-
-  const { updateColumnWidth, columnWidth, gap, feedsContainer } = useVariable();
-
   onMounted(() => {
-    if (id) {
-      getUserInfo(id).then((res) => {
-        userInfo.value = JSON.parse(JSON.stringify(res));
-        console.log("userInfo", userInfo.value);
-      });
-
-      getRes.noteFeeds(5);
-    }
     nextTick(() => {
       updateColumnWidth();
     });

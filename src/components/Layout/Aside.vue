@@ -1,7 +1,5 @@
 <script setup lang="ts">
-  import Dropdown from "../global/Dropdown.vue";
-  import { dropDownItems3 } from "@/common";
-  import { computed, onMounted } from "vue";
+  import { onMounted } from "vue";
   import { useUserStore } from "@/store/user";
   import { openLoginDialog } from "@/hooks/useLoginDialog";
   import type { NavigationItem } from "@/types/item";
@@ -9,7 +7,9 @@
   import AppLink from "@/components/AppLink.vue";
   import useHome from "@/composables/useHome";
   import { useStore } from "@/store";
-import { adsClick } from "@/api/advertisment";
+  import { adsClick } from "@/api/advertisment";
+  import { User } from "@element-plus/icons-vue";
+
   const userStore = useUserStore();
 
   defineEmits([
@@ -27,8 +27,7 @@ import { adsClick } from "@/api/advertisment";
   const { getAdsPosition } = useHome();
 
   const itemClick = (item: EmptyObjectType) => {
-
-    adsClick(item.id)
+    adsClick(item.id);
   };
   onMounted(() => {
     getAdsPosition(2);
@@ -39,29 +38,27 @@ import { adsClick } from "@/api/advertisment";
   <div class="aside flex flex-col gap-5">
     <SocialNetwork />
     <!-- 登录按钮 -->
-    <button
-      class="login-btn"
+    <el-button
+      type="danger"
+      size="large"
+      round
       v-if="!userStore.isLogin"
       @click="openLoginDialog"
     >
       <span>登录</span>
-    </button>
+    </el-button>
 
-    <!-- <el-button
-      type="danger"
-      @click="openLoginDialog"
-    >
-      <span>下载</span>
-    </el-button> -->
     <el-button
       type="warning"
+      size="large"
+      round
       style="margin: 0"
       @click="openLoginDialog"
     >
       <span>其他的</span>
     </el-button>
     <!-- 浮动框 -->
-    <div
+    <!-- <div
       class="float-box"
       @click="openLoginDialog"
       v-if="!userStore.isLogin"
@@ -83,15 +80,25 @@ import { adsClick } from "@/api/advertisment";
         <ChatSquare />
         与他人更好地互动、交流
       </span>
-    </div>
+    </div> -->
     <AppLink
       :apps="store?.recommendAds"
       v-if="store?.recommendAds?.length > 0"
       @item-click="itemClick"
     />
 
-    <!-- 更多菜单 -->
-    <Dropdown
+    <el-button
+      size="large"
+      round
+      @click="$router.push(`/user/${userStore.useId}`)"
+    >
+      <div class="flex gap-2 items-center">
+        <User />
+
+        <span>轮廓</span>
+      </div>
+    </el-button>
+    <!-- <Dropdown
       @click-item="(item) => $emit('click-menu-item', item)"
       :items="dropDownItems3"
       placement="top-start"
@@ -101,7 +108,7 @@ import { adsClick } from "@/api/advertisment";
         <MoreFilled />
         <span>更多</span>
       </button>
-    </Dropdown>
+    </Dropdown> -->
   </div>
 </template>
 
@@ -126,29 +133,6 @@ import { adsClick } from "@/api/advertisment";
       width: 0;
       display: none;
     });
-  }
-
-  // 按钮组样式
-  button {
-    font-size: 16px;
-    font-weight: 1000;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-    .btn-large();
-
-    // color: var(--text-color-dark);
-
-    svg {
-      width: 24px;
-      height: 24px;
-      margin-right: 12px;
-    }
-
-    &.active {
-      background-color: var(--background-color-dark);
-    }
   }
 
   // 登录按钮样式

@@ -12,10 +12,11 @@ export const getNoteDetail = (
 
 // 获取评论
 export const getComments = (
-  id: number,
-  num: number
+  id: string | number
 ): Promise<ResponseConfig<CommentBlockInfo[]>> => {
-  return axios.get("/member/comments", { params: { id, num } });
+  return axios.post("/item/comments", {
+    id: id,
+  });
 };
 
 // 获取回复
@@ -28,18 +29,17 @@ export const getReplies = (
 
 // 回复
 export const reply = (
-  id: number,
+  id: string | number,
   content: string,
-  to?: string
+  pid: number
 ): Promise<ResponseConfig<CommentInfo>> => {
-  return axios.post("/member/comment", { item_id: id, content });
+  return axios.post("/member/comment", { id, pid, content });
 };
 
 // 点赞
 export const like = (id: number): Promise<ResponseConfig<null>> => {
   return axios.post("/member/like", { id });
 };
-
 
 export const follow = (
   id: number

@@ -58,3 +58,9 @@ export const getStarFeeds = (
 ): Promise<ResponseConfig<ListConfig<EmptyObjectType>>> => {
   return service.post("/user/starfeeds", { mid: id });
 };
+
+export function subscribe(
+  params?: object
+): Promise<ResponseConfig<EmptyObjectType>> {
+  return service.post("/member/subscribe");
+}
