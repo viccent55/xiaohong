@@ -99,7 +99,7 @@
           <el-icon><MoreFilled /></el-icon>
         </button>
         <template #dropdown>
-          <el-dropdown-menu width="200px">
+          <el-dropdown-menu >
             <el-dropdown-item
               v-for="(item, index) in categories"
               :key="index"
