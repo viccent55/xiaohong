@@ -160,11 +160,6 @@
     getMoreComments() {
       console.log("更多评论");
       checkPermissions(PERMISSION.User, () => {
-        // 获取当前评论块数量
-        const curr_num = commentBlocks.value.length;
-        // 获取文章的总评论块数
-        const total_num = article.value.action.commentCount;
-        // 将获取的评论数限制在5内
         Api.getComments(Number(noteDialog.id.value)).then((res) => {
           if (res.code !== 200) return;
 
@@ -277,8 +272,8 @@
           @more-comments="handle.getMoreComments"
         >
           <template
-            v-for="(block, index) in commentBlocks"
-            :key="index"
+            v-for="(block) in commentBlocks"
+            :key="block.id"
           >
             <CommentBlock
               :comment="block"

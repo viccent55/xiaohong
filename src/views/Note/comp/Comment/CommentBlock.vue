@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { computed } from "vue";
   import Comment from "./Comment.vue";
   import { type ActionInfo } from "@/types/info";
 

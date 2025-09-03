@@ -1,7 +1,5 @@
 <script setup lang="ts">
   import Date from "../Date.vue";
-  import InterAction from "./InterAction.vue";
-  import ReportButton from "../ReportButton.vue";
 
   defineProps<{
     comment: EmptyObjectType;

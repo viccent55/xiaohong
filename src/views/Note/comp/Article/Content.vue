@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import type { ArticleInfo } from "@/types/info";
   import Date from "../Date.vue";
   import ReportButton from "../ReportButton.vue";
 

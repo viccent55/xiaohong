@@ -13,11 +13,11 @@
 <template>
   <div class="container">
     <img
-      :src="info.user.avatarUrl"
+      :src="info.user.avatar"
       @clcik="$emit('click-author')" />
     <div class="main">
       <div class="info">
-        <a @click="$emit('click-author', info)">{{ info.user.name }}</a>
+        <a @click="$emit('click-author', info)">{{ info.user?.nickname }}</a>
         <div class="interaction">
           <span>{{ info.hint }}</span>
           <span>{{ info.time }}</span>
