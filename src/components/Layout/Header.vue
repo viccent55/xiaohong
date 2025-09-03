@@ -42,11 +42,11 @@
   const clickMenuItem = (item: Record<string, string>) => {
     store.channel = item.value;
   };
-  const searchDisabled =ref(false)
+  const searchDisabled = ref(false);
   const onFocusSearch = () => {
     if (searchDisabled.value) return;
 
-    checkPermissions(PERMISSION.User, () => { });
+    checkPermissions(PERMISSION.User, () => {});
   };
 </script>
 
@@ -56,7 +56,8 @@
     <a href="/"><img src="/logo.png" alt="logo" /></a>
 
     <div
-      class="input-wrapper" @click.stop="onFocusSearch"
+      class="input-wrapper"
+      @click.stop="onFocusSearch"
     >
       <input
         :disabled="searchDisabled"
@@ -99,7 +100,7 @@
           <el-icon><MoreFilled /></el-icon>
         </button>
         <template #dropdown>
-          <el-dropdown-menu >
+          <el-dropdown-menu class="custom-dropdown">
             <el-dropdown-item
               v-for="(item, index) in categories"
               :key="index"
@@ -241,5 +242,8 @@
         display: none;
       });
     }
+  }
+  .custom-dropdown {
+    min-width: 170px; /* adjust as needed */
   }
 </style>
