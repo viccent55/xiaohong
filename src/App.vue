@@ -51,7 +51,7 @@ import AnalyticsLoader from "@/components/AnalyticsLoader.vue";
 
   // 导航索引
   const navigationItem = computed(
-    () => NavigationItems.find((item) => item.mode === store.mode) || "0"
+    () => NavigationItems.find((item) => item.mode === store?.mode) ?? NavigationItems[0]
   );
 
   // 点击导航项
