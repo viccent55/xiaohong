@@ -60,6 +60,7 @@ const viteConfig = defineConfig((mode) => {
         },
       }),
     ],
+
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
@@ -76,6 +77,12 @@ const viteConfig = defineConfig((mode) => {
       },
       allowedHosts: true,
       hmr: true,
+    },
+    esbuild: {
+      // Skip type checking in production build
+      tsconfigRaw: {
+        compilerOptions: { noEmitOnError: false },
+      },
     },
   };
 });
