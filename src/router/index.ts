@@ -1,4 +1,8 @@
-import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import {
+  createRouter,
+  createWebHistory,
+  type RouteRecordRaw,
+} from "vue-router";
 
 const routes: Array<RouteRecordRaw> = [
   // {
@@ -6,35 +10,30 @@ const routes: Array<RouteRecordRaw> = [
   //   redirect: '/explore',
   // },
   {
-    path: '/',
-    name: 'Explore',
-    component: () => import('@/views/Explore/index.vue'),
+    path: "/",
+    name: "Explore",
+    component: () => import("@/views/Explore/index.vue"),
   },
   {
-    path: '/notification',
-    name: 'Notification',
-    component: () => import('@/views/Notification/index.vue'),
+    path: "/notification",
+    name: "Notification",
+    component: () => import("@/views/Notification/index.vue"),
   },
   {
-    path: '/user/:id',
-    name: 'User',
-    component: () => import('@/views/User/index.vue'),
+    path: "/user/:id",
+    name: "User",
+    component: () => import("@/views/User/index.vue"),
   },
   {
-    path: '/member',
-    name: 'Member',
-    component: () => import('@/views/Member/index.vue'),
+    path: "/member",
+    name: "Member",
+    component: () => import("@/views/Member/index.vue"),
   },
-  {
-    path: '/download',
-    name: 'Member',
-    component: () => import('@/views/Download/index.vue'),
-  },
-]
+];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
-})
+});
 
-export default router
+export default router;
