@@ -17,19 +17,17 @@
   import { computed, onBeforeMount, onMounted, ref, provide } from "vue";
   import type { NavigationItem } from "./types/item";
   import { NavigationItems } from "./common";
-  import { openPage } from "./service";
-  import { useRouter, useRoute } from "vue-router";
+  import { useRouter } from "vue-router";
   import { useUserStore } from "./store/user";
   import { useStore } from "./store";
   import InstallPWA from "./components/global/InstallPWA.vue";
   import DialogPopupAds from "./components/DialogPopupAds.vue";
   import useHome from "./composables/useHome";
+import AnalyticsLoader from "@/components/AnalyticsLoader.vue";
 
-  const route = useRoute();
   const router = useRouter();
   const userStore = useUserStore();
   const noteDialog = useNoteDialog();
-  const store = useStore();
   const { generateVisitCode } = useHome();
 
   const scrollContainer = ref<HTMLElement | null>(null);
@@ -82,6 +80,8 @@
     }
   });
 
+  const store = useStore();
+
   onMounted(() => {
     // 检查是否需要打开笔记
     // 延迟500ms后执行，因为此时路由查询参数可能还未更新
@@ -93,11 +93,11 @@
 
 <template>
   <div class="app-center-wrapper">
+
     <div class="app-container">
       <Header></Header>
       <Aside
         :items="NavigationItems"
-        :active-item="navigationItem"
         @click-nav-item="clickNavigationItem"
       ></Aside>
 
@@ -124,7 +124,9 @@
         v-if="!userStore.loginDialogVisible"
         :adverts="store.homePopupAds"
       />
+      <AnalyticsLoader :analytics="store.configuration?.analytics" />
     </div>
+
   </div>
 </template>
 

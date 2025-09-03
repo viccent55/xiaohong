@@ -13,7 +13,7 @@
       default: "small",
     },
     id: {
-      type: String,
+      type: Number || String,
       default: () => "",
     },
   });
