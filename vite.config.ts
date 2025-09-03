@@ -70,15 +70,29 @@ const viteConfig = defineConfig((mode) => {
       open: false,
       proxy: {
         "/apiv1": {
-          target: env.VITE_API_URL_PROD,
+          target: env.VITE_API_URL_LOC,
           changeOrigin: true,
         },
       },
       allowedHosts: true,
-      hmr: {
-        protocol: "wss",
-        host: "redbook.cgtt.live",
-        port: 5173,
+      hmr: true,
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          // Keep entry files (main.ts etc.)
+          entryFileNames: `assets/[name].js`,
+          // Keep asset names
+          assetFileNames: `assets/[name].[ext]`,
+          // Customize chunk names
+          chunkFileNames: (chunkInfo) => {
+            // If the chunk comes from a Vue file, keep the name
+            if (chunkInfo.name) {
+              return `assets/${chunkInfo.name}.js`;
+            }
+            return `assets/chunk-[hash].js`;
+          },
+        },
       },
     },
   };
