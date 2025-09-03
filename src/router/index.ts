@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 const routes: Array<RouteRecordRaw> = [
+  // {
+  //   path: '/',
+  //   redirect: '/explore',
+  // },
   {
     path: '/',
-    redirect: '/explore',
-  },
-  {
-    path: '/explore',
     name: 'Explore',
     component: () => import('@/views/Explore/index.vue'),
   },
@@ -24,6 +24,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/member',
     name: 'Member',
     component: () => import('@/views/Member/index.vue'),
+  },
+  {
+    path: '/download',
+    name: 'Member',
+    component: () => import('@/views/Download/index.vue'),
   },
 ]
 
