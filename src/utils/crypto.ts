@@ -1,9 +1,9 @@
 import CryptoJS from "crypto-js";
 import md5 from "crypto-js/md5";
 
-const SECRET_KEY = "12345678901234567890123456789012"; // 32 chars
-const IV = "1234567890123456"; // 16 chars
 const SIGN_KEY = "super-secret-sign";
+const SECRET_KEY = "mHZ3LVwW8ukKEVvWM1dQi5cyP8pXHFpN"; // 32 chars
+const IV = "Avbn58RBm4RzprRw"; // 16 chars
 
 // Convert key/iv into WordArray (char codes)
 const KEY = CryptoJS.enc.Utf8.parse(SECRET_KEY);
@@ -39,10 +39,6 @@ export function decrypt(ciphertext: string): any {
 }
 
 // 🔹 Make Sign (MD5)
-export function makeSign(
-  client: string,
-  timestamp: number,
-  encryptedData: string
-): string {
-  return md5(`${client}${timestamp}${encryptedData}${SIGN_KEY}`).toString();
+export function makeSign(timestamp: number, encryptedData: string): string {
+  return md5(`${timestamp}${encryptedData}${SIGN_KEY}`).toString();
 }

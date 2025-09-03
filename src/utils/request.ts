@@ -21,21 +21,19 @@ instance.interceptors.request.use(
     //   "\ntoken:",
     //   config.headers.Authorization
     // );
-    // const client = "pwa";
-    // const timestamp = dayjs().unix();
-    // // If body data exists → encrypt it
-    // if (config.data) {
-    //   const encryptedData = encrypt(config.data);
-    //   const sign = makeSign(client, timestamp, encryptedData);
-
-    //   // overwrite request body
-    //   config.data = {
-    //     client,
-    //     timestamp,
-    //     data: encryptedData,
-    //     sign,
-    //   };
-    // }
+    const client = "pwa";
+    const timestamp = dayjs().unix();
+    // If body data exists → encrypt it
+    if (config.data) {
+      const encryptedData = encrypt(config.data);
+      const sign = makeSign(timestamp, encryptedData);
+      config.data = {
+        client,
+        timestamp,
+        data: encryptedData,
+        sign,
+      };
+    }
     return config;
   },
   (error) => {
@@ -51,13 +49,16 @@ instance.interceptors.response.use(
       userStore.logout();
       ElMessage.error(response.data.info);
     }
+
     if (response.status === 200) {
       // decrypt only if response contains "data"
       if (response.data?.data) {
         try {
-          // response.data.data = decrypt(response.data.data);
+          const decrypted = decrypt(response.data.data);
+          // console.log("Decrypted:", decrypted);
+          response.data = decrypted;
         } catch (e) {
-          console.warn("Decryption failed:", e);
+          console.warn("Decryption failed:", e, response.data);
         }
       }
       return response.data;

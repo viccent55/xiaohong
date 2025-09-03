@@ -1,6 +1,7 @@
 <script lang="ts" setup>
   import { ref, watchEffect, reactive, nextTick } from "vue";
   import { useDecryption } from "@/composables/useDecryption";
+  import md5 from "crypto-js/md5";
 
   const props = defineProps({
     src: {
@@ -10,6 +11,10 @@
     size: {
       type: String,
       default: "small",
+    },
+    id: {
+      type: String,
+      default: () => "",
     },
   });
 
@@ -45,9 +50,8 @@
     });
   };
   const generateAvatar = () => {
-    const gender = "women";
-    const randomNumber = Math.floor(Math.random() * 100);
-    return `https://randomuser.me/api/portraits/${gender}/${randomNumber}.jpg`;
+    const id = props.id ? md5(props.id.toString()) : "";
+    return `https://cravatar.cn/avatar/${id}`;
   };
 </script>
 

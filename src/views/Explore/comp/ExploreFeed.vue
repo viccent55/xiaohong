@@ -58,9 +58,8 @@
       <div class="author-wrapper">
         <!-- 作者名称头像 -->
         <div class="info-wrapper" @click.stop="$emit('clickAuthor') /* 阻止冒泡 */">
-        
           <a :href="feed.author?.id ? `/user/${feed.author?.id}` : '#'">
-          <Avatar :src="feed.author?.avatar" />
+          <Avatar :src="feed.author?.avatar" :id="feed.id"/>
           </a>
           <span>{{ feed.author?.name }}</span>
         </div>

@@ -2,6 +2,8 @@
   import { useStore } from "@/store";
   import { computed, ref } from "vue";
   import DialogInfo from "../DialogInfo.vue";
+  import { checkPermissions } from "@/hooks/usePermisions";
+  import { PERMISSION } from "@/common/permision";
 
   const store = useStore();
   const emits = defineEmits(["click-menu-item"]);
@@ -40,6 +42,12 @@
   const clickMenuItem = (item: Record<string, string>) => {
     store.channel = item.value;
   };
+  const searchDisabled =ref(false)
+  const onFocusSearch = () => {
+    if (searchDisabled.value) return;
+
+    checkPermissions(PERMISSION.User, () => { });
+  };
 </script>
 
 <template>
@@ -47,9 +55,15 @@
     <!-- prettier-ignore -->
     <a href="/"><img src="/logo.png" alt="logo" /></a>
 
-    <div class="input-wrapper">
+    <div
+      class="input-wrapper" @click.stop="onFocusSearch"
+    >
       <input
+        :disabled="searchDisabled"
+        v-model="store.search"
         type="text"
+        @focus="onFocusSearch"
+        @keydown.enter="onFocusSearch"
         placeholder="搜索"
       />
       <div class="search-icon">
@@ -91,15 +105,15 @@
               :key="index"
               @click="clickMenuItem"
             >
-              <span class="p-1 text-base">{{ item.name }}</span>
+              <span class="px-3 py-1 text-base">{{ item.name }}</span>
             </el-dropdown-item>
-            <el-divider></el-divider>
+            <el-divider style="margin: 6px 0"></el-divider>
             <el-dropdown-item
               v-for="(item, index) in menuItems"
               :key="index"
             >
               <span
-                class="text-base p-1"
+                class="text-base px-3 py-1"
                 :key="index"
                 @click="openLoginDialog(item)"
               >

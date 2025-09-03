@@ -99,7 +99,7 @@
       console.log("收藏");
       checkPermissions(PERMISSION.User, () => {
         const id_ = article.value.id;
-        Api.like(id_).then((res) => {
+        Api.star(id_).then((res) => {
           if (res.errcode == 0) {
             item.isStar = !item.isStar;
             if (!item.isStar) {
