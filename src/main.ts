@@ -6,10 +6,10 @@ import "element-plus/dist/index.css";
 import "element-plus/theme-chalk/dark/css-vars.css";
 import "@/assets/styles/styles.css";
 import App from "@/App.vue";
-import router from "@/router";
+import router from "@/router/index";
 import { setupElementPlus } from "@/utils/element";
 import ElementPlus from "element-plus";
-import Heart from "./components/global/Heart.vue";
+import Heart from "@/components/global/Heart.vue";
 
 // mock
 // import "@/mock";
