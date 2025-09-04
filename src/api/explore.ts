@@ -22,8 +22,8 @@ export function getUserInfo(params: {
 }
 
 // getConfiguration
-export function getConfiguration(): Promise<ResponseConfig<EmptyObjectType>> {
-  return axios.get("/index/config");
+export function getConfiguration(params: object): Promise<ResponseConfig<EmptyObjectType>> {
+  return axios.post("/index/config", params);
 }
 
 // Visitor

@@ -19,6 +19,7 @@
   import { storeToRefs } from "pinia";
   import useHome from "@/composables/useHome";
   import { itemAdClick } from "@/api/advertisment";
+  import dayjs from "dayjs";
 
   const noteDialog = useNoteDialog();
 
@@ -150,7 +151,10 @@
   };
   // 初始加载数据
   const initConfig = async () => {
-    const response = await getConfiguration();
+    const timestamp = dayjs().unix();
+    const response = await getConfiguration({
+      timestamp: timestamp,
+    });
     if (response.errcode == 0) {
       store.configuration = response.data;
     }

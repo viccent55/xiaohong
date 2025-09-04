@@ -8,7 +8,7 @@
   ]);
   defineProps<{
     items: NavigationItem[];
-    activeItem?: NavigationItem;
+    activeItem: NavigationItem;
   }>();
 </script>
 
@@ -24,7 +24,7 @@
       >
         <div v-if="item.icon == 'Setting'">
           <Dropdown
-            @click-item="(item) => $emit('click-menu-item', item)"
+            @click-item="(item: NavigationItem) => $emit('click-menu-item', item)"
             :items="dropDownItems3"
             placement="top-start"
             trigger="click"

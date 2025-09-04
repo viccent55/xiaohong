@@ -9,6 +9,7 @@
   import { useStore } from "@/store";
   import { adsClick } from "@/api/advertisment";
   import { User } from "@element-plus/icons-vue";
+  import { openPage } from "@/service";
 
   const userStore = useUserStore();
 
@@ -29,9 +30,7 @@
   const itemClick = (item: EmptyObjectType) => {
     adsClick(item.id);
   };
-  const openAppUrl = () => {
-    window.open(store.configuration?.download_app_url);
-  };
+
   onMounted(() => {
     getAdsPosition(2);
   });
@@ -56,7 +55,7 @@
       size="large"
       round
       style="margin: 0"
-      @click="openAppUrl"
+      @click="openPage(store.configuration?.download_app_url)"
     >
       <span>App下载</span>
     </el-button>

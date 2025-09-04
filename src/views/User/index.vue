@@ -3,7 +3,6 @@
   import UserInfo from "./UserInfo.vue";
   import ExploreChannelBar from "../Explore/comp/ExploreChannelBar.vue";
   import ExploreFeed from "../Explore/comp/ExploreFeed.vue";
-  import BottomMore from "@/components/global/BottomMore.vue";
   import { computed, onMounted, ref, inject, nextTick, watchEffect } from "vue";
   import { useRoute } from "vue-router";
   import type { ExploreChannelItem } from "@/types/item";
@@ -45,14 +44,14 @@
   // });
 
   const getRes = {
-    noteFeeds(num: number) {
+    noteFeeds() {
       // 获取笔记
       getNoteFeeds(id.value).then((res) => {
         if (res.errcode !== 0) return;
         noteFeeds.value = [...noteFeeds.value, ...res.data?.items];
       });
     },
-    starFeeds(num: number) {
+    starFeeds() {
       // 获取收藏
       getStarFeeds(id.value).then((res) => {
         if (res.errcode !== 0) return;
@@ -82,9 +81,9 @@
     },
     clickMore() {
       if (channel.value === UserChannelItems[0].value) {
-        getRes.noteFeeds(5);
+        getRes.noteFeeds();
       } else {
-        getRes.starFeeds(5);
+        getRes.starFeeds();
       }
     },
   };
@@ -97,7 +96,7 @@
       noteFeeds.value = [];
       starFeeds.value = [];
       // getRes.starFeeds(5);
-      getRes.noteFeeds(5);
+      getRes.noteFeeds();
     }
   });
 

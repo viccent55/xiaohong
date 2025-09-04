@@ -21,7 +21,7 @@ export const getComments = (
 
 // 获取回复
 export const getReplies = (
-  id: number,
+  id: String | Number,
   num: number
 ): Promise<ResponseConfig<CommentInfo[]>> => {
   return axios.get("/replies", { params: { id, num } });

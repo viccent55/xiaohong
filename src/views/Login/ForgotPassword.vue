@@ -126,7 +126,7 @@
         <el-form-item size="large">
           <template #label>
             <span class="text-red-500 mr-1">*</span>
-            密码
+            新密码
           </template>
           <el-input
             v-model="state.password"

@@ -6,7 +6,11 @@ import dayjs from "dayjs";
 import { ElMessage } from "element-plus";
 
 const instance: AxiosInstance = axios.create({
-  baseURL: "/apiv1",
+  baseURL: `${
+    import.meta.env.MODE === "development"
+      ? import.meta.env.VITE_API_URL_LOC
+      : import.meta.env.VITE_API_URL_PROD
+  }/apiv1`,
   timeout: 10000,
   withCredentials: true,
   headers: { "Content-Type": "application/json" },

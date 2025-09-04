@@ -69,20 +69,14 @@ const viteConfig = defineConfig((mode) => {
     server: {
       host: "0.0.0.0",
       open: false,
-      proxy: {
-        "/apiv1": {
-          target: env.VITE_API_URL_LOC,
-          changeOrigin: true,
-        },
-      },
+      // proxy: {
+      //   "/apiv1": {
+      //     target: env.VITE_API_URL_PROD,
+      //     changeOrigin: true,
+      //   },
+      // },
       allowedHosts: true,
       hmr: true,
-    },
-    esbuild: {
-      // Skip type checking in production build
-      tsconfigRaw: {
-        compilerOptions: { noEmitOnError: false },
-      },
     },
   };
 });

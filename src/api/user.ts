@@ -1,5 +1,5 @@
 import type { ListConfig, ResponseConfig } from "@/types/axios";
-import type { ExploreFeedInfo, UserDetailInfo } from "@/types/info";
+import type {  UserDetailInfo } from "@/types/info";
 import service from "@/utils/request";
 
 export function login(

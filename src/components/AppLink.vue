@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import { ElCard } from "element-plus";
-  import Image from "./Image.vue";
   import AdvertSlot from "./AdvertSlot.vue";
   // props for dynamic apps
   defineProps<{
