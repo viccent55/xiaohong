@@ -3,6 +3,7 @@
   import { ElDialog, ElButton, ElIcon } from "element-plus";
   import { Close } from "@element-plus/icons-vue";
   import AdvertSlot from "./AdvertSlot.vue";
+  import { adsClick } from "@/api/advertisment";
 
   interface Advert {
     id: number | string;
@@ -134,6 +135,7 @@
         v-if="currentAdvert"
         :advert="currentAdvert"
         class="advert-image"
+        @click="adsClick(Number(currentAdvert?.id))"
       />
     </div>
   </el-dialog>
