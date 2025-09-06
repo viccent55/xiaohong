@@ -23,7 +23,7 @@
   import InstallPWA from "./components/global/InstallPWA.vue";
   import DialogPopupAds from "./components/DialogPopupAds.vue";
   import useHome from "./composables/useHome";
-import AnalyticsLoader from "@/components/AnalyticsLoader.vue";
+  import AnalyticsLoader from "@/components/AnalyticsLoader.vue";
 
   const router = useRouter();
   const userStore = useUserStore();
@@ -50,7 +50,9 @@ import AnalyticsLoader from "@/components/AnalyticsLoader.vue";
 
   // 导航索引
   const navigationItem = computed(
-    () => NavigationItems.find((item) => item.mode === store?.mode) ?? NavigationItems[0]
+    () =>
+      NavigationItems.find((item) => item.mode === store?.mode) ??
+      NavigationItems[0]
   );
 
   // 点击导航项
@@ -91,7 +93,6 @@ import AnalyticsLoader from "@/components/AnalyticsLoader.vue";
 
 <template>
   <div class="app-center-wrapper">
-
     <div class="app-container">
       <Header></Header>
       <Aside
@@ -124,7 +125,6 @@ import AnalyticsLoader from "@/components/AnalyticsLoader.vue";
       />
       <AnalyticsLoader :analytics="store.configuration?.analytics" />
     </div>
-
   </div>
 </template>
 
@@ -153,6 +153,7 @@ import AnalyticsLoader from "@/components/AnalyticsLoader.vue";
     height: calc(100% - 72px);
     margin-top: 72px;
 
+    overflow-y: auto;
     overflow-x: auto;
     scrollbar-width: none;
   }

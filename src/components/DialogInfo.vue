@@ -47,7 +47,7 @@
     v-model="dialogVisible"
     :before-close="handleClose"
     :show-close="false"
-    :width="screenMode === 'phone' ? '90%' : 'fit-content'"
+    :width="screenMode === 'phone' ? '90%' : ''"
   >
     <template #header="{ close, titleId, titleClass }">
       <div class="flex justify-end pr-1">

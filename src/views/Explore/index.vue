@@ -25,6 +25,8 @@
   import { itemAdClick } from "@/api/advertisment";
   import dayjs from "dayjs";
   import useVariable from "@/composables/useVariable";
+  import { ca } from "element-plus/es/locales.mjs";
+  import { ElMessage } from "element-plus";
   const noteDialog = useNoteDialog();
 
   // 当前频道
@@ -179,8 +181,13 @@
   });
 
   const searchParam = async () => {
-    const respnse = await search(store.search);
-    feeds.value = respnse.data;
+    if (store.search === "" || !store.search) return;
+    try {
+      const respnse = await search(store.search);
+      feeds.value = respnse.data;
+    } catch (e) {
+      console.log(e);
+    }
   };
   const debouncedSearch = debounce(searchParam, 500);
   watch(

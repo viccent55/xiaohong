@@ -84,7 +84,7 @@
   <el-image
     v-if="decryptedImage"
     :src="decryptedImage"
-    :fit="props.fit"
+    :fit="fit"
     :width="width"
     :height="height"
     class="decrypted-image"
@@ -139,7 +139,7 @@
     position: relative;
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
   }
 
   .image-slot {

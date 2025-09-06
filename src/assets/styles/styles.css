@@ -208,3 +208,7 @@ input {
 .bg-warning {
   background-color: var(--el-color-warning);
 }
+html,
+body {
+  touch-action: manipulation; /* prevents double-tap zoom, keeps tap working */
+}

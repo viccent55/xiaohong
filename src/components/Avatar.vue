@@ -49,6 +49,7 @@
       }
     });
   };
+
   const generateAvatar = () => {
     const id = props.id ? md5(props.id.toString()) : "";
     return `https://cravatar.cn/avatar/${id}`;

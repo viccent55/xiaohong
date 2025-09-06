@@ -29,8 +29,8 @@
   @import "@/assets/styles/base.less";
 
   .float-set {
-    z-index: 16;
-    position: absolute;
+    z-index: 100;
+    position: fixed;
     bottom: 24px;
     gap: 8px;
     display: flex;
