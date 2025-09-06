@@ -22,10 +22,12 @@ export const useStore = defineStore("store", {
     recommendAds: [] as EmptyArrayType,
     channel: "001",
     mode: "0",
+    search: "",
   }),
   actions: {
     initMode() {
-      if (this.isDarkmode === "dark") {
+      console.log("Mode => ", this.isDarkmode);
+      if (this.isDarkmode == "dark") {
         document.documentElement.classList.add("dark");
       } else {
         document.documentElement.classList.remove("dark");
@@ -34,16 +36,19 @@ export const useStore = defineStore("store", {
     // Toggle Darkmode
     async toggleDarkMode() {
       // To enable dark mode
-      this.isDarkmode === "light"
-        ? (this.isDarkmode = "dark")
-        : (this.isDarkmode = "light");
+      this.isDarkmode = this.isDarkmode === "light" ? "dark" : "light";
+
+      const root = document.documentElement;
       if (this.isDarkmode === "dark") {
-        document.documentElement.classList.add("dark");
+        root.classList.add("dark"); // Tailwind
+        root.classList.add("el-theme-dark"); // Element Plus
       } else {
-        document.documentElement.classList.remove("dark");
+        root.classList.remove("dark");
+        root.classList.remove("el-theme-dark");
       }
     },
   },
+
   // persist: true,
   persist: {
     pick: ["isDarkmode", "configuration", "homePopupAds", "homePopupAds"],

@@ -28,7 +28,6 @@ import AnalyticsLoader from "@/components/AnalyticsLoader.vue";
   const router = useRouter();
   const userStore = useUserStore();
   const noteDialog = useNoteDialog();
-  const { generateVisitCode } = useHome();
 
   const scrollContainer = ref<HTMLElement | null>(null);
   provide("scrollContainer", scrollContainer);
@@ -73,7 +72,6 @@ import AnalyticsLoader from "@/components/AnalyticsLoader.vue";
 
   onBeforeMount(async () => {
     // 尝试登录
-    generateVisitCode();
     store.initMode();
     if (!storeUser.isLogin) {
       openLoginDialog();
