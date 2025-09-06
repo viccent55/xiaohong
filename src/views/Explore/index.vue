@@ -7,12 +7,16 @@
   import { computed, onMounted, ref, watch } from "vue";
   import type { ExploreFLoatSetItem } from "@/types/item";
   import type { ExploreFeedInfo } from "@/types/info";
-  import { getExploreFeeds, getConfiguration } from "@/api/explore";
+  import {
+    getExploreFeeds,
+    getConfiguration,
+    activeVisitor,
+  } from "@/api/explore";
   import { ExploreFloatSetItems } from "@/common";
   import { useNoteDialog } from "@/hooks/useNoteDialog";
   import { checkPermissions } from "@/hooks/usePermisions";
   import { PERMISSION } from "@/common/permision";
-  import { like } from "@/api/note";
+  import { like, search } from "@/api/note";
   import { openPage } from "@/service";
   import { useUserStore } from "@/store/user";
   import { useStore } from "@/store/index";
@@ -20,7 +24,7 @@
   import useHome from "@/composables/useHome";
   import { itemAdClick } from "@/api/advertisment";
   import dayjs from "dayjs";
-
+  import useVariable from "@/composables/useVariable";
   const noteDialog = useNoteDialog();
 
   // 当前频道
@@ -33,7 +37,9 @@
   const page = ref(1);
   const isNoMore = ref(false);
   const isInitialLoading = ref(true);
-  const { getAdsPosition, checkVisitor } = useHome();
+  const { getAdsPosition, checkNewVisitor, getActiveUser } = useHome();
+  const { debounce } = useVariable();
+  const storeUser = useUserStore();
 
   const backToTop = (smooth = true) => {
     const el = document.querySelector(".container");
@@ -42,7 +48,6 @@
     }
   };
 
-  const storeUser = useUserStore();
   // 刷新列表
   const freshFeeds = () => {
     loading.value = true;
@@ -116,6 +121,7 @@
       if (item.name === "goto-top") {
         return backToTop();
       }
+      page.value = 1;
       freshFeeds();
     },
     // 点击Feed
@@ -172,8 +178,30 @@
     ];
   });
 
+  const searchParam = async () => {
+    const respnse = await search(store.search);
+    feeds.value = respnse.data;
+  };
+  const debouncedSearch = debounce(searchParam, 500);
+  watch(
+    () => store.search,
+    (v) => {
+      if (v) {
+        debouncedSearch();
+      } else {
+        freshFeeds();
+      }
+    }
+  );
+  const init = () => {
+    if (storeUser.visitCode) {
+      getActiveUser();
+    } else {
+      checkNewVisitor();
+    }
+  };
   onMounted(() => {
-    checkVisitor();
+    init();
     initConfig();
     freshFeeds();
     getAdsPosition(1);
@@ -198,7 +226,12 @@
       :items="feeds"
       :is-loading="isInitialLoading"
       :is-load-more="loading"
-      @get-more="handle.loadMoreFeeds"
+      @get-more="
+        () => {
+          if (store.search) return;
+          handle.loadMoreFeeds();
+        }
+      "
       @click-item="handle.clickFeed"
     />
     <div

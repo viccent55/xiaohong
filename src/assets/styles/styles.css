@@ -143,3 +143,68 @@ input {
 .like-active {
   fill: red;
 }
+
+.dark body {
+  background-color: rgb(31, 31, 33);
+  color: #ebf4f1;
+}
+.dark body .primary {
+  color: var(--el-color-primary);
+}
+
+.dark body .info {
+  color: #c3c3c3;
+}
+
+.dark body .success {
+  color: var(--el-color-success);
+}
+
+.dark body .warning {
+  color: var(--el-color-warning);
+}
+
+.dark body .danger {
+  color: var(--el-color-danger);
+}
+
+.dark body .bg-primary {
+  background-color: var(--el-color-primary);
+}
+
+.dark body .bg-warning {
+  background-color: var(--el-color-warning);
+}
+
+.dark body .border-gray {
+  border: 2px solid var(--el-color-primary);
+}
+
+/* Global default styles */
+.primary {
+  color: var(--el-color-primary);
+}
+
+.info {
+  color: var(--el-color-info);
+}
+
+.success {
+  color: var(--el-color-success);
+}
+
+.warning {
+  color: var(--el-color-warning);
+}
+
+.danger {
+  color: var(--el-color-danger);
+}
+
+.bg-primary {
+  background-color: var(--el-color-primary);
+}
+
+.bg-warning {
+  background-color: var(--el-color-warning);
+}

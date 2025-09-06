@@ -10,6 +10,7 @@
   import { adsClick } from "@/api/advertisment";
   import { User } from "@element-plus/icons-vue";
   import { openPage } from "@/service";
+  import { useRoute } from "vue-router";
 
   const userStore = useUserStore();
 
@@ -31,6 +32,11 @@
     adsClick(item.id);
   };
 
+  const route = useRoute();
+  const onOpenPage = () => {
+    const param = route.query.chan;
+    openPage(`${store.configuration?.download_app_url}?chan=${param}`);
+  };
   onMounted(() => {
     getAdsPosition(2);
   });
@@ -55,7 +61,7 @@
       size="large"
       round
       style="margin: 0"
-      @click="openPage(store.configuration?.download_app_url)"
+      @click="onOpenPage"
     >
       <span>App下载</span>
     </el-button>

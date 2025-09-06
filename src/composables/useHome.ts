@@ -28,16 +28,14 @@ export default function useHome() {
   };
 
   const chanId = computed(() => route.query.chan);
-  const checkVisitor = async () => {
-    if (!storeUser.visitCode) {
-      generateVisitCode;
-    }
+  const checkNewVisitor = async () => {
+    generateVisitCode();
     try {
       const request = {
         visitor: storeUser.visitCode,
         chan: chanId.value,
       };
-      const response = await newVisitor(request);
+      await newVisitor(request);
       // console.log(response);
     } catch (e) {
       console.error(e);
@@ -48,8 +46,8 @@ export default function useHome() {
       const request = {
         visitor: storeUser.visitCode,
       };
-      const response = await activeVisitor(request);
-      console.log(response);
+      await activeVisitor(request);
+      // console.log(response);
     } catch (e) {
       console.error(e);
     }
@@ -58,7 +56,7 @@ export default function useHome() {
   return {
     getAdsPosition,
     generateVisitCode,
-    checkVisitor,
+    checkNewVisitor,
     getActiveUser,
   };
 }

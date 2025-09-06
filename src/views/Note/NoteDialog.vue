@@ -13,6 +13,7 @@
     nextTick,
     ref,
     useTemplateRef,
+    watch,
   } from "vue";
   import type { CommentBlockInfo } from "@/types/info";
   import * as Api from "@/api/note";
@@ -21,7 +22,10 @@
   import { openPage } from "@/service";
   import { ElMessage } from "element-plus";
   import { useUserStore } from "@/store/user";
+  import useVariable from "@/composables/useVariable";
+import { closeLoginDialog } from "@/hooks/useLoginDialog";
 
+  const { onCopy, route } = useVariable();
   const bottomRef = useTemplateRef("bottomActions");
   const noteDIalogRef = useTemplateRef("note-dialog");
   const Swiper = defineAsyncComponent(
@@ -80,7 +84,7 @@
         Api.like(id_).then((res) => {
           if (res.errcode == 0) {
             item.isLike = !item.isLike;
-            if (!item.isLike) {
+            if (item.isLike) {
               item.like_count++;
             } else {
               item.like_count--;
@@ -91,8 +95,10 @@
     },
     // 分享
     clickShare() {
-      console.log("分享");
-      // TODO: 实现分享功能
+      const url = window.location.origin + route.fullPath;
+      console.log("分享", url);
+      ElMessage.success("链接已复制!");
+      onCopy(url); // copy full route with noteId
     },
     // 收藏
     clickStar(item: EmptyObjectType) {
@@ -102,7 +108,7 @@
         Api.star(id_).then((res) => {
           if (res.errcode == 0) {
             item.isStar = !item.isStar;
-            if (!item.isStar) {
+            if (item.isStar) {
               item.collect_count++;
             } else {
               item.collect_count--;
@@ -207,6 +213,12 @@
       swiperInstanceRef.value.closeVideo();
     }
   };
+  watch(
+    () => noteDialog.id.value,
+    () => {
+      closeLoginDialog()
+    }
+  );
 </script>
 
 <template>
@@ -272,7 +284,7 @@
           @more-comments="handle.getMoreComments"
         >
           <template
-            v-for="(block) in commentBlocks"
+            v-for="block in commentBlocks"
             :key="block.id"
           >
             <CommentBlock

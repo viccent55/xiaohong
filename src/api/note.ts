@@ -62,3 +62,7 @@ export const unstar = (id: number): Promise<ResponseConfig<null>> => {
 export const report = (id: number): Promise<ResponseConfig<null>> => {
   return axios.post("/report", { id });
 };
+
+export const search = (keyword: string): Promise<ResponseConfig<null>> => {
+  return axios.post("/member/search", { keyword });
+};

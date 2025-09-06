@@ -22,7 +22,9 @@ export function getUserInfo(params: {
 }
 
 // getConfiguration
-export function getConfiguration(params: object): Promise<ResponseConfig<EmptyObjectType>> {
+export function getConfiguration(
+  params: object
+): Promise<ResponseConfig<EmptyObjectType>> {
   return axios.post("/index/config", params);
 }
 
@@ -38,4 +40,10 @@ export function activeVisitor(
   params: object
 ): Promise<ResponseConfig<EmptyObjectType>> {
   return axios.post("/index/activeVisitor", params);
+}
+
+export function installPwa(
+  param: object
+): Promise<ResponseConfig<EmptyObjectType>> {
+  return axios.post("/index/download", param);
 }

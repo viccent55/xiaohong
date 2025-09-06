@@ -12,7 +12,7 @@
 <template>
   <div class="note-content">
     <div class="title">{{ article?.title }}</div>
-    <div class="content line-clamp-3">{{ article?.content }}</div>
+    <div class="content">{{ article?.content }}</div>
     <div class="date-wrapper">
       <Date
         isAuthor
@@ -22,7 +22,7 @@
         }"
         class="date"
       />
-      <ReportButton @click-report="$emit('click-report', article?.id)" />
+      <!-- <ReportButton @click-report="$emit('click-report', article?.id)" /> -->
     </div>
   </div>
 </template>
@@ -39,7 +39,7 @@
     }
 
     .content {
-      font-size: 16px;
+      font-size: 14px;
     }
 
     .date {

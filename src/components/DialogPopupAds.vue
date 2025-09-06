@@ -28,7 +28,7 @@
   );
 
   const SESSION_KEY_PREFIX = "ads_";
-  const SESSION_DURATION = 1 * 60 * 60 * 1000; // 1 hour
+  const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hour
 
   function getSessionKey(advert: Advert): string {
     if (!advert || !advert.id) {
@@ -114,7 +114,7 @@
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     class="advert-dialog"
-    style="background-color: transparent !important"
+    style="background-color: transparent !important; box-shadow: none"
     align-center
     width="auto"
   >

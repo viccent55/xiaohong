@@ -57,14 +57,14 @@
       
       <div class="author-wrapper">
         <!-- 作者名称头像 -->
+         
         <div class="info-wrapper" @click.stop="$emit('clickAuthor') /* 阻止冒泡 */">
-          <router-link v-if="feed.author?.id" :to="`/user/${feed.author.id}`">
-            {{ feed.author.name }}
-             <Avatar :src="feed.author?.avatar" :id="feed.id"/>
-          </router-link>
-        <a v-else href="#">Unknown</a>
-          <span>{{ feed.author?.name }}</span>
+          <router-link :to="feed.author?.id ? `/user/${feed.author?.id}` : '#'" class="flex items-center gap-1">
+          <Avatar :src="feed.author?.avatar" :id="feed.id"/>
+          <span class="info">{{ feed.author?.name || feed.author?.nickname }}</span>
+            </router-link>
         </div>
+
         <!-- 点赞数 -->
         <div class="like-wrapper" @click.stop="onClickLike(feed)">
           <Heart :class="{ 'text-red-500': feed.isLike }" />

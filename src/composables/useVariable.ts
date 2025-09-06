@@ -60,6 +60,46 @@ const useVariable = () => {
       }
     }
   };
+  const debounce = <T extends (...args: any[]) => void>(
+    fn: T,
+    delay: number
+  ) => {
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => fn.apply(this, args), delay);
+    };
+  };
+
+  const getDeviceInfo = () => {
+    const ua = navigator.userAgent.toLowerCase();
+
+    const isIos = /iphone|ipad|ipod/.test(ua);
+    const isAndroid = /android/.test(ua);
+    const isMobile = isIos || isAndroid || /mobile/.test(ua);
+
+    const isWindows = /windows nt/.test(ua);
+    const isMac = /macintosh|mac os x/.test(ua) && !isIos;
+
+    const isPc = !isMobile && (isWindows || isMac);
+
+    let type: "ios" | "android" | "windows" | "macos" | "unknown" = "unknown";
+    if (isIos) type = "ios";
+    else if (isAndroid) type = "android";
+    else if (isWindows) type = "windows";
+    else if (isMac) type = "macos";
+
+    return {
+      isPc,
+      isMobile,
+      isIos,
+      isAndroid,
+      isWindows,
+      isMac,
+      type,
+    };
+  };
+
   return {
     isMobileSm,
     isMobile,
@@ -74,6 +114,8 @@ const useVariable = () => {
     columnWidth,
     gap,
     feedsContainer,
+    debounce,
+    getDeviceInfo,
   };
 };
 export default useVariable;

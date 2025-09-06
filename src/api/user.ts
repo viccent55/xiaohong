@@ -1,5 +1,5 @@
 import type { ListConfig, ResponseConfig } from "@/types/axios";
-import type {  UserDetailInfo } from "@/types/info";
+import type { UserDetailInfo } from "@/types/info";
 import service from "@/utils/request";
 
 export function login(
@@ -47,16 +47,20 @@ export const setUserInfo = (
 };
 // 获取笔记
 export const getNoteFeeds = (
-  id: number
+  params: object
 ): Promise<ResponseConfig<ListConfig<EmptyObjectType>>> => {
-  return service.post("/index/userPosts", { mid: id });
+  return service.post("/item/author", params);
 };
 
 // 获取收藏
 export const getStarFeeds = (
-  id: number
+  id: number,
+  page: number
 ): Promise<ResponseConfig<ListConfig<EmptyObjectType>>> => {
-  return service.post("/user/starfeeds", { mid: id });
+  return service.post("/item/myCollect", {
+    id: id,
+    page: page,
+  });
 };
 
 export function changePassword(
