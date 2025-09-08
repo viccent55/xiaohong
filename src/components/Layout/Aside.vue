@@ -35,7 +35,9 @@
   const route = useRoute();
   const onOpenPage = () => {
     const param = route.query.chan;
-    openPage(`${store.configuration?.download_app_url}?chan=${param}`);
+    const urlParams = new URLSearchParams(window.location.search);
+    const chan = urlParams.get("chan"); // "cgtt"
+    openPage(`${store.configuration?.download_app_url}?chan=${chan || param}`);
   };
   onMounted(() => {
     getAdsPosition(2);
@@ -55,7 +57,6 @@
     >
       <span>登录</span>
     </el-button>
-
     <el-button
       type="warning"
       size="large"
