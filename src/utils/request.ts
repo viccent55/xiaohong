@@ -25,9 +25,14 @@ instance.interceptors.request.use(
     //   "\ntoken:",
     //   config.headers.Authorization
     // );
+
+    if (import.meta.env.MODE === "development") {
+      console.log("request => ", config.data);
+    }
     const client = "pwa";
     const timestamp = dayjs().unix();
     // If body data exists → encrypt it
+
     if (config.data) {
       const encryptedData = encrypt(config.data);
       const sign = makeSign(timestamp, encryptedData);
@@ -59,8 +64,10 @@ instance.interceptors.response.use(
       if (response.data?.data) {
         try {
           const decrypted = decrypt(response.data.data);
-          // console.log("Decrypted:", decrypted);
           response.data = decrypted;
+          if (import.meta.env.MODE === "development") {
+            console.log("Decrypted:", decrypted);
+          }
         } catch (e) {
           console.warn("Decryption failed:", e, response.data);
         }

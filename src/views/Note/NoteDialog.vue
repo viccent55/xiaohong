@@ -23,7 +23,7 @@
   import { ElMessage } from "element-plus";
   import { useUserStore } from "@/store/user";
   import useVariable from "@/composables/useVariable";
-import { closeLoginDialog } from "@/hooks/useLoginDialog";
+  import { closeLoginDialog } from "@/hooks/useLoginDialog";
 
   const { onCopy, route } = useVariable();
   const bottomRef = useTemplateRef("bottomActions");
@@ -63,8 +63,9 @@ import { closeLoginDialog } from "@/hooks/useLoginDialog";
   const handle = {
     // 查看作者主页
     clickAuthor(id: string) {
-      const url = `${window.location.origin}/user/${id}`;
-      openPage(url);
+      const url = `${window.location.origin}/#/user/${id}`;
+      window.location.href = url;
+      window.location.reload();
     },
     // 关注
     clickFollow(id: number) {
@@ -216,7 +217,7 @@ import { closeLoginDialog } from "@/hooks/useLoginDialog";
   watch(
     () => noteDialog.id.value,
     () => {
-      closeLoginDialog()
+      closeLoginDialog();
     }
   );
 </script>

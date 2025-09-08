@@ -229,4 +229,8 @@ export const UserChannelItems: ExploreChannelItem[] = [
     name: "收藏",
     value: "star",
   },
+  {
+    name: "点赞",
+    value: "like",
+  },
 ];

@@ -54,13 +54,15 @@ export const getNoteFeeds = (
 
 // 获取收藏
 export const getStarFeeds = (
-  id: number,
-  page: number
+  params: object
 ): Promise<ResponseConfig<ListConfig<EmptyObjectType>>> => {
-  return service.post("/item/myCollect", {
-    id: id,
-    page: page,
-  });
+  return service.post("/item/myCollect", params);
+};
+
+export const getLikeFeeds = (
+  params: object
+): Promise<ResponseConfig<ListConfig<EmptyObjectType>>> => {
+  return service.post("/item/myLike", params);
 };
 
 export function changePassword(

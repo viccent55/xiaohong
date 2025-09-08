@@ -57,11 +57,10 @@
 
     <div
       class="input-wrapper"
-      @click.stop="onFocusSearch"
     >
       <input
         :disabled="searchDisabled"
-        v-model="store.search"
+        v-model.trim="store.search"
         type="text"
         @focus="onFocusSearch"
         @keydown.enter="onFocusSearch"
@@ -104,9 +103,9 @@
             <el-dropdown-item
               v-for="(item, index) in categories"
               :key="index"
-              @click="clickMenuItem"
+              @click="clickMenuItem(item)"
             >
-              <span class="px-3 py-1 text-base">{{ item.name }}</span>
+              <span class="px-3 py-2 text-base">{{ item.name }}</span>
             </el-dropdown-item>
             <el-divider style="margin: 6px 0"></el-divider>
             <el-dropdown-item
@@ -114,7 +113,7 @@
               :key="index"
             >
               <span
-                class="text-base px-3 py-1"
+                class="text-base px-3 py-2"
                 :key="index"
                 @click="openLoginDialog(item)"
               >
@@ -144,14 +143,15 @@
   @import "@/assets/styles/base.less";
 
   .header {
-    z-index: 16px;
+    z-index: 1;
     width: 100%;
+    max-width: 1728px; // Match .app-container max-width
     height: 72px;
     background-color: var(--background-color);
     display: flex;
     padding: 0 16px 0 24px;
     align-items: center;
-    position: absolute;
+    position: fixed;
     top: 0;
     justify-content: space-between;
   }
@@ -191,7 +191,7 @@
       align-items: center;
       font-size: 20px;
       margin-left: 20px;
-      cursor: pointer;
+      // cursor: pointer;
 
       :hover {
         color: var(--text-color-dark);

@@ -53,6 +53,22 @@ const viteConfig = defineConfig((mode) => {
 
         workbox: {
           globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
+          runtimeCaching: [
+            {
+              urlPattern: /\/apiv1\//,
+              handler: "NetworkFirst",
+              options: {
+                cacheName: "api-cache",
+                expiration: {
+                  maxEntries: 500,
+                  maxAgeSeconds: 60 * 60 * 24 * 7, // 1 week
+                },
+                cacheableResponse: {
+                  statuses: [0, 200],
+                },
+              },
+            },
+          ],
         },
         devOptions: {
           enabled: process.env.NODE_ENV === "development",

@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import CloseButton from "@/components/global/CloseButton.vue";
-  import Qrcode from "qrcode";
   import { reactive, ref, watch } from "vue";
   import { loginDialogVisible, closeLoginDialog } from "@/hooks/useLoginDialog";
   import { screenMode } from "@/hooks/useScreenMode";
@@ -164,7 +163,7 @@
       >
         <h1>{{ state.isLogin ? "邮箱登录" : "邮箱注册" }}</h1>
         <el-form
-          class="p-10 pb-0 w-full"
+          class="px-8 pt-2 pb-0 w-full"
           ref="form"
           label-position="top"
           label-width="auto"
@@ -205,7 +204,7 @@
         </el-form>
         <el-form
           v-else
-          class="p-10 pb-0 w-full"
+          class="px-8 pt-2 pb-0 w-full"
           ref="form"
           label-position="left"
           label-width="auto"
@@ -313,7 +312,7 @@
           </div>
         </el-form>
 
-        <div class="flex flex-col items-center gap-2 my-3 w-full px-10">
+        <div class="flex flex-col items-center gap-2 my-3 w-full px-8">
           <div class="flex justify-between w-full text-sm">
             <el-button
               @click="openFogotDialog"
@@ -323,14 +322,11 @@
             >
               <span>忘记密码了吗？</span>
             </el-button>
-            <div class="flex">
+            <div
+              class="flex text-blue-500 cursor-pointer"
+              @click="state.isLogin = !state.isLogin"
+            >
               <div>{{ state.isLogin ? "没有账号？" : "已有账户？" }}</div>
-              <div
-                @click="state.isLogin = !state.isLogin"
-                class="text-blue-500 cursor-pointer ml-1"
-              >
-                {{ state.isLogin ? "请注册" : "登录" }}
-              </div>
             </div>
           </div>
 
@@ -339,7 +335,7 @@
             v-if="screenMode === 'phone'"
           >
             <ul
-              class="grid grid-cols-2 my-0 justify-center list-disc text-blue-400 w-full"
+              class="grid grid-cols-1 my-0 justify-center list-disc text-blue-400 w-full"
             >
               <li>
                 <el-link
@@ -629,7 +625,7 @@
   });
 
     h1 {
-      margin-top: 48px;
+      margin-top: 20px;
       font-size: 18px;
       color: var(--text-color-dark);
     }

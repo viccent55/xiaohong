@@ -67,11 +67,6 @@
       };
     });
   }
-
-  const gravatarUrl = computed(() => {
-    const emailHash = MD5("user");
-    return `https://cravatar.cn/avatar/${emailHash}`;
-  });
 </script>
 
 <template>
