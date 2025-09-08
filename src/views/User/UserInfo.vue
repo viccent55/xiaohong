@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import ReportButton from "../Note/comp/ReportButton.vue";
   import FollowButton from "@/components/global/FollowButton.vue";
   import Dialog from "./Dialog.vue";
 
@@ -8,6 +7,7 @@
   import md5 from "crypto-js/md5";
   import { computed } from "vue";
   import Image from "@/components/Image.vue";
+  import { screenMode } from "@/hooks/useScreenMode";
 
   const props = defineProps<{ user: UserDetailInfo }>();
   const emits = defineEmits(["click-follow", "click-report", "refresh"]);
@@ -24,16 +24,32 @@
   function clickFollow() {
     emits("click-follow", props.user);
   }
-  function clickReport() {
-    emits("click-report", props.user);
-  }
 </script>
 
 <template>
   <div class="info-wrapper">
-    <div class="avatar-wrapper">
+    <el-avatar
+      :size="screenMode == 'phone' ? 80 : 120"
+      v-if="self"
+      class="mr-5"
+      fit="cover"
+    >
+      <Image
+        v-if="user.avatar"
+        :src="user.avatar"
+        fit="cover"
+        height="100%"
+        width="100%"
+      />
       <img
-        v-if="!user.avatar || user.avatar == '/avatar/user/header.png'"
+        v-else
+        :src="gravatarUrl"
+        fit="cover"
+      />
+    </el-avatar>
+    <span v-else>
+      <img
+        v-if="!user.avatar"
         :src="gravatarUrl"
         fit="cover"
       />
@@ -43,20 +59,17 @@
         class="avatar-wrapper"
         fit="cover"
       />
-    </div>
-    <div class="basic-wrapper min-w-[300px]">
-      <div class="base-info items-start justify-between">
+    </span>
+    <div class="basic-wrapper">
+      <div class="base-info items-start justify-between w-full">
         <div class="name-wrapper">
-          <span class="name">{{ user?.nickname }}</span>
-          <span class="id">小红书号: {{ user.id }}</span>
+          <span class="name w-[200px]">
+            {{ user?.nickname }}
+          </span>
+          <span class="id w-[200px]">小红书号: {{ user.invite_code }}</span>
         </div>
-        <Dialog
-          v-if="self"
-          :user="user"
-          @refresh="emits('refresh')"
-        />
       </div>
-      <div class="desc">{{ user.slogan || "还没有简介" }}</div>
+      <div class="desc break-words">{{ user.slogan || "还没有简介" }}</div>
       <div class="interactions">
         <div class="action">
           <span>{{ user?.subscribed }}</span>
@@ -73,15 +86,21 @@
       </div>
     </div>
 
-    <div
-      class="button-wrapper"
-      v-if="!self"
-    >
+    <div class="button-wrapper">
+      <Dialog
+        :user="user"
+        @refresh="
+          () => {
+            emits('refresh');
+          }
+        "
+      />
       <FollowButton
+        v-if="!self"
         :is-follow="user.isFollow"
         @click="clickFollow"
       />
-      <ReportButton @click-report="clickReport" />
+      <!-- <ReportButton @click-report="clickReport" /> -->
     </div>
   </div>
 </template>
@@ -97,7 +116,7 @@
 
     .pc-mode({
       width: 70%;
-      max-width: 750px;
+      max-width: 800px;
       min-width: 650px;
       padding-top: 32px;
       padding-bottom: 32px;
@@ -135,6 +154,11 @@
     });
   }
 
+  .basic-wrapper {
+    flex: 1;
+    min-width: 0; /* Prevents flex item from overflowing */
+  }
+
   .base-info {
     display: flex;
     align-items: center;
@@ -164,6 +188,7 @@
     margin-top: 16px;
     font-size: 14px;
     color: var(--text-color-dark);
+    word-break: break-word;
   }
 
   .interactions {
@@ -184,10 +209,9 @@
 
   .button-wrapper {
     right: 16px;
-    position: absolute;
     display: flex;
     gap: 16px;
-    align-items: center;
+    align-items: start;
 
     .phone-mode({
       bottom: 24px;

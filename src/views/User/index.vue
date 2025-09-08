@@ -16,7 +16,12 @@
   import { useRoute } from "vue-router";
   import type { ExploreChannelItem } from "@/types/item";
   import { UserChannelItems } from "@/common";
-  import { getNoteFeeds, getStarFeeds, getUserInfo } from "@/api/user";
+  import {
+    getLikeFeeds,
+    getNoteFeeds,
+    getStarFeeds,
+    getUserInfo,
+  } from "@/api/user";
   import type { ExploreFeedInfo, UserDetailInfo } from "@/types/info";
   import { report } from "@/api/note";
   import { useNoteDialog } from "@/hooks/useNoteDialog";
@@ -24,6 +29,11 @@
   import useVariable from "@/composables/useVariable";
   import { checkPermissions } from "@/hooks/usePermisions";
   import { PERMISSION } from "@/common/permision";
+  import { useStore } from "@/store";
+
+  const backgroundImage = ref(
+    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=2670&auto=format&fit=crop"
+  );
 
   const route = useRoute();
   const noteDialog = useNoteDialog();
@@ -41,13 +51,18 @@
   const isNoMore = ref(false);
   // 收藏列表
   const starFeeds = ref<ExploreFeedInfo[]>([]);
+  const likesFeeds = ref<EmptyObjectType[]>([]);
   // 展示列表
   const showFeeds = computed(() => {
-    return channel.value === UserChannelItems[0].value
-      ? noteFeeds.value
-      : starFeeds.value;
+    if (channel.value == "note") {
+      return noteFeeds.value;
+    } else if (channel.value == "star") {
+      return starFeeds.value;
+    } else if (channel.value == "like") {
+      return likesFeeds.value;
+    }
+    return [];
   });
-
   const getRes = {
     noteFeeds() {
       if (isLoadMore.value) return;
@@ -70,11 +85,42 @@
     },
     starFeeds() {
       // 获取收藏
-
-      getStarFeeds(id.value, page.value).then((res) => {
-        if (res.errcode !== 0) return;
-        starFeeds.value = res.data;
-      });
+      if (isLoadMore.value) return;
+      isLoadMore.value = true;
+      const request = {
+        id: id.value,
+        page: page.value,
+      };
+      getStarFeeds(request)
+        .then((res) => {
+          if (res.errcode !== 0) return;
+          starFeeds.value = [...starFeeds.value, ...res.data];
+          if (!res.data.length) {
+            isNoMore.value = true;
+          }
+        })
+        .finally(() => {
+          isLoadMore.value = false;
+        });
+    },
+    likeFeeds() {
+      if (isLoadMore.value) return;
+      isLoadMore.value = true;
+      const request = {
+        id: id.value,
+        page: page.value,
+      };
+      getLikeFeeds(request)
+        .then((res) => {
+          if (res.errcode !== 0) return;
+          likesFeeds.value = [...likesFeeds.value, ...res.data];
+          if (!res.data.length) {
+            isNoMore.value = true;
+          }
+        })
+        .finally(() => {
+          isLoadMore.value = false;
+        });
     },
   };
 
@@ -104,10 +150,14 @@
       if (isLoadMore.value || isNoMore.value) return;
       page.value++;
       getRes.noteFeeds();
-    } else {
+    } else if (channel.value === "star") {
       if (isLoadMore.value || isNoMore.value) return;
       page.value++;
       getRes.starFeeds();
+    } else if (channel.value === "like") {
+      if (isLoadMore.value || isNoMore.value) return;
+      page.value++;
+      getRes.likeFeeds();
     }
   };
   const onInit = () => {
@@ -115,15 +165,29 @@
       userInfo.value = JSON.parse(JSON.stringify(res));
     });
     getRes.noteFeeds();
-    getRes.starFeeds();
   };
   watch(
     () => id.value,
     () => {
       page.value = 1;
-      noteFeeds.value = [];
-      starFeeds.value = [];
       onInit();
+    }
+  );
+  watch(
+    () => channel.value,
+    (val) => {
+      page.value = 1;
+      isNoMore.value = false;
+      if (val == "note") {
+        noteFeeds.value = [];
+        getRes.noteFeeds();
+      } else if (val == "star") {
+        starFeeds.value = [];
+        getRes.starFeeds();
+      } else if (val == "like") {
+        likesFeeds.value = [];
+        getRes.likeFeeds();
+      }
     }
   );
   onMounted(() => {
@@ -139,69 +203,80 @@
   });
 
   const skeletonItems = computed(() => Array.from({ length: 10 }));
+  const store = useStore();
 </script>
 
 <template>
-  <div class="center-wrapper">
-    <div class="user-container">
-      <UserInfo
-        :user="userInfo"
-        @click-follow="handle.clickFollow"
-        @click-report="handle.clickReport"
-        @refresh="onInit"
-      />
+  <div class="user-page-wrapper">
+    <!-- Full-width background container -->
+    <div
+      class="user-background"
+      :style="{
+        backgroundImage: `url(${store?.configuration?.member_center_background})`,
+      }"
+    ></div>
 
-      <div class="channel-wrpper">
-        <ExploreChannelBar
-          :items="UserChannelItems"
-          :active-value="channel"
-          @click-item="handle.clickChannel"
+    <!-- Centered content container -->
+    <div class="user-content-container">
+      <div class="user-content">
+        <UserInfo
+          :user="userInfo"
+          @click-follow="handle.clickFollow"
+          @click-report="handle.clickReport"
+          @refresh="onInit"
         />
-      </div>
-
-      <el-divider />
-      <div
-        class="container"
-        v-infinite-scroll="onLoadMore"
-        infinite-scroll-distance="300"
-      >
-        <div ref="feedsContainer">
-          <MasonryWall
-            v-if="showFeeds?.length > 0"
-            :items="showFeeds ?? []"
-            :column-width="columnWidth"
-            :gap="gap"
-            item-key="id"
-            :scroll-container="scrollContainer"
-            :layout-animation-duration="500"
-          >
-            <template #default="{ item }">
-              <ExploreFeed
-                :feed="item"
-                @click="handle.clickFeed(item)"
-              />
-            </template>
-          </MasonryWall>
-          <!-- Loading indicator for loading more -->
-          <MasonryWall
-            v-if="isLoadMore"
-            :items="skeletonItems"
-            :column-width="columnWidth"
-            :gap="gap"
-          >
-            <template #default>
-              <ExploreFeedSkeleton />
-            </template>
-          </MasonryWall>
-        </div>
-        <div
-          class="flex justify-center text-xl py-2"
-          v-if="isNoMore || !showFeeds.length"
-        >
-          <el-empty
-            :image-size="120"
-            description="没有更多了"
+        <div class="channel-wrpper">
+          <ExploreChannelBar
+            :items="UserChannelItems"
+            :active-value="channel"
+            @click-item="handle.clickChannel"
           />
+        </div>
+
+        <el-divider />
+        <div
+          class="feeds-container"
+          v-infinite-scroll="onLoadMore"
+          infinite-scroll-distance="300"
+        >
+          <div ref="feedsContainer">
+            <MasonryWall
+              v-if="showFeeds?.length > 0"
+              :items="showFeeds ?? []"
+              :column-width="columnWidth"
+              :gap="gap"
+              item-key="id"
+              :scroll-container="scrollContainer"
+              :layout-animation-duration="500"
+            >
+              <template #default="{ item }">
+                <ExploreFeed
+                  :feed="item"
+                  @click="handle.clickFeed(item)"
+                />
+              </template>
+            </MasonryWall>
+            <!-- Loading indicator for loading more -->
+            <MasonryWall
+              v-if="isLoadMore"
+              :items="skeletonItems"
+              :column-width="columnWidth"
+              :gap="gap"
+            >
+              <template #default>
+                <ExploreFeedSkeleton />
+              </template>
+            </MasonryWall>
+          </div>
+          <div
+            class="flex justify-center text-xl py-2"
+            v-if="isNoMore || !showFeeds.length"
+          >
+            <el-empty
+              :image-size="120"
+              description="没有更多了"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -211,13 +286,31 @@
 <style scoped lang="less">
   @import "@/assets/styles/base.less";
 
-  .center-wrapper {
+  .user-page-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .user-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 300px; /* Or the height you want for the background */
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+  }
+
+  .user-content-container {
+    position: relative;
+    z-index: 1;
     display: flex;
     justify-content: center;
     width: 100%;
   }
 
-  .user-container {
+  .user-content {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -225,10 +318,10 @@
   }
 
   .channel-wrpper {
-    width: min-content;
+    width: fit-content;
   }
 
-  .container {
+  .feeds-container {
     width: 100%;
     padding: 0 16px;
   }

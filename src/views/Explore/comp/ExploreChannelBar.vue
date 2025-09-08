@@ -15,12 +15,16 @@
       v-for="item in items"
       :key="item.id"
     >
-      <span
+      <el-button
+        round
         @click="$emit('click-item', item)"
-        :class="{ active: item.value === activeValue }"
+        :type="item.value === activeValue ? 'danger' : 'default'"
+        text
+        :bg="item.value === activeValue ? true : false"
+        style="margin-left: 0;"
       >
         {{ item.name }}
-      </span>
+      </el-button>
     </template>
   </div>
 </template>

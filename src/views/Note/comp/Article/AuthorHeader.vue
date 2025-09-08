@@ -37,7 +37,7 @@
   .author-header {
     position: sticky;
     top: 0;
-    z-index: 90;
+    z-index: 16;
     width: 100%;
     padding: 12px 16px;
     display: flex;
