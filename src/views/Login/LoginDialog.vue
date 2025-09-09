@@ -345,7 +345,7 @@
                   type="primary"
                 >
                   <span class="text-xs">
-                    {{ store.configuration?.domain_latest }}
+                    {{ store.configuration?.home_url }}
                   </span>
                 </el-link>
               </li>

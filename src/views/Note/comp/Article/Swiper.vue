@@ -12,19 +12,25 @@
   }>();
 
   const videoPlayerRef = ref<InstanceType<typeof VideoPlayer>[]>([]);
+  const carousel = ref();
 
   const closeVideo = () => {
     videoPlayerRef.value.forEach((player) => {
       player?.closeVideo();
     });
   };
+  const next = () => carousel.value.next();
+  const prev = () => carousel.value.prev();
   defineExpose({
     closeVideo,
+    next,
+    prev,
   });
 </script>
 
 <template>
   <el-carousel
+    ref="carousel"
     class="swiper"
     trigger="click"
     :indicator-position="

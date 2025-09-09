@@ -3,12 +3,12 @@
   import { ElMessage } from "element-plus";
   import { setUserInfo, changePassword } from "@/api/user";
   import AvatarUpload from "@/components/AvatarUpload.vue";
-  import { screenMode } from "@/hooks/useScreenMode";
   import Qrcode from "qrcode";
   import { useRoute } from "vue-router";
 
   const dialogVisible = ref(false);
   const activeTab = ref("userinfo");
+  import { screenMode } from "@/hooks/useScreenMode";
 
   const props = defineProps({
     user: {
@@ -103,7 +103,9 @@
   <div>
     <div class="flex flex-col align-middle items-center">
       <el-button
+        round
         type="primary"
+        :size="screenMode === 'phone' ? 'small' : 'default'"
         @click="dialogVisible = true"
       >
         编辑资料

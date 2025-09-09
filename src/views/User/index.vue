@@ -160,6 +160,12 @@
       getRes.likeFeeds();
     }
   };
+  const resetItems = () => {
+    noteFeeds.value = [];
+    starFeeds.value = [];
+    likesFeeds.value = [];
+
+  }
   const onInit = () => {
     getUserInfo(id.value).then((res) => {
       userInfo.value = JSON.parse(JSON.stringify(res));
@@ -170,6 +176,7 @@
     () => id.value,
     () => {
       page.value = 1;
+      resetItems();
       onInit();
     }
   );

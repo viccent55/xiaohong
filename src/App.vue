@@ -111,7 +111,6 @@
           </keep-alive>
         </router-view>
       </div>
-
       <Footer
         :items="NavigationItems"
         :active-item="navigationItem"

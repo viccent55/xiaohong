@@ -7,20 +7,22 @@
   import { checkPermissions } from "@/hooks/usePermisions";
   import type { PropType } from "vue";
   import * as Api from "@/api/note";
+  import { useStore } from "@/store";
 
-  const props = defineProps({
+  defineProps({
     feed: {
       type: Object as PropType<EmptyObjectType>,
       default: () => [],
     },
   });
+  const store = useStore();
   const onClickLike = async (feed: EmptyObjectType) => {
     checkPermissions(PERMISSION.User, () => {
       const id_ = feed.id;
       Api.like(id_).then((res) => {
         if (res.errcode == 0) {
           feed.isLike = !feed.isLike;
-          if (!feed.isLike) {
+          if (feed.isLike) {
             feed.like_count++;
           } else {
             feed.like_count--;
@@ -57,12 +59,14 @@
       
       <div class="author-wrapper">
         <!-- 作者名称头像 -->
-         
-        <div class="info-wrapper" @click.stop="$emit('clickAuthor') /* 阻止冒泡 */">
-          <router-link :to="feed.author?.id ? `/user/${feed.author?.id}` : '#'" class="flex items-center gap-1">
+        <div class="info-wrapper" @click.stop="() => {
+          store.mode = '-1';
+          $emit('clickAuthor');
+        }">
+          <a :href="feed.author?.id ? `/#/user/${feed.author.id}` : '#'" class="flex items-center gap-1">
           <Avatar :src="feed.author?.avatar" :id="feed.id"/>
           <span class="info">{{ feed.author?.name || feed.author?.nickname }}</span>
-            </router-link>
+            </a>
         </div>
 
         <!-- 点赞数 -->

@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import type { NavigationItem } from "@/types/item";
   import { dropDownItems3 } from "@/common";
+  import { useStore } from "@/store";
 
   defineEmits([
     "click-menu-item", // 点击选项
@@ -10,6 +11,7 @@
     items: NavigationItem[];
     activeItem: NavigationItem;
   }>();
+  const store = useStore();
 </script>
 
 <template>
@@ -20,7 +22,7 @@
     >
       <div
         class="channel-wrapper"
-        :class="{ active: activeItem?.mode === item.mode }"
+        :class="{ active: store.mode === item.mode }"
       >
         <div v-if="item.icon == 'Setting'">
           <Dropdown
@@ -38,7 +40,7 @@
           v-else
           @click="$emit('click-nav-item', item)"
         >
-          <el-icon :size="24"><component :is="item.icon"/></el-icon>
+          <el-icon :size="24"><component :is="item.icon" /></el-icon>
           <span>{{ item.name }}</span>
         </div>
       </div>
@@ -72,8 +74,8 @@
     align-items: center;
     cursor: pointer;
 
-    &.active i{
-      color: var(--primary-color)!important;
+    &.active i {
+      color: var(--primary-color) !important;
       font-weight: 600;
     }
 

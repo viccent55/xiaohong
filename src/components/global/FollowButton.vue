@@ -1,21 +1,23 @@
 <script setup lang="ts">
   defineProps<{
-    isFollow: boolean
-  }>()
+    isFollow: boolean;
+  }>();
 
-  defineEmits(['click'])
+  defineEmits(["click"]);
 </script>
 
 <template>
   <button
+    size="small"
     @click="$emit('click')"
-    :class="{ active: isFollow }">
-    {{ isFollow ? '已关注' : '关注' }}
+    :class="{ active: isFollow }"
+  >
+    {{ isFollow ? "已关注" : "关注" }}
   </button>
 </template>
 
 <style scoped lang="less">
-  @import '@/assets/styles/base.less';
+  @import "@/assets/styles/base.less";
 
   button {
     margin-left: auto;
@@ -23,7 +25,7 @@
     font-size: 16px;
     font-weight: 600;
     width: 96px;
-    height: 40px;
+    height: 32px;
     border-radius: 100px;
     line-height: 32px;
     text-align: center;

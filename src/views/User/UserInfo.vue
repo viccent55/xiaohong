@@ -86,7 +86,7 @@
       </div>
     </div>
 
-    <div class="button-wrapper">
+    <div class="button-wrapper md:flex-row flex-col-reverse">
       <Dialog
         :user="user"
         @refresh="
@@ -113,6 +113,7 @@
     display: flex;
     position: relative;
     width: 100%;
+    align-items: start;
 
     .pc-mode({
       width: 70%;
@@ -210,7 +211,7 @@
   .button-wrapper {
     right: 16px;
     display: flex;
-    gap: 16px;
+    gap: 12px;
     align-items: start;
 
     .phone-mode({

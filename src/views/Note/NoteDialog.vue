@@ -220,6 +220,28 @@
       closeLoginDialog();
     }
   );
+
+  // keep track of touch start X
+  let startX = 0;
+
+  function onTouchStart(e: TouchEvent) {
+    startX = e.touches[0].clientX;
+  }
+
+  function onTouchEnd(e: TouchEvent) {
+    const endX = e.changedTouches[0].clientX;
+    const deltaX = endX - startX;
+
+    if (!swiperInstanceRef.value) return;
+
+    if (deltaX < -50) {
+      // swipe left → go next
+      swiperInstanceRef.value.next();
+    } else if (deltaX > 50) {
+      // swipe right → go previous
+      swiperInstanceRef.value.prev();
+    }
+  }
 </script>
 
 <template>
@@ -264,6 +286,8 @@
         <div
           class="media-container"
           v-if="screenMode !== 'pc'"
+          @touchstart="onTouchStart"
+          @touchend="onTouchEnd"
         >
           <Swiper
             ref="swiperInstanceRef"
