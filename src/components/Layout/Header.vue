@@ -126,7 +126,7 @@
                 class="text-base px-3 py-1"
                 @click="openDialogIos"
               >
-                安装到桌面 - install pwa
+                安装到桌面
               </div>
 
               <!-- Android/Desktop Prompt -->
