@@ -1,63 +1,24 @@
 <script setup lang="ts">
   import usePWA from "@/composables/usePWA";
-  import useVariable from "@/composables/useVariable";
-  import { Share } from "@element-plus/icons-vue";
-  import { installPwa } from "@/api/explore";
-  import { ref } from "vue";
   import GuideIos from "./GuideIos.vue";
 
   // Import all necessary state and methods from the composable
   const {
     showInstallPrompt,
     isIOS,
-    promptInstall,
     closeInstallPrompt,
-    needRefresh,
     updateServiceWorker,
     closeReloadPrompt,
+    onInstall,
+    dialogIosGuide,
+    openDialogIos,
   } = usePWA();
-
-  const { getDeviceInfo, route } = useVariable();
-
-  // Handler for the install button click
-  const onInstall = async () => {
-    await promptInstall();
-    const device = getDeviceInfo();
-    let type = 0;
-    switch (true) {
-      case device.isAndroid:
-        type = 1; // Android
-        break;
-      case device.isIos:
-        type = 2; // iOS
-        break;
-      case device.isMac:
-        type = 3; // macOS
-        break;
-      case device.isWindows:
-        type = 4; // Windows
-        break;
-      default:
-        type = 0; // Unknown
-    }
-    const request = {
-      chan: route.query.chan,
-      type: type,
-    };
-    await installPwa(request);
-    closeInstallPrompt();
-  };
 
   // Handler for the reload button click
   const refresh = async () => {
     await updateServiceWorker();
     // Close the prompt after the user clicks to reload.
     closeReloadPrompt();
-  };
-  const dialogIosGuide = ref();
-  const openDialogIos = () => {
-    closeInstallPrompt();
-    dialogIosGuide.value.openDialog();
   };
 </script>
 
@@ -124,7 +85,7 @@
 
     <!-- PWA Reload Toast -->
     <!-- This section is displayed when an update is available -->
-    <div
+    <!-- <div
       v-if="needRefresh"
       class="pwa-toast"
       role="alert"
@@ -145,7 +106,7 @@
           关闭
         </el-button>
       </div>
-    </div>
+    </div> -->
     <GuideIos ref="dialogIosGuide" />
   </div>
 </template>

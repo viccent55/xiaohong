@@ -1,7 +1,9 @@
 import { useRegisterSW } from "virtual:pwa-register/vue";
 import { onMounted, ref } from "vue";
+import useVariable from "./useVariable";
+import { installPwa } from "@/api/explore";
 // This will hold the event from 'beforeinstallprompt'
-let installPromptEvent: Event & { prompt: () => Promise<void> } | null = null;
+let installPromptEvent: (Event & { prompt: () => Promise<void> }) | null = null;
 
 export default function usePWA() {
   const { offlineReady, needRefresh, updateServiceWorker } = useRegisterSW({
@@ -33,7 +35,9 @@ export default function usePWA() {
   onMounted(() => {
     // Detect if the user is on an iOS device
     const ua = window.navigator.userAgent;
-    const isStandalone = window.matchMedia("(display-mode: standalone)").matches;
+    const isStandalone = window.matchMedia(
+      "(display-mode: standalone)"
+    ).matches;
     const isIosDevice = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
     isIOS.value = isIosDevice;
 
@@ -56,6 +60,41 @@ export default function usePWA() {
     }
   });
 
+  const { getDeviceInfo, route } = useVariable();
+
+  // Handler for the install button click
+  const onInstall = async () => {
+    await promptInstall();
+    const device = getDeviceInfo();
+    let type = 0;
+    switch (true) {
+      case device.isAndroid:
+        type = 1; // Android
+        break;
+      case device.isIos:
+        type = 2; // iOS
+        break;
+      case device.isMac:
+        type = 3; // macOS
+        break;
+      case device.isWindows:
+        type = 4; // Windows
+        break;
+      default:
+        type = 0; // Unknown
+    }
+    const request = {
+      chan: route.query.chan,
+      type: type,
+    };
+    await installPwa(request);
+    closeInstallPrompt();
+  };
+  const dialogIosGuide = ref();
+  const openDialogIos = () => {
+    closeInstallPrompt();
+    dialogIosGuide.value.openDialog();
+  };
   return {
     // For updates
     needRefresh,
@@ -66,5 +105,8 @@ export default function usePWA() {
     isIOS,
     promptInstall,
     closeInstallPrompt,
+    onInstall,
+    dialogIosGuide,
+    openDialogIos,
   };
 }

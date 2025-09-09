@@ -4,6 +4,11 @@
   import DialogInfo from "../DialogInfo.vue";
   import { checkPermissions } from "@/hooks/usePermisions";
   import { PERMISSION } from "@/common/permision";
+  import { Download } from "@element-plus/icons-vue";
+  import usePWA from "@/composables/usePWA";
+  import GuideIos from "../global/GuideIos.vue";
+  import { useRoute } from "vue-router";
+  import { openPage } from "@/service/index";
 
   const store = useStore();
   const emits = defineEmits(["click-menu-item"]);
@@ -48,6 +53,14 @@
 
     checkPermissions(PERMISSION.User, () => {});
   };
+  const route = useRoute();
+  const onOpenPage = () => {
+    const param = route.query.chan || "";
+    const urlParams = new URLSearchParams(window.location.search);
+    const chan = urlParams.get("chan"); // "cgtt"
+    openPage(`${store.configuration?.download_app_url}?chan=${chan || param}`);
+  };
+  const { isIOS, onInstall, dialogIosGuide, openDialogIos } = usePWA();
 </script>
 
 <template>
@@ -55,9 +68,7 @@
     <!-- prettier-ignore -->
     <a href="/"><img src="/logo.png" alt="logo" /></a>
 
-    <div
-      class="input-wrapper"
-    >
+    <div class="input-wrapper">
       <input
         :disabled="searchDisabled"
         v-model.trim="store.search"
@@ -105,7 +116,36 @@
               :key="index"
               @click="clickMenuItem(item)"
             >
-              <span class="px-3 py-2 text-base">{{ item.name }}</span>
+              <span class="px-3 py-1 text-base">{{ item.name }}</span>
+            </el-dropdown-item>
+            <el-divider style="margin: 6px 0"></el-divider>
+            <el-dropdown-item>
+              <!-- iOS Instructions -->
+              <div
+                v-if="isIOS"
+                class="text-base px-3 py-1"
+                @click="openDialogIos"
+              >
+                安装到桌面 - install pwa
+              </div>
+
+              <!-- Android/Desktop Prompt -->
+              <div
+                v-else
+                class="buttons px-3 py-1"
+                @click="onInstall"
+              >
+                安装到桌面
+              </div>
+              <el-icon><Download /></el-icon>
+            </el-dropdown-item>
+            <el-dropdown-item>
+              <span
+                class="text-base px-3 py-1"
+                @click="onOpenPage"
+              >
+                下载app
+              </span>
             </el-dropdown-item>
             <el-divider style="margin: 6px 0"></el-divider>
             <el-dropdown-item
@@ -113,7 +153,7 @@
               :key="index"
             >
               <span
-                class="text-base px-3 py-2"
+                class="text-base px-3 py-1"
                 :key="index"
                 @click="openLoginDialog(item)"
               >
@@ -136,6 +176,7 @@
     </div>
 
     <DialogInfo ref="dialgInfo" />
+    <GuideIos ref="dialogIosGuide" />
   </div>
 </template>
 

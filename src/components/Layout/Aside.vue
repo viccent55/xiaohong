@@ -34,7 +34,7 @@
 
   const route = useRoute();
   const onOpenPage = () => {
-    const param = route.query.chan;
+    const param = route.query.chan || "";
     const urlParams = new URLSearchParams(window.location.search);
     const chan = urlParams.get("chan"); // "cgtt"
     openPage(`${store.configuration?.download_app_url}?chan=${chan || param}`);
@@ -133,8 +133,8 @@
     display: flex;
     flex-direction: column;
     width: 270px;
-    height: calc(100% - 72px);
-
+    height: calc(100vh - 72px);
+    overflow: auto;
     > :last-child {
       margin-top: auto;
       margin-bottom: 20px;
