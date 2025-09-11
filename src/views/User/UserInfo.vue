@@ -8,6 +8,7 @@
   import { computed } from "vue";
   import Image from "@/components/Image.vue";
   import { screenMode } from "@/hooks/useScreenMode";
+  import Avatar from "@/components/Avatar.vue";
 
   const props = defineProps<{ user: UserDetailInfo }>();
   const emits = defineEmits(["click-follow", "click-report", "refresh"]);
@@ -48,12 +49,13 @@
       />
     </el-avatar>
     <span v-else>
-      <img
-        v-if="!user.avatar"
-        :src="gravatarUrl"
-        fit="cover"
-      />
-      <Image
+      <el-avatar :size="70" v-if="!user.avatar" class="mr-5">
+        <img
+          :src="gravatarUrl"
+          fit="cover"
+        />
+      </el-avatar>
+      <Avatar
         v-else
         :src="user.avatar"
         class="avatar-wrapper"
@@ -89,6 +91,7 @@
     <div class="button-wrapper md:flex-row flex-col-reverse">
       <Dialog
         :user="user"
+        :self="self"
         @refresh="
           () => {
             emits('refresh');

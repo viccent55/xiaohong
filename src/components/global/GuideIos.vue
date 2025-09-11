@@ -28,6 +28,22 @@
       carousel.value.prev();
     }
   }
+
+  const steps = [
+    {
+      title: "步骤 1: 点击分享按钮",
+      image: new URL("../../assets/guide/step-1.png", import.meta.url).href,
+    },
+    {
+      title: "步骤 2: 选择 '添加到主屏幕'",
+      image: new URL("../../assets/guide/step-2.png", import.meta.url).href,
+    },
+    {
+      title: "步骤 3: 点击 '添加'",
+      image: new URL("../../assets/guide/step-3.png", import.meta.url).href,
+    },
+  ];
+
   defineExpose({
     openDialog,
   });
@@ -39,11 +55,8 @@
     width="90%"
     custom-class="pwa-dialog"
     append-to-body
+    align-center
   >
-    <template #header>
-      <div class="dialog-header">📲 安装到主屏幕</div>
-    </template>
-
     <!-- Carousel slides -->
     <el-carousel
       class="carousel-wrapper"
@@ -54,50 +67,16 @@
       arrow="never"
     >
       <!-- slide 1 -->
-      <el-carousel-item>
+      <el-carousel-item
+        v-for="(step, index) in steps"
+        :key="index"
+      >
         <div class="slide">
-          <h3>步骤 1</h3>
-          <p>在 Safari 浏览器中打开放置 PWA 的页面。</p>
-          <div class="tip">🔍 确保使用 Safari 打开</div>
-        </div>
-      </el-carousel-item>
-
-      <!-- slide 2 -->
-      <el-carousel-item>
-        <div class="slide">
-          <h3>步骤 2</h3>
-          <p>
-            点击底部工具栏上的
-            <strong>分享</strong>
-            按钮 （一个方框和箭头图标）。
-          </p>
-        </div>
-      </el-carousel-item>
-
-      <!-- slide 3 -->
-      <el-carousel-item>
-        <div class="slide">
-          <h3>步骤 3</h3>
-          <p>
-            向下滑动菜单，选择
-            <strong>添加到主屏幕</strong>
-            。
-          </p>
-          <p class="tip">✅ 完成后，你可以直接从桌面打开应用！</p>
+          <h3>{{ step.title }}</h3>
+          <el-image :src="step.image"></el-image>
         </div>
       </el-carousel-item>
     </el-carousel>
-
-    <template #footer>
-      <div class="footer-actions">
-        <el-button
-          type="danger"
-          @click="showDialog = false"
-        >
-          我知道了
-        </el-button>
-      </div>
-    </template>
   </el-dialog>
 </template>
 

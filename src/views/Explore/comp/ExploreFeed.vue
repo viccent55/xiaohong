@@ -59,10 +59,7 @@
       
       <div class="author-wrapper">
         <!-- 作者名称头像 -->
-        <div class="info-wrapper" @click.stop="() => {
-          store.mode = '-1';
-          $emit('clickAuthor');
-        }">
+        <div class="info-wrapper" @click.stop="$emit('clickAuthor')">
           <a :href="feed.author?.id ? `/#/user/${feed.author.id}` : '#'" class="flex items-center gap-1">
           <Avatar :src="feed.author?.avatar" :id="feed.id"/>
           <span class="info">{{ feed.author?.name || feed.author?.nickname }}</span>

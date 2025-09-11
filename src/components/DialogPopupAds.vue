@@ -19,6 +19,7 @@
     },
   });
 
+  const emit = defineEmits(["allAdsClosed"]);
   const dialog = ref(false);
   const adQueue = ref<Advert[]>([]);
   const currentAdIndexInQueue = ref(0);
@@ -81,6 +82,8 @@
       setTimeout(() => {
         dialog.value = true;
       }, 300);
+    } else {
+      emit("allAdsClosed");
     }
   }
 
@@ -102,6 +105,8 @@
     if (adQueue.value.length > 0) {
       // If there are ads to show, open the dialog for the first one
       dialog.value = true;
+    } else {
+      emit("allAdsClosed");
     }
   });
 </script>

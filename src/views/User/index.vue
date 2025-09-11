@@ -12,6 +12,7 @@
     inject,
     nextTick,
     watch,
+    onBeforeMount,
   } from "vue";
   import { useRoute } from "vue-router";
   import type { ExploreChannelItem } from "@/types/item";

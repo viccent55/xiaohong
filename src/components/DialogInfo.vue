@@ -48,6 +48,7 @@
     :before-close="handleClose"
     :show-close="false"
     :width="screenMode === 'phone' ? '90%' : ''"
+    append-to-body
   >
     <template #header="{ close, titleId, titleClass }">
       <div class="flex justify-end pr-1">

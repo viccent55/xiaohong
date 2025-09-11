@@ -4,14 +4,18 @@
   import ExploreChannelBar from "./comp/ExploreChannelBar.vue";
   import ExploreLoading from "./comp/ExploreLoading.vue";
 
-  import { computed, onMounted, ref, watch } from "vue";
+  import {
+    computed,
+    onMounted,
+    ref,
+    watch,
+    reactive,
+    nextTick,
+    onBeforeMount,
+  } from "vue";
   import type { ExploreFLoatSetItem } from "@/types/item";
   import type { ExploreFeedInfo } from "@/types/info";
-  import {
-    getExploreFeeds,
-    getConfiguration,
-    activeVisitor,
-  } from "@/api/explore";
+  import { getExploreFeeds, getConfiguration } from "@/api/explore";
   import { ExploreFloatSetItems } from "@/common";
   import { useNoteDialog } from "@/hooks/useNoteDialog";
   import { checkPermissions } from "@/hooks/usePermisions";
@@ -25,8 +29,7 @@
   import { itemAdClick } from "@/api/advertisment";
   import dayjs from "dayjs";
   import useVariable from "@/composables/useVariable";
-  import { ca } from "element-plus/es/locales.mjs";
-  import { ElMessage } from "element-plus";
+
   const noteDialog = useNoteDialog();
 
   // 当前频道
@@ -43,10 +46,25 @@
   const { debounce } = useVariable();
   const storeUser = useUserStore();
 
+  const feedsCache = reactive<
+    Record<
+      string,
+      {
+        feeds: ExploreFeedInfo[];
+        page: number;
+        isNoMore: boolean;
+        scrollTop: number;
+      }
+    >
+  >({});
+  const containerEl = ref<Element | null>(null);
+
   const backToTop = (smooth = true) => {
-    const el = document.querySelector(".container");
-    if (el) {
-      el.scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
+    if (containerEl.value) {
+      containerEl.value.scrollTo({
+        top: 0,
+        behavior: smooth ? "smooth" : "auto",
+      });
     }
   };
 
@@ -74,19 +92,41 @@
     });
   };
   watch(
-    () => [mode.value, channel.value],
-    ([newMode, newChannel], [oldMode, oldChannel]) => {
-      if (newMode !== oldMode) {
-        // handle mode change
-        console.log("mode changed:", oldMode, "→", newMode);
-      }
-      if (newChannel !== oldChannel) {
-        // handle channel change
-        console.log("channel changed:", oldChannel, "→", newChannel);
-        indexChannel.value = newChannel;
-      }
+    () => mode.value,
+    () => {
       page.value = 1;
       freshFeeds();
+    }
+  );
+  watch(
+    () => channel.value,
+    (newChannel, oldChannel) => {
+      if (oldChannel && containerEl.value) {
+        feedsCache[oldChannel] = {
+          feeds: feeds.value,
+          page: page.value,
+          isNoMore: isNoMore.value,
+          scrollTop: containerEl.value.scrollTop,
+        };
+      }
+
+      if (feedsCache[newChannel]) {
+        const cached = feedsCache[newChannel];
+        feeds.value = cached.feeds;
+        page.value = cached.page;
+        isNoMore.value = cached.isNoMore;
+        nextTick(() => {
+          if (containerEl.value) {
+            containerEl.value.scrollTop = cached.scrollTop;
+          }
+        });
+      } else {
+        feeds.value = [];
+        page.value = 1;
+        isNoMore.value = false;
+        freshFeeds();
+      }
+      indexChannel.value = newChannel;
     }
   );
   const handle = {
@@ -124,7 +164,7 @@
         return backToTop();
       }
       page.value = 1;
-      freshFeeds();
+      window.location.reload();
     },
     // 点击Feed
     clickFeed(item: ExploreFeedInfo) {
@@ -207,6 +247,9 @@
       checkNewVisitor();
     }
   };
+  onBeforeMount(() => {
+    containerEl.value = document.querySelector(".container");
+  });
   onMounted(() => {
     init();
     initConfig();
@@ -264,7 +307,7 @@
   .explore-wrapper {
     width: 100%;
     height: 100%;
-    padding: 0 24px;
+    padding: 0 12px;
 
     .pc-mode({
       padding: @pc-padding;
@@ -277,7 +320,6 @@
 
     .phone-mode({
       padding-bottom: 48px;
-      padding: @phone-padding;
     });
   }
 </style>

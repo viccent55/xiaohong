@@ -190,10 +190,11 @@
     height: 72px;
     background-color: var(--background-color);
     display: flex;
-    padding: 0 16px 0 24px;
+    padding: 0 16px 0 16px;
     align-items: center;
     position: fixed;
     top: 0;
+    gap: 5px;
     justify-content: space-between;
   }
 

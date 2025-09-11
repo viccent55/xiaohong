@@ -42,8 +42,8 @@
             class="app-logo"
           />
           <div class="text-content">
-            <p class="title">安装小红书成人版</p>
-            <p class="description">添加到主屏幕 有更好的使用体验</p>
+            <p class="title">添加到主屏幕</p>
+            <p class="description">有更好的使用体验</p>
           </div>
         </div>
 

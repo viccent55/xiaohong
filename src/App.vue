@@ -13,7 +13,7 @@
   } from "./hooks/usePermisions";
   import { openLoginDialog } from "./hooks/useLoginDialog";
   import { useNoteDialog } from "./hooks/useNoteDialog";
-  import { PERMISSION } from "./common/permision";
+  import { PERMISSION } from "@/common/permision";
   import { computed, onBeforeMount, onMounted, ref, provide } from "vue";
   import type { NavigationItem } from "./types/item";
   import { NavigationItems } from "./common";
@@ -29,6 +29,7 @@
   const userStore = useUserStore();
   const noteDialog = useNoteDialog();
 
+  const allAdsClosed = ref(false);
   const scrollContainer = ref<HTMLElement | null>(null);
   provide("scrollContainer", scrollContainer);
 
@@ -58,11 +59,12 @@
   // 点击导航项
   const clickNavigationItem = (item: NavigationItem) => {
     if (item.type === "router-link") {
-      store.mode = item.mode;
       if (item.mode != "#") {
+        store.mode = item.mode;
         store.channel = "001";
         router.push("/");
       } else {
+        store.mode = item.mode;
         checkPermissions(PERMISSION.User, () => {
           router.push({ path: `/user/${userStore.useId}` });
         });
@@ -104,7 +106,6 @@
         class="container"
         ref="scrollContainer"
       >
-        <InstallPWA v-show="!userStore.loginDialogVisible" />
         <router-view v-slot="{ Component }">
           <keep-alive>
             <component :is="Component" />
@@ -121,6 +122,11 @@
       <DialogPopupAds
         v-if="!userStore.loginDialogVisible"
         :adverts="store.homePopupAds"
+        @all-ads-closed="allAdsClosed = true"
+      />
+      <InstallPWA
+        v-if="allAdsClosed"
+        v-show="!userStore.loginDialogVisible"
       />
       <AnalyticsLoader :analytics="store.configuration?.analytics" />
     </div>

@@ -12,12 +12,17 @@ const useVariable = () => {
   const isMobile = computed(() => width.value < 768);
   const isIpad = computed(() => width.value <= 1024 && width.value >= 768);
 
-  const onCopy = (text: string) => {
-    const el = document.createElement("textarea");
-    el.value = text;
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand("copy");
+  const onCopy = async (text: string) => {
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(text);
+        console.log("Text successfully copied to clipboard!");
+        return;
+      } catch (err) {
+        console.error("Failed to copy text using Clipboard API:", err);
+        // Fallback to the traditional method if the modern API fails.
+      }
+    }
   };
   const formatTime = (timestamp: string | number | Date) => {
     const createdAt =
@@ -50,7 +55,8 @@ const useVariable = () => {
     if (feedsContainer.value) {
       // Use getBoundingClientRect().width for a more precise fractional value
       // and Math.floor to prevent floating point rounding errors from breaking the layout.
-      const containerWidth = feedsContainer.value.getBoundingClientRect().width;
+      const containerWidth =
+        feedsContainer.value?.getBoundingClientRect().width;
       if (window.innerWidth <= 768) {
         gap.value = 12;
         columnWidth.value = Math.floor((containerWidth - gap.value) / 2);

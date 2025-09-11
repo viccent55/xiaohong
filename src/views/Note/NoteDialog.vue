@@ -4,6 +4,7 @@
   import CommentContainer from "./comp/Comment/CommentContainer.vue";
   import AuthorHeader from "./comp/Article/AuthorHeader.vue";
   import BottomAction from "./comp/BottomAction.vue";
+  import { getCurrentDomain } from "@/service";
 
   import { useNoteDialog, noteDialogVisible } from "@/hooks/useNoteDialog";
   import { screenMode } from "@/hooks/useScreenMode";
@@ -13,18 +14,15 @@
     nextTick,
     ref,
     useTemplateRef,
-    watch,
   } from "vue";
   import type { CommentBlockInfo } from "@/types/info";
   import * as Api from "@/api/note";
   import { checkPermissions } from "@/hooks/usePermisions";
   import { PERMISSION } from "@/common/permision";
-  import { openPage } from "@/service";
   import { ElMessage } from "element-plus";
   import { useUserStore } from "@/store/user";
   import useVariable from "@/composables/useVariable";
-  import { closeLoginDialog } from "@/hooks/useLoginDialog";
-
+  
   const { onCopy, route } = useVariable();
   const bottomRef = useTemplateRef("bottomActions");
   const noteDIalogRef = useTemplateRef("note-dialog");
@@ -96,10 +94,8 @@
     },
     // 分享
     clickShare() {
-      const url = window.location.origin + route.fullPath;
-      console.log("分享", url);
       ElMessage.success("链接已复制!");
-      onCopy(url); // copy full route with noteId
+      onCopy(getCurrentDomain() + route.fullPath);
     },
     // 收藏
     clickStar(item: EmptyObjectType) {
@@ -214,34 +210,38 @@
       swiperInstanceRef.value.closeVideo();
     }
   };
-  watch(
-    () => noteDialog.id.value,
-    () => {
-      closeLoginDialog();
-    }
-  );
 
-  // keep track of touch start X
+  // keep track of touch start X and Y
   let startX = 0;
+  let startY = 0;
 
   function onTouchStart(e: TouchEvent) {
     startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
   }
 
   function onTouchEnd(e: TouchEvent) {
     const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
     const deltaX = endX - startX;
+    const deltaY = endY - startY;
+
+    if (screenMode.value !== 'pc' && deltaX > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      noteDialog.closeNoteDialog();
+      return;
+    }
 
     if (!swiperInstanceRef.value) return;
 
-    if (deltaX < -50) {
+    if (deltaX < -50 && Math.abs(deltaX) > Math.abs(deltaY)) {
       // swipe left → go next
       swiperInstanceRef.value.next();
-    } else if (deltaX > 50) {
+    } else if (deltaX > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
       // swipe right → go previous
       swiperInstanceRef.value.prev();
     }
   }
+
 </script>
 
 <template>
@@ -255,7 +255,11 @@
     :show-close="false"
     align-center
   >
-    <div class="note-dialog">
+    <div
+      class="note-dialog"
+      @touchstart="onTouchStart"
+      @touchend="onTouchEnd"
+    >
       <div
         class="media-container"
         v-if="screenMode === 'pc'"
@@ -286,8 +290,6 @@
         <div
           class="media-container"
           v-if="screenMode !== 'pc'"
-          @touchstart="onTouchStart"
-          @touchend="onTouchEnd"
         >
           <Swiper
             ref="swiperInstanceRef"

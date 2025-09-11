@@ -15,6 +15,10 @@
       type: Object,
       default: () => {},
     },
+    self: {
+      type: Boolean,
+      default: false,
+    },
   });
   // User info form
   const userInfo = reactive({
@@ -103,6 +107,7 @@
   <div>
     <div class="flex flex-col align-middle items-center">
       <el-button
+        v-if="self"
         round
         type="primary"
         :size="screenMode === 'phone' ? 'small' : 'default'"

@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import Date from "../Date.vue";
-  import ReportButton from "../ReportButton.vue";
+  import { getCurrentDomain } from "@/service";
 
   defineProps<{
     article: EmptyObjectType;
@@ -24,6 +24,8 @@
       />
       <!-- <ReportButton @click-report="$emit('click-report', article?.id)" /> -->
     </div>
+
+    <!-- <div>{{ getCurrentDomain() }}</div> -->
   </div>
 </template>
 
