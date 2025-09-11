@@ -107,7 +107,7 @@
         ref="scrollContainer"
       >
         <router-view v-slot="{ Component }">
-          <keep-alive>
+          <keep-alive include="Explore">
             <component :is="Component" />
           </keep-alive>
         </router-view>

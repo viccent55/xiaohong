@@ -9,10 +9,13 @@
   import Image from "@/components/Image.vue";
   import { screenMode } from "@/hooks/useScreenMode";
   import Avatar from "@/components/Avatar.vue";
+  import useVariable from "@/composables/useVariable";
+  import { ElMessage } from "element-plus";
 
   const props = defineProps<{ user: UserDetailInfo }>();
   const emits = defineEmits(["click-follow", "click-report", "refresh"]);
   const userStore = useUserStore();
+  const { onCopy } = useVariable();
 
   const self = computed(() => {
     return userStore.useId === props.user.id;
@@ -25,6 +28,11 @@
   function clickFollow() {
     emits("click-follow", props.user);
   }
+  const onCopyUsername = () => {
+    const url = `${window.location.origin}/#/user/${props.user.id}`;
+    ElMessage.success("复制用户名!");
+    onCopy(url);
+  };
 </script>
 
 <template>
@@ -49,7 +57,11 @@
       />
     </el-avatar>
     <span v-else>
-      <el-avatar :size="70" v-if="!user.avatar" class="mr-5">
+      <el-avatar
+        :size="70"
+        v-if="!user.avatar"
+        class="mr-5"
+      >
         <img
           :src="gravatarUrl"
           fit="cover"
@@ -68,7 +80,16 @@
           <span class="name w-[200px]">
             {{ user?.nickname }}
           </span>
-          <span class="id w-[200px]">小红书号: {{ user.invite_code }}</span>
+          <span class="id w-[200px] flex items-center gap-1">
+            小红书号: {{ user.invite_code }}
+            <el-icon
+              :size="16"
+              @click="onCopyUsername()"
+              class="cursor-pointer"
+            >
+              <CopyDocument />
+            </el-icon>
+          </span>
         </div>
       </div>
       <div class="desc break-words">{{ user.slogan || "还没有简介" }}</div>

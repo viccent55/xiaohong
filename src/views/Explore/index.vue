@@ -31,7 +31,6 @@
   import useVariable from "@/composables/useVariable";
 
   const noteDialog = useNoteDialog();
-
   // 当前频道
   const store = useStore();
   const { configuration, channel, mode } = storeToRefs(store);
@@ -307,7 +306,7 @@
   .explore-wrapper {
     width: 100%;
     height: 100%;
-    padding: 0 12px;
+    padding: 0 24px;
 
     .pc-mode({
       padding: @pc-padding;
@@ -320,6 +319,7 @@
 
     .phone-mode({
       padding-bottom: 48px;
+      padding: @phone-padding;
     });
   }
 </style>

@@ -3,7 +3,7 @@
 
   defineProps<{
     items: ExploreChannelItem[];
-    activeValue: string;
+    activeValue: string | number;
   }>();
 
   defineEmits(["click-item"]);
