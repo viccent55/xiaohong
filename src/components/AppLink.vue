@@ -8,6 +8,7 @@
       image: string;
       url: string;
     }[];
+    height: string;
   }>();
   defineEmits(["item-click"]);
 </script>
@@ -16,8 +17,9 @@
   <el-card
     shadow="never"
     class="rounded-xl border border-gray-200 card"
+    :body-style="{ maxHeight: height, overflow: 'auto' }"
   >
-    <div class="grid grid-cols-2 gap-2 justify-items-center">
+    <div class="grid grid-cols-3 gap-2 justify-items-center">
       <a
         v-for="(app, index) in apps"
         :key="index"

@@ -379,7 +379,7 @@
                   rel="noopener noreferrer"
                   type="primary"
                 >
-                  <span class="text-sm text-blue-400">
+                  <span class="text-sm">
                     {{ store.configuration?.domain_latest }}
                   </span>
                 </el-link>

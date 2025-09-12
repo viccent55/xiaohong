@@ -9,6 +9,8 @@
   import GuideIos from "../global/GuideIos.vue";
   import { useRoute } from "vue-router";
   import { openPage } from "@/service/index";
+  import { adsClick } from "@/api/advertisment";
+  import AppLink from "../AppLink.vue";
 
   const store = useStore();
   const emits = defineEmits(["click-menu-item"]);
@@ -61,6 +63,17 @@
     openPage(`${store.configuration?.download_app_url}?chan=${chan || param}`);
   };
   const { isIOS, onInstall, dialogIosGuide, openDialogIos } = usePWA();
+  const dialogVisible = ref(false);
+  const openAds = () => {
+    dialogVisible.value = true;
+  };
+  const handleClose = () => {
+    dialogVisible.value = false;
+  };
+
+  const itemClick = (item: EmptyObjectType) => {
+    adsClick(item.id);
+  };
 </script>
 
 <template>
@@ -149,13 +162,16 @@
             </el-dropdown-item>
             <el-divider style="margin: 6px 0"></el-divider>
             <el-dropdown-item
-              v-for="(item, index) in menuItems"
+              v-for="(item, index) in [
+                ...menuItems,
+                { name: '福利应用', page: 'ads' },
+              ]"
               :key="index"
+              @click="item.page === 'ads' ? openAds() : openLoginDialog(item)"
             >
               <span
                 class="text-base px-3 py-1"
                 :key="index"
-                @click="openLoginDialog(item)"
               >
                 {{ item.name }}
               </span>
@@ -177,6 +193,24 @@
 
     <DialogInfo ref="dialgInfo" />
     <GuideIos ref="dialogIosGuide" />
+    <el-dialog
+      v-model="dialogVisible"
+      width="320px"
+      append-to-body
+      align-center
+      :before-close="handleClose"
+    >
+      <template #title>
+        <div class="text-center">推荐福利应用</div>
+      </template>
+      <AppLink
+        class="mt-2"
+        :apps="store?.recommendAds"
+        v-if="store?.recommendAds?.length > 0"
+        @item-click="itemClick"
+        height="100%"
+      />
+    </el-dialog>
   </div>
 </template>
 
@@ -184,7 +218,7 @@
   @import "@/assets/styles/base.less";
 
   .header {
-    z-index: 1;
+    z-index: 10;
     width: 100%;
     max-width: 1728px; // Match .app-container max-width
     height: 72px;

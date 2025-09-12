@@ -94,6 +94,7 @@
       :apps="store?.recommendAds"
       v-if="store?.recommendAds?.length > 0"
       @item-click="itemClick"
+      height="300px"
     />
 
     <el-button
@@ -132,7 +133,7 @@
     padding-top: 16px;
     display: flex;
     flex-direction: column;
-    width: 270px;
+    width: 300px;
     height: calc(100vh - 72px);
     overflow: auto;
     > :last-child {

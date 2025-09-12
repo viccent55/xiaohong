@@ -22,7 +22,7 @@
   import { ElMessage } from "element-plus";
   import { useUserStore } from "@/store/user";
   import useVariable from "@/composables/useVariable";
-  
+
   const { onCopy, route } = useVariable();
   const bottomRef = useTemplateRef("bottomActions");
   const noteDIalogRef = useTemplateRef("note-dialog");
@@ -204,20 +204,34 @@
     );
   };
   const swiperInstanceRef = ref<InstanceType<typeof Swiper> | null>(null);
+  const mediaContainerRef = ref<HTMLElement | null>(null);
   const onCloseNoteDialog = async () => {
     await nextTick();
     if (swiperInstanceRef.value) {
       swiperInstanceRef.value.closeVideo();
     }
   };
+  // onBeforeRouteLeave((to, from, next) => {
 
-  // keep track of touch start X and Y
+  //   if (noteDialog.id.value) return;
+  //   next();
+  // });
+  // keep track of touch start X and Y for swipe gestures
   let startX = 0;
   let startY = 0;
+  let isTouchingMedia = false;
 
   function onTouchStart(e: TouchEvent) {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
+    if (
+      mediaContainerRef.value &&
+      mediaContainerRef.value.contains(e.target as Node)
+    ) {
+      isTouchingMedia = true;
+    } else {
+      isTouchingMedia = false;
+    }
   }
 
   function onTouchEnd(e: TouchEvent) {
@@ -225,23 +239,34 @@
     const endY = e.changedTouches[0].clientY;
     const deltaX = endX - startX;
     const deltaY = endY - startY;
+    const isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY);
 
-    if (screenMode.value !== 'pc' && deltaX > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+    // On mobile, swipe right to close the dialog
+    const isEdgeSwipe = startX < 40; // Edge swipe threshold
+    if (
+      (isEdgeSwipe || !isTouchingMedia) &&
+      screenMode.value !== "pc" &&
+      deltaX > 50 &&
+      isHorizontalSwipe
+    ) {
       noteDialog.closeNoteDialog();
       return;
     }
 
     if (!swiperInstanceRef.value) return;
 
-    if (deltaX < -50 && Math.abs(deltaX) > Math.abs(deltaY)) {
-      // swipe left → go next
-      swiperInstanceRef.value.next();
-    } else if (deltaX > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
-      // swipe right → go previous
-      swiperInstanceRef.value.prev();
+    // Swipe left/right to navigate the swiper
+    if (isHorizontalSwipe) {
+      // Horizontal swipe
+      if (deltaX < -50) {
+        // Swipe left
+        swiperInstanceRef.value.next();
+      } else if (deltaX > 50) {
+        // Swipe right
+        swiperInstanceRef.value.prev();
+      }
     }
   }
-
 </script>
 
 <template>
@@ -261,6 +286,7 @@
       @touchend="onTouchEnd"
     >
       <div
+        ref="mediaContainerRef"
         class="media-container"
         v-if="screenMode === 'pc'"
       >
@@ -288,6 +314,7 @@
 
         <!-- 图片/视频区域 -->
         <div
+          ref="mediaContainerRef"
           class="media-container"
           v-if="screenMode !== 'pc'"
         >

@@ -27,13 +27,16 @@ export default function useHome() {
     }
   };
 
-  const chanId = computed(() => route.query.chan);
   const checkNewVisitor = async () => {
     generateVisitCode();
     try {
+      const param = route.query.chan || "";
+      const urlParams = new URLSearchParams(window.location.search);
+      const chan = String(urlParams.get("chan") || param);
+      const cleanedChan = chan.replace(/\/+$/, "");
       const request = {
         visitor: storeUser.visitCode,
-        chan: chanId.value,
+        chan: cleanedChan,
       };
       await newVisitor(request);
       // console.log(response);

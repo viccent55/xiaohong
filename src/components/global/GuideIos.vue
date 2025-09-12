@@ -39,9 +39,13 @@
       image: new URL("../../assets/guide/step-2.png", import.meta.url).href,
     },
     {
-      title: "步骤 3: 点击 '添加'",
+      title: "步骤 3:",
       image: new URL("../../assets/guide/step-3.png", import.meta.url).href,
     },
+    {
+      title: "步骤 4: ",
+       image: new URL("../../assets/guide/step-4.png", import.meta.url).href,
+    }
   ];
 
   defineExpose({
