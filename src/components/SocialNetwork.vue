@@ -68,7 +68,7 @@
     </div>
 
     <!-- icons row -->
-    <div class="flex justify-center gap-6 mt-4 text-gray-600">
+    <!-- <div class="flex justify-center gap-6 mt-4 text-gray-600">
       <a
         :href="store?.configuration?.github"
         target="_blank"
@@ -147,7 +147,7 @@
           />
         </svg>
       </a>
-    </div>
+    </div> -->
   </el-card>
 </template>
 <style>

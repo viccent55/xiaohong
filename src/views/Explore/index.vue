@@ -3,6 +3,7 @@
   import ExploreFloatSet from "./comp/ExploreFloatSet.vue";
   import ExploreChannelBar from "./comp/ExploreChannelBar.vue";
   import ExploreLoading from "./comp/ExploreLoading.vue";
+  import { getCurrentDomain } from "@/service";
 
   import {
     computed,
@@ -193,7 +194,7 @@
     },
     // 点击Author
     clickAuthor(item: ExploreFeedInfo) {
-      openPage(`http://localhost:5173/user/${item.id}`);
+      openPage(`${getCurrentDomain()}/#/user/${item.id}`);
     },
   };
   // 初始加载数据

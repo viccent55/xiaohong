@@ -92,7 +92,7 @@
         });
       });
     },
-    // 分享
+    // 分享`
     clickShare() {
       ElMessage.success("链接已复制!");
       onCopy(getCurrentDomain() + route.fullPath);
