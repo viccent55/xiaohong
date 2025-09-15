@@ -12,7 +12,6 @@
     inject,
     nextTick,
     watch,
-    onBeforeMount,
   } from "vue";
   import { useRoute } from "vue-router";
   import type { ExploreChannelItem } from "@/types/item";
@@ -31,10 +30,9 @@
   import { checkPermissions } from "@/hooks/usePermisions";
   import { PERMISSION } from "@/common/permision";
   import { useStore } from "@/store";
-
-  const backgroundImage = ref(
-    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?q=80&w=2670&auto=format&fit=crop"
-  );
+  import { ElMessage } from "element-plus";
+  import { retrySendEmailCode, veryCode } from "@/api/user";
+  import { useUserStore } from "@/store/user";
 
   const route = useRoute();
   const noteDialog = useNoteDialog();
@@ -46,6 +44,7 @@
   const id = computed(() => Number(route.params.id));
   const page = ref(1);
   const isLoadMore = ref(false);
+  const code = ref("");
 
   // 笔记列表
   const noteFeeds = ref<EmptyObjectType[]>([]);
@@ -165,8 +164,7 @@
     noteFeeds.value = [];
     starFeeds.value = [];
     likesFeeds.value = [];
-
-  }
+  };
   const onInit = () => {
     getUserInfo(id.value).then((res) => {
       userInfo.value = JSON.parse(JSON.stringify(res));
@@ -198,6 +196,67 @@
       }
     }
   );
+
+  const skeletonItems = computed(() => Array.from({ length: 10 }));
+  const store = useStore();
+
+  const isShowPupup = ref(false);
+  const loading = ref(false);
+  const onVeryEmail = async () => {
+    if (!userInfo.value.email) {
+      ElMessage.warning("请输入您的代码");
+      return;
+    }
+    try {
+      loading.value = true;
+      const response = await retrySendEmailCode({
+        email: userInfo.value.email,
+      });
+      if (response.errcode === 0) {
+        ElMessage.success(response.info);
+        isShowPupup.value = true;
+      } else {
+        ElMessage.error(response.info);
+      }
+      isShowPupup.value = true;
+    } catch (error) {
+      console.error("Error during login:", error);
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const verifyEmail = async () => {
+    if (!userInfo.value.email) {
+      ElMessage.warning("请输入您的代码");
+      return;
+    }
+    if (!code.value) {
+      ElMessage.error("需要代码！");
+      return;
+    }
+    try {
+      const response = await veryCode({
+        email: userInfo.value.email,
+        code: code.value,
+      });
+      if (response.errcode === 0) {
+        ElMessage.success(response.info);
+      } else {
+        ElMessage.error(response.info);
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
+  };
+  const isVerify = computed(() => {
+    // If input contains any non-digit character, return true
+    return /\D/.test(userInfo.value.invite_code);
+  });
+  const userStore = useUserStore();
+  const self = computed(() => {
+    return userStore.useId === userInfo.value.id;
+  });
   onMounted(() => {
     nextTick(() => {
       updateColumnWidth();
@@ -209,9 +268,6 @@
   onUnmounted(() => {
     window.removeEventListener("resize", updateColumnWidth);
   });
-
-  const skeletonItems = computed(() => Array.from({ length: 10 }));
-  const store = useStore();
 </script>
 
 <template>
@@ -233,6 +289,31 @@
           @click-report="handle.clickReport"
           @refresh="onInit"
         />
+        <div class="flex items-center align-middle gap-2 px-4">
+          <el-alert
+            v-if=" self"
+            type="warning"
+            :closable="false"
+            size="small"
+            class="max-w-[600px]"
+          >
+            <template
+              #title
+              class="flex align-middle items-center"
+            >
+              <span>⚠️ 未验证邮箱 {{ userInfo.email }} 验证后可订阅最新域名防止失联</span>
+              <el-button
+                type="primary"
+                size="small"
+                class="ml-2"
+                :loading="loading"
+                @click="onVeryEmail"
+              >
+                验证邮箱
+              </el-button>
+            </template>
+          </el-alert>
+        </div>
         <div class="channel-wrpper">
           <ExploreChannelBar
             :items="UserChannelItems"
@@ -288,6 +369,33 @@
         </div>
       </div>
     </div>
+    <el-dialog
+      v-model="isShowPupup"
+      title="Warning"
+      width="350px"
+      center
+      align-center
+    >
+      <el-form class="mt-5">
+        <el-form-item label="验证码">
+          <el-input
+            type="number"
+            v-model.trim="code"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div>
+          <el-button @click="isShowPupup = false">取消</el-button>
+          <el-button
+            type="primary"
+            @click="verifyEmail"
+          >
+            确认
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 

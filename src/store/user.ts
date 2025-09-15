@@ -1,13 +1,9 @@
 import { defineStore } from "pinia";
 import { setDefaultPermission } from "@/hooks/usePermisions";
 import { PERMISSION } from "@/common/permision";
-import { writeToken, removeToken, refreshToken } from "@/hooks/useJWT";
-import {
-  closeLoginDialog,
-  openLoginDialog,
-  loginDialogVisible,
-} from "@/hooks/useLoginDialog";
-import { Session } from "@/utils/storage";
+import { removeToken } from "@/hooks/useJWT";
+import { closeLoginDialog, loginDialogVisible } from "@/hooks/useLoginDialog";
+
 import type { UserDetailInfo } from "@/types/info";
 
 export const useUserStore = defineStore("user", {
@@ -46,10 +42,14 @@ export const useUserStore = defineStore("user", {
       removeToken();
       // 重置权限
       setDefaultPermission(PERMISSION.Visitor);
-      // 重置登录状态
+      this.useId = -1;
+      this.userInfo = {} as UserDetailInfo;
       this.isLogin = false;
+      window.location.href = "/";
+      // 重置登录状态
+      // this.isLogin = false;
       // 打开登录弹窗
-      openLoginDialog();
+      // openLoginDialog();
     },
   },
   getters: {

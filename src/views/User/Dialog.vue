@@ -5,10 +5,12 @@
   import AvatarUpload from "@/components/AvatarUpload.vue";
   import Qrcode from "qrcode";
   import { useRoute } from "vue-router";
+  import { screenMode } from "@/hooks/useScreenMode";
+import { useUserStore } from "@/store/user";
 
   const dialogVisible = ref(false);
   const activeTab = ref("userinfo");
-  import { screenMode } from "@/hooks/useScreenMode";
+  const storeUser = useUserStore()
 
   const props = defineProps({
     user: {
@@ -98,6 +100,7 @@
     } finally {
     }
   };
+  
   onMounted(() => {
     generateQrcode();
   });
@@ -121,6 +124,17 @@
         :size="80"
         :src="qrcodeUrl"
       />
+      <el-button
+        v-if="self"
+        size="small"
+        round
+        @click="storeUser.logout()"
+      >
+        <div class="flex gap-2 items-center">
+          登出
+          <TurnOff />
+        </div>
+      </el-button>
     </div>
     <el-dialog
       v-model="dialogVisible"

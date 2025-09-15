@@ -16,6 +16,7 @@
   const emits = defineEmits(["click-follow", "click-report", "refresh"]);
   const userStore = useUserStore();
   const { onCopy } = useVariable();
+  import { getCurrentDomain } from "@/service";
 
   const self = computed(() => {
     return userStore.useId === props.user.id;
@@ -29,7 +30,7 @@
     emits("click-follow", props.user);
   }
   const onCopyUsername = () => {
-    const url = `${window.location.origin}/#/user/${props.user.id}`;
+    const url = `${getCurrentDomain()}/#/user/${props.user.id}`;
     ElMessage.success("复制用户名!");
     onCopy(url);
   };

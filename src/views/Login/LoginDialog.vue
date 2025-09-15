@@ -26,7 +26,11 @@
       subscribed: 0,
     },
     isLogin: true,
-    code: "",
+    step: 1,
+    verifyRegister: {
+      email: "",
+      code: "",
+    },
   });
   // 监听屏幕宽度变化
   watch(
@@ -92,7 +96,8 @@
       state.register.visitor = storeUser.visitCode;
       const response = await register(state.register);
       if (response.errcode === 0) {
-        ElMessage.success("请检查您的电子邮件以获取代码!");
+        ElMessage.success("已申请注册!");
+        state.step++;
       } else {
         ElMessage.error(response.info);
       }
@@ -101,11 +106,11 @@
     }
   };
   const onVerifyRegister = async () => {
-    if (!state.register.email) {
-      ElMessage.warning("请输入您的电子邮件");
-      return;
-    }
-    if (!state.code) {
+    // if (!state.verifyRegister.email) {
+    //   ElMessage.warning("请输入您的代码");
+    //   return;
+    // }
+    if (!state.verifyRegister.code) {
       ElMessage.warning("请输入您的代码");
       return;
     }
@@ -113,10 +118,11 @@
     try {
       const response = await veryCode({
         email: state.register.email,
-        code: state.code,
+        code: state.verifyRegister.code,
       });
       if (response.errcode === 0) {
         ElMessage.success(response.info);
+        state.step = 1;
         closeLoginDialog();
       } else {
         ElMessage.error(response.info);
@@ -202,119 +208,161 @@
             </el-button>
           </el-form-item>
         </el-form>
-        <el-form
-          v-else
-          class="px-8 pt-2 pb-0 w-full"
-          ref="form"
-          label-position="left"
-          label-width="auto"
-        >
-          <el-form-item style="margin-bottom: 0">
-            <template #label>
-              <span class="text-red-500 mr-1">*</span>
-              电子邮件
-            </template>
-            <el-input
-              v-model="state.register.email"
-              type="email"
-              label="电子邮件"
-              size="large"
-            />
-          </el-form-item>
-          <el-form-item label=" ">
-            <el-checkbox
-              v-model="state.register.subscribed"
-              :true-label="1"
-              :false-label="0"
+        <div v-else>
+          <div class="py-2">
+            <el-steps
+              style="max-width: 600px; margin: auto"
+              :active="state.step"
+              align-center
             >
-              <template #default>
-                <div
-                  class="md:mt-0 mt-3"
-                  style="white-space: normal"
-                >
-                  <span class="text-xs text-gray-500">订阅邮箱</span>
-                  <span class="ml-1 text-xs text-sky-800">
-                    接收最新域名地址 永不失联
-                  </span>
-                </div>
-              </template>
-            </el-checkbox>
-          </el-form-item>
-          <el-form-item size="large">
-            <template #label>
-              <span class="text-red-500 mr-1">*</span>
-              密码
-            </template>
-            <el-input
-              v-model="state.register.password"
-              size="large"
-              type="password"
-              show-password
-            />
-          </el-form-item>
-          <el-form-item>
-            <template #label>
-              <span class="text-red-500 mr-1">*</span>
-              重复密码
-            </template>
-            <el-input
-              v-model="state.register.password_repeat"
-              type="password"
-              size="large"
-              show-password
-            />
-          </el-form-item>
-          <el-form-item
-            label=""
-            size="large"
-          >
-            <template #label>
-              <span class="ml-3">邀请码</span>
-            </template>
-            <el-input
-              v-model="state.register.invite_code"
-              size="large"
-              type="password"
-            />
-          </el-form-item>
-
-          <el-form-item>
-            <template #label>
-              <span class="text-red-500 mr-1">*</span>
-              邮箱验证码
-            </template>
-            <el-input
-              v-model="state.code"
-              placeholder="输入您的代码"
-              size="large"
-              type="text"
-            >
-              <template #append>
-                <el-button
-                  type="danger"
-                  @click="onPrepareRegister"
-                >
-                  获取
-                </el-button>
-              </template>
-            </el-input>
-          </el-form-item>
-          <div class="flex flex-col justify-end text-end w-100 mb-5">
-            <el-button
-              type="danger"
-              size="large"
-              class="w-full"
-              round
-              @click="onVerifyRegister"
-            >
-              注册
-            </el-button>
+              <el-step
+                title="步骤 1"
+                description="注册账户"
+              />
+              <el-step
+                title="步骤 2"
+                description="验证你的邮箱"
+              />
+            </el-steps>
           </div>
-        </el-form>
+          <el-form
+            v-if="state.step === 1"
+            class="px-8 pt-2 pb-0 w-full"
+            ref="form"
+            label-position="left"
+            label-width="auto"
+          >
+            <el-form-item style="margin-bottom: 0">
+              <template #label>
+                <span class="text-red-500 mr-1">*</span>
+                电子邮件
+              </template>
+              <el-input
+                v-model="state.register.email"
+                type="email"
+                label="电子邮件"
+                size="large"
+              />
+            </el-form-item>
+            <el-form-item label=" ">
+              <el-checkbox
+                v-model="state.register.subscribed"
+                :true-label="1"
+                :false-label="0"
+              >
+                <template #default>
+                  <div
+                    class="md:mt-0 mt-3"
+                    style="white-space: normal"
+                  >
+                    <span class="text-xs text-gray-500">订阅邮箱</span>
+                    <span class="ml-1 text-xs text-sky-800">
+                      接收最新域名地址 永不失联
+                    </span>
+                  </div>
+                </template>
+              </el-checkbox>
+            </el-form-item>
+            <el-form-item size="large">
+              <template #label>
+                <span class="text-red-500 mr-1">*</span>
+                密码
+              </template>
+              <el-input
+                v-model="state.register.password"
+                size="large"
+                type="password"
+                show-password
+              />
+            </el-form-item>
+            <el-form-item>
+              <template #label>
+                <span class="text-red-500 mr-1">*</span>
+                重复密码
+              </template>
+              <el-input
+                v-model="state.register.password_repeat"
+                type="password"
+                size="large"
+                show-password
+              />
+            </el-form-item>
+            <el-form-item
+              label=""
+              size="large"
+            >
+              <template #label>
+                <span class="ml-3">邀请码</span>
+              </template>
+              <el-input
+                v-model="state.register.invite_code"
+                size="large"
+                type="password"
+              />
+            </el-form-item>
+
+            <div class="flex flex-col justify-end text-end w-100 mb-5">
+              <el-button
+                type="danger"
+                size="large"
+                class="w-full"
+                round
+                @click="onPrepareRegister"
+              >
+                注册
+              </el-button>
+            </div>
+          </el-form>
+          <el-form
+            v-if="state.step === 2"
+            class="px-8 pt-2 pb-0 w-full"
+            ref="form"
+            label-position="left"
+            label-width="auto"
+          >
+            <!-- <el-form-item>
+              <template #label>
+                <span class="text-red-500 mr-1">*</span>
+                电子邮件
+              </template>
+              <el-input
+                v-model="state.verifyRegister.email"
+                type="email"
+                label="电子邮件"
+                placeholder="输入您的电子邮件"
+                size="large"
+              />
+            </el-form-item> -->
+            <el-form-item>
+              <template #label>
+                <span class="text-red-500 mr-1">*</span>
+                邮箱验证码
+              </template>
+              <el-input
+                v-model="state.verifyRegister.code"
+                placeholder="输入您的代码"
+                size="large"
+                type="text"
+              ></el-input>
+            </el-form-item>
+            <div class="flex flex-col justify-end text-end w-100 mb-5">
+              <el-button
+                type="danger"
+                size="large"
+                class="w-full"
+                round
+                @click="onVerifyRegister"
+              >
+                验证电子邮件
+              </el-button>
+            </div>
+          </el-form>
+        </div>
 
         <div class="flex flex-col items-center gap-2 my-3 w-full px-8">
           <div class="flex justify-between w-full text-sm">
             <el-button
+              v-if="state.isLogin"
               @click="openFogotDialog"
               class="border-none"
               size="small"
@@ -326,7 +374,7 @@
               class="flex text-blue-500 cursor-pointer"
               @click="state.isLogin = !state.isLogin"
             >
-              <div>{{ state.isLogin ? "没有账号？" : "已有账户？" }}</div>
+              <div>{{ state.isLogin ? "没有账号？" : state.step == 1 ? "已有账户？去登录"  : '暂不验证 去登录'}}</div>
             </div>
           </div>
 
@@ -386,6 +434,7 @@
               </li>
               <li>
                 <span class="text-xs">防失联邮箱：</span>
+
                 <el-link
                   :href="store.configuration?.email"
                   target="_blank"
