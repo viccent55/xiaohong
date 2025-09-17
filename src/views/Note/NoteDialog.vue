@@ -3,18 +3,24 @@
   import Content from "./comp/Article/Content.vue";
   import CommentContainer from "./comp/Comment/CommentContainer.vue";
   import AuthorHeader from "./comp/Article/AuthorHeader.vue";
+  import { Keyboard } from "@capacitor/keyboard";
   import BottomAction from "./comp/BottomAction.vue";
   import { getCurrentDomain } from "@/service";
+  import { App } from "@capacitor/app";
+  import { Capacitor } from "@capacitor/core";
 
   import { useNoteDialog, noteDialogVisible } from "@/hooks/useNoteDialog";
   import { screenMode } from "@/hooks/useScreenMode";
   import {
     computed,
     defineAsyncComponent,
-    nextTick,
     ref,
     useTemplateRef,
+    nextTick,
+    onBeforeUnmount,
+    watch,
   } from "vue";
+  import type { PluginListenerHandle } from "@capacitor/core";
   import type { CommentBlockInfo } from "@/types/info";
   import * as Api from "@/api/note";
   import { checkPermissions } from "@/hooks/usePermisions";
@@ -224,6 +230,7 @@
   function onTouchStart(e: TouchEvent) {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
+
     if (
       mediaContainerRef.value &&
       mediaContainerRef.value.contains(e.target as Node)
@@ -241,14 +248,16 @@
     const deltaY = endY - startY;
     const isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY);
 
-    // On mobile, swipe right to close the dialog
-    const isEdgeSwipe = startX < 40; // Edge swipe threshold
+    // Edge swipe threshold (avoid iOS system gesture zone)
+    const isEdgeSwipe = startX < 30;
+
     if (
-      (isEdgeSwipe || !isTouchingMedia) &&
       screenMode.value !== "pc" &&
+      isHorizontalSwipe &&
       deltaX > 50 &&
-      isHorizontalSwipe
+      (isEdgeSwipe || !isTouchingMedia)
     ) {
+      e.preventDefault(); // 🚀 block default back-swipe
       noteDialog.closeNoteDialog();
       return;
     }
@@ -257,16 +266,78 @@
 
     // Swipe left/right to navigate the swiper
     if (isHorizontalSwipe) {
-      // Horizontal swipe
       if (deltaX < -50) {
-        // Swipe left
         swiperInstanceRef.value.next();
-      } else if (deltaX > 50) {
-        // Swipe right
+      } else if (deltaX > 50 && !isEdgeSwipe) {
+        // only allow swiper navigation if not from the extreme edge
         swiperInstanceRef.value.prev();
       }
     }
   }
+
+  let keyboardWillShowListener: PluginListenerHandle | null = null;
+  let keyboardWillHideListener: PluginListenerHandle | null = null;
+  let backButtonListener: PluginListenerHandle | null = null;
+
+  watch(noteDialogVisible, async (isVisible) => {
+    if (!Capacitor.isNativePlatform()) return;
+
+    await removeAllListeners();
+
+    if (isVisible) {
+      const noteDialogEl = noteDIalogRef.value;
+      if (!noteDialogEl) return;
+
+      const platform = Capacitor.getPlatform();
+      const showEvent: any =
+        platform === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+      const hideEvent: any =
+        platform === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+
+      keyboardWillShowListener = await Keyboard.addListener(
+        showEvent,
+        (info) => {
+          noteDialogEl.style.setProperty(
+            "--keyboard-height",
+            `${info.keyboardHeight}px`
+          );
+          setTimeout(() => {
+            bottomRef.value?.$el.scrollIntoView({
+              behavior: "smooth",
+              block: "end",
+            });
+          }, 20); // Increased delay slightly for Android
+        }
+      );
+
+      keyboardWillHideListener = await Keyboard.addListener(hideEvent, () => {
+        noteDialogEl.style.removeProperty("--keyboard-height");
+      });
+
+      if (platform === "android") {
+        backButtonListener = await App.addListener(
+          "backButton",
+          ({ canGoBack }) => {
+            if (noteDialog.id.value) {
+              noteDialog.closeNoteDialog();
+            } else if (canGoBack) {
+              window.history.back();
+            } else {
+              App.exitApp();
+            }
+          }
+        );
+      }
+    }
+  });
+
+  const removeAllListeners = async () => {
+    await keyboardWillShowListener?.remove();
+    await keyboardWillHideListener?.remove();
+    await backButtonListener?.remove();
+  };
+
+  onBeforeUnmount(removeAllListeners);
 </script>
 
 <template>
@@ -283,7 +354,7 @@
     <div
       class="note-dialog"
       @touchstart="onTouchStart"
-      @touchend="onTouchEnd"
+      @touchend.passive="onTouchEnd"
     >
       <div
         ref="mediaContainerRef"
@@ -295,7 +366,6 @@
           :media-info="media"
         />
       </div>
-
       <!-- 文章内容区域 -->
       <div
         class="container"
@@ -379,6 +449,11 @@
     .mobile-mode({
       height: 100vh;
       flex-direction: column;
+      padding-top: var(--safe-area-inset-top, 0px);
+      padding-bottom: var(--safe-area-inset-bottom, 0px);
+      padding-left: var(--safe-area-inset-left, 0px);
+      padding-right: var(--safe-area-inset-right, 0px);
+      padding-bottom: calc(var(--safe-area-inset-bottom, 0px) + var(--keyboard-height, 0px)) !important;
     });
 
     .pc-mode({

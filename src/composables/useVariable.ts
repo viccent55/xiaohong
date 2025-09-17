@@ -2,16 +2,20 @@ import { useWindowSize } from "@vueuse/core";
 import { useStore } from "@/store";
 import { useRoute, useRouter } from "vue-router";
 import { computed, ref } from "vue";
+import { Capacitor } from "@capacitor/core";
+import { useUserStore } from "@/store/user";
 
 const useVariable = () => {
   const { width } = useWindowSize();
   const store = useStore();
   const route = useRoute();
+  const storeUser = useUserStore();
   const router = useRouter();
   const isMobileSm = computed(() => width.value < 467);
   const isMobile = computed(() => width.value < 768);
   const isIpad = computed(() => width.value <= 1024 && width.value >= 768);
-
+  const platform = computed(() => Capacitor.getPlatform());
+  const isNativePlatform = computed(() => Capacitor.isNativePlatform());
   const onCopy = async (text: string) => {
     if (navigator.clipboard && window.isSecureContext) {
       try {
@@ -89,11 +93,25 @@ const useVariable = () => {
 
     const isPc = !isMobile && (isWindows || isMac);
 
-    let type: "ios" | "android" | "windows" | "macos" | "unknown" = "unknown";
+    let type:
+      | "ios"
+      | "android"
+      | "windows"
+      | "macos"
+      | "pwa"
+      | "other"
+      | "unknown" = "unknown";
+
     if (isIos) type = "ios";
     else if (isAndroid) type = "android";
     else if (isWindows) type = "windows";
     else if (isMac) type = "macos";
+
+    // Check if the app is running as a PWA
+    const isPwa =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      (window.navigator as any).standalone ||
+      document.referrer.startsWith("android-app://");
 
     return {
       isPc,
@@ -103,9 +121,30 @@ const useVariable = () => {
       isWindows,
       isMac,
       type,
+      isPwa,
     };
   };
-
+  const getTypeDevice = () => {
+    const device = getDeviceInfo();
+    let type = 0;
+    switch (true) {
+      case device.isPc:
+        type = 1; // PC
+        break;
+      case device.isPwa:
+        type = 2; // PWA
+        break;
+      case device.isAndroid:
+        type = 3; // ANDROID
+        break;
+      case device.isIos:
+        type = 4; // IOS
+        break;
+      default:
+        type = 6; // OTHER
+    }
+    return type;
+  };
   return {
     isMobileSm,
     isMobile,
@@ -122,6 +161,10 @@ const useVariable = () => {
     feedsContainer,
     debounce,
     getDeviceInfo,
+    isNativePlatform,
+    platform,
+    storeUser,
+    getTypeDevice,
   };
 };
 export default useVariable;

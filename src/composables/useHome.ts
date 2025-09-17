@@ -1,15 +1,13 @@
 import { gePostionAds } from "@/api/advertisment";
 import { useStore } from "@/store";
-import { useUserStore } from "@/store/user";
-import { computed } from "vue";
-import { useRoute } from "vue-router";
+import { firstVisitInApp } from "@/api/app";
 import { generateCode } from "@/utils/toolsValidate";
 import { newVisitor, activeVisitor } from "@/api/explore";
+import useVariable from "./useVariable";
 
 export default function useHome() {
   const store = useStore();
-  const route = useRoute();
-  const storeUser = useUserStore();
+  const { getTypeDevice, route, storeUser } = useVariable();
 
   const getAdsPosition = async (position = 1) => {
     const respnse = await gePostionAds(position);
@@ -29,6 +27,7 @@ export default function useHome() {
 
   const checkNewVisitor = async () => {
     generateVisitCode();
+    const deviceType = getTypeDevice();
     try {
       const param = route.query.chan || "";
       const urlParams = new URLSearchParams(window.location.search);
@@ -37,6 +36,7 @@ export default function useHome() {
       const request = {
         visitor: storeUser.visitCode,
         chan: cleanedChan,
+        platform: deviceType,
       };
       await newVisitor(request);
       // console.log(response);
@@ -56,10 +56,31 @@ export default function useHome() {
     }
   };
 
+  const getFirstVisitInApp = async () => {
+    const deviceType = getTypeDevice();
+    const lastCalledKey = "lastGetFirstVisitInApp";
+    const lastCalled = localStorage.getItem(lastCalledKey);
+    const now = Date.now();
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+    if (!lastCalled || now - parseInt(lastCalled, 10) > twentyFourHours) {
+      const param = route.query.chan || "";
+      const urlParams = new URLSearchParams(window.location.search);
+      const chan = String(urlParams.get("chan") || param);
+      const cleanedChan = chan.replace(/\/+$/, "");
+      const request = {
+        chan: cleanedChan,
+        visitor: storeUser.visitCode,
+        type: deviceType,
+      };
+      await firstVisitInApp(request);
+      localStorage.setItem(lastCalledKey, now.toString());
+    }
+  };
   return {
     getAdsPosition,
     generateVisitCode,
     checkNewVisitor,
     getActiveUser,
+    getFirstVisitInApp,
   };
 }

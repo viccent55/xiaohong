@@ -35,6 +35,7 @@
     gap: 8px;
     display: flex;
     flex-direction: column;
+    touch-action: none;
 
     .pc-mode({
       right: @pc-right-padding;

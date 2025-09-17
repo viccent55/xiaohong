@@ -42,8 +42,3 @@ export function activeVisitor(
   return axios.post("/index/activeVisitor", params);
 }
 
-export function installPwa(
-  param: object
-): Promise<ResponseConfig<EmptyObjectType>> {
-  return axios.post("/index/download", param);
-}

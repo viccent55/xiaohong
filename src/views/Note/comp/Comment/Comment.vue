@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import Avatar from "@/components/Avatar.vue";
   import Date from "../Date.vue";
 
   defineProps<{
@@ -19,12 +20,13 @@
       class="avatar"
       :class="{ 'with-reply': comment?.replyTo }"
     >
-      <el-avatar>
-        <Image
-          :src="comment?.avatar"
-          @click="$emit('click-avatar', comment?.author?.id)"
-        />
-      </el-avatar>
+      <Avatar
+        size="default"
+        :src="comment?.avatar"
+        :id="comment?.id"
+        fit="cover"
+        @click="$emit('click-avatar', comment?.id)"
+      />
     </div>
     <div class="right">
       <!-- prettier-ignore -->

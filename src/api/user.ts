@@ -26,6 +26,12 @@ export function veryCode(
   return service.post("index/register", params);
 }
 
+export function retrySendEmailCode(
+  params?: object
+): Promise<ResponseConfig<EmptyObjectType>> {
+  return service.post("index/retrySendEmailCode", params);
+}
+
 export function logout(params?: object) {
   return service({
     url: "logout",
@@ -82,3 +88,4 @@ export function resetPassword(
 ): Promise<ResponseConfig<EmptyObjectType>> {
   return service.post("/index/setPassword", params);
 }
+

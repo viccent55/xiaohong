@@ -1,16 +1,16 @@
 <script setup lang="ts">
   import { onMounted, reactive, ref, watch } from "vue";
-  import { ElMessage } from "element-plus";
+  import { ElMessage, ElMessageBox } from "element-plus";
   import { setUserInfo, changePassword } from "@/api/user";
   import AvatarUpload from "@/components/AvatarUpload.vue";
   import Qrcode from "qrcode";
   import { useRoute } from "vue-router";
   import { screenMode } from "@/hooks/useScreenMode";
-import { useUserStore } from "@/store/user";
+  import { useUserStore } from "@/store/user";
 
   const dialogVisible = ref(false);
   const activeTab = ref("userinfo");
-  const storeUser = useUserStore()
+  const storeUser = useUserStore();
 
   const props = defineProps({
     user: {
@@ -100,7 +100,20 @@ import { useUserStore } from "@/store/user";
     } finally {
     }
   };
-  
+  const open = () => {
+    ElMessageBox.confirm("你确定要退出吗?", "注销", {
+      confirmButtonText: "确认",
+      cancelButtonText: "取消",
+      type: "warning",
+      center: true,
+    }).then(() => {
+      ElMessage({
+        type: "success",
+        message: "登出成功",
+      });
+      storeUser.logout();
+    });
+  };
   onMounted(() => {
     generateQrcode();
   });
@@ -128,7 +141,10 @@ import { useUserStore } from "@/store/user";
         v-if="self"
         size="small"
         round
-        @click="storeUser.logout()"
+        type="danger"
+        bg
+        text
+        @click="open"
       >
         <div class="flex gap-2 items-center">
           登出

@@ -16,7 +16,7 @@
   } from "vue";
   import type { ExploreFLoatSetItem } from "@/types/item";
   import type { ExploreFeedInfo } from "@/types/info";
-  import { getExploreFeeds, getConfiguration } from "@/api/explore";
+  import { getExploreFeeds } from "@/api/explore";
   import { ExploreFloatSetItems } from "@/common";
   import { useNoteDialog } from "@/hooks/useNoteDialog";
   import { checkPermissions } from "@/hooks/usePermisions";
@@ -28,7 +28,6 @@
   import { storeToRefs } from "pinia";
   import useHome from "@/composables/useHome";
   import { itemAdClick } from "@/api/advertisment";
-  import dayjs from "dayjs";
   import useVariable from "@/composables/useVariable";
 
   const noteDialog = useNoteDialog();
@@ -197,16 +196,7 @@
       openPage(`${getCurrentDomain()}/#/user/${item.id}`);
     },
   };
-  // 初始加载数据
-  const initConfig = async () => {
-    const timestamp = dayjs().unix();
-    const response = await getConfiguration({
-      timestamp: timestamp,
-    });
-    if (response.errcode == 0) {
-      store.configuration = response.data;
-    }
-  };
+
   const categories = computed(() => {
     return [
       {
@@ -252,7 +242,6 @@
   });
   onMounted(() => {
     init();
-    initConfig();
     freshFeeds();
     getAdsPosition(1);
   });

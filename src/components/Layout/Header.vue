@@ -1,6 +1,5 @@
 <script setup lang="ts">
-  import { useStore } from "@/store";
-  import { computed, ref } from "vue";
+  import { computed, onMounted, ref, watch } from "vue";
   import DialogInfo from "../DialogInfo.vue";
   import { checkPermissions } from "@/hooks/usePermisions";
   import { PERMISSION } from "@/common/permision";
@@ -11,10 +10,12 @@
   import { openPage } from "@/service/index";
   import { adsClick } from "@/api/advertisment";
   import AppLink from "../AppLink.vue";
+  import useVariable from "@/composables/useVariable";
+  import { StatusBar, Style } from "@capacitor/status-bar";
 
-  const store = useStore();
   const emits = defineEmits(["click-menu-item"]);
 
+  const { store, isNativePlatform } = useVariable();
   const toggleDarkMode = () => {
     store.toggleDarkMode();
   };
@@ -74,13 +75,28 @@
   const itemClick = (item: EmptyObjectType) => {
     adsClick(item.id);
   };
+  const setStatusBarStyle = (newMode: string) => {
+    if (isNativePlatform.value) {
+      // Style.Dark = light text for dark backgrounds
+      // Style.Light = dark text for light backgrounds
+      const style = newMode === "dark" ? Style.Dark : Style.Light;
+      StatusBar.setStyle({ style });
+    }
+  };
+
+  setStatusBarStyle(store.isDarkmode);
+  onMounted(() => {
+    setStatusBarStyle(store.isDarkmode);
+  });
 </script>
 
 <template>
-  <div class="header">
+  <div
+    class="header"
+    :class="isNativePlatform ? 'isNative' : ''"
+  >
     <!-- prettier-ignore -->
     <a href="/"><img src="/logo.png" alt="logo" /></a>
-
     <div class="input-wrapper">
       <input
         :disabled="searchDisabled"
@@ -218,7 +234,7 @@
   @import "@/assets/styles/base.less";
 
   .header {
-    z-index: 10;
+    z-index: 1;
     width: 100%;
     max-width: 1728px; // Match .app-container max-width
     height: 72px;
@@ -230,8 +246,9 @@
     top: 0;
     gap: 5px;
     justify-content: space-between;
+    // height: var(--header-height);
+    padding-top: var(--safe-area-inset-top, 0px);
   }
-
   a {
     height: 100%;
     display: flex;
@@ -321,5 +338,9 @@
   }
   .custom-dropdown {
     min-width: 170px; /* adjust as needed */
+  }
+  .isNative {
+    height: 110px !important;
+    padding-top: var(--safe-area-inset-top, 0px);
   }
 </style>

@@ -38,7 +38,7 @@
           fit="cover"
           style="width: 32px; height: 32px"
         />
-        <span class="text-xs text-gray-700">{{ app.name }}</span>
+        <span class="text-xs info">{{ app.name }}</span>
       </a>
     </div>
   </el-card>

@@ -1,7 +1,7 @@
 import { useRegisterSW } from "virtual:pwa-register/vue";
 import { onMounted, ref } from "vue";
 import useVariable from "./useVariable";
-import { installPwa } from "@/api/explore";
+import { installPwa } from "@/api/app";
 // This will hold the event from 'beforeinstallprompt'
 let installPromptEvent: (Event & { prompt: () => Promise<void> }) | null = null;
 
@@ -60,7 +60,7 @@ export default function usePWA() {
     }
   });
 
-  const { getDeviceInfo, route } = useVariable();
+  const { getDeviceInfo, route, storeUser } = useVariable();
 
   // Handler for the install button click
   const onInstall = async () => {
@@ -83,8 +83,13 @@ export default function usePWA() {
       default:
         type = 0; // Unknown
     }
+    const param = route.query.chan || "";
+    const urlParams = new URLSearchParams(window.location.search);
+    const chan = String(urlParams.get("chan") || param);
+    const cleanedChan = chan.replace(/\/+$/, "");
     const request = {
-      chan: route.query.chan,
+      chan: cleanedChan,
+      visitor: storeUser.visitCode,
       type: type,
     };
     await installPwa(request);

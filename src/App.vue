@@ -14,23 +14,30 @@
   import { openLoginDialog } from "./hooks/useLoginDialog";
   import { useNoteDialog } from "./hooks/useNoteDialog";
   import { PERMISSION } from "@/common/permision";
-  import { computed, onBeforeMount, onMounted, ref, provide } from "vue";
+  import { Capacitor } from "@capacitor/core";
+  import { SafeArea } from "capacitor-plugin-safe-area";
+  import { computed, onBeforeMount, onMounted, provide, ref } from "vue";
   import type { NavigationItem } from "./types/item";
   import { NavigationItems } from "./common";
-  import { useRouter } from "vue-router";
   import { useUserStore } from "./store/user";
-  import { useStore } from "./store";
   import InstallPWA from "./components/global/InstallPWA.vue";
   import DialogPopupAds from "./components/DialogPopupAds.vue";
-  import useHome from "./composables/useHome";
-  import AnalyticsLoader from "@/components/AnalyticsLoader.vue";
 
-  const router = useRouter();
+  import AnalyticsLoader from "@/components/AnalyticsLoader.vue";
+  import useVariable from "./composables/useVariable";
+  import useHome from "./composables/useHome";
+  import { getConfiguration } from "@/api/explore";
+  import NotificationDialog from "./components/NotificationDialog.vue";
+  import dayjs from "dayjs";
+
+  const { router, store, platform } = useVariable();
   const userStore = useUserStore();
   const noteDialog = useNoteDialog();
+  const { getFirstVisitInApp } = useHome();
 
   const allAdsClosed = ref(false);
   const scrollContainer = ref<HTMLElement | null>(null);
+  const notificationDialogRef = ref<InstanceType<typeof NotificationDialog>>();
   provide("scrollContainer", scrollContainer);
 
   // 顶层组件监听屏幕大小变化
@@ -64,8 +71,8 @@
         store.channel = "001";
         router.push("/");
       } else {
-        store.mode = item.mode;
         checkPermissions(PERMISSION.User, () => {
+          store.mode = item.mode;
           router.push({ path: `/user/${userStore.useId}` });
         });
       }
@@ -74,22 +81,64 @@
     }
   };
 
-  onBeforeMount(async () => {
-    // 尝试登录
-    store.initMode();
-    if (!storeUser.isLogin) {
-      openLoginDialog();
-    }
-  });
-
-  const store = useStore();
-
-  onMounted(() => {
+  const reloadPage = () => {
+    window.location.reload();
+  };
+  onMounted(async () => {
     // 检查是否需要打开笔记
     // 延迟500ms后执行，因为此时路由查询参数可能还未更新
     setTimeout(() => {
       noteDialog.queryNoteDialogId();
     }, 500);
+
+    const root = document.documentElement;
+    if (Capacitor.isNativePlatform()) {
+      // Function to apply insets
+      const applyInsets = (insets: any) => {
+        root.style.setProperty("--safe-area-inset-top", `${insets.top}px`);
+        root.style.setProperty(
+          "--safe-area-inset-bottom",
+          `${insets.bottom}px`
+        );
+        root.style.setProperty("--safe-area-inset-left", `${insets.left}px`);
+        root.style.setProperty("--safe-area-inset-right", `${insets.right}px`);
+      };
+      // Get initial insets
+      const { insets } = await SafeArea.getSafeAreaInsets();
+      applyInsets(insets);
+
+      // Listen for changes (rotation, notch, etc.)
+      SafeArea.addListener("safeAreaChanged", (data) => {
+        applyInsets(data.insets);
+      });
+    }
+    // getFirstVisitInApp();
+  });
+  // 初始加载数据
+
+  const initializeApp = async () => {
+    try {
+      store.initMode();
+      const timestamp = dayjs().unix();
+      const response = await getConfiguration({
+        timestamp: timestamp,
+      });
+      if (response.errcode == 0) {
+        store.configuration = response.data;
+      }
+      // If initMode is successful, check for login
+      if (!userStore.isLogin) {
+        openLoginDialog();
+      }
+    } catch (error) {
+      console.error("Server is down or initial fetch failed:", error);
+      notificationDialogRef.value?.open();
+      allAdsClosed.value = false;
+    }
+  };
+
+  onBeforeMount(async () => {
+    initializeApp();
   });
 </script>
 
@@ -104,6 +153,13 @@
 
       <div
         class="container"
+        :class="
+          platform === 'ios'
+            ? 'isIos'
+            : platform === 'android'
+            ? 'isAndroid'
+            : ''
+        "
         ref="scrollContainer"
       >
         <router-view v-slot="{ Component }">
@@ -119,6 +175,10 @@
       ></Footer>
       <NoteDialog></NoteDialog>
       <LoginDialog></LoginDialog>
+      <NotificationDialog
+        ref="notificationDialogRef"
+        @retry="reloadPage"
+      />
       <DialogPopupAds
         v-if="!userStore.loginDialogVisible"
         :adverts="store.homePopupAds"
@@ -155,11 +215,22 @@
 
   .container {
     width: 100%;
-    height: calc(100% - 72px);
-    margin-top: 72px;
-
+    // height: 100%;
+    margin-top: var(--header-height, 72px);
     overflow-y: auto;
     overflow-x: auto;
+    z-index: 0;
     scrollbar-width: none;
+
+    .mobile-mode({
+      /* Account for the mobile footer height */
+      padding-bottom: var(--footer-height-mobile, 48px);
+    });
+  }
+  .isIos {
+    margin-top: var(--header-height, 110px);
+  }
+  .isAndroid {
+    margin-top: var(--header-height, 95px);
   }
 </style>

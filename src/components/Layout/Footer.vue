@@ -51,16 +51,21 @@
 <style scoped lang="less">
   @import "@/assets/styles/base.less";
 
+  :root {
+    --footer-height-mobile: calc(48px + var(--safe-area-inset-bottom, 0px));
+  }
   .footer {
     z-index: 16;
     position: fixed;
     bottom: 0;
     left: 0;
-    height: 48px;
+
+    height: var(--footer-height-mobile);
     width: 100%;
     display: flex;
+    padding-bottom: var(--safe-area-inset-bottom, 0px);
     background-color: var(--background-color);
-
+    padding: 12px 0;
     .pc-mode({
       display: none;
     });
@@ -70,6 +75,7 @@
     flex: 1;
     height: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     cursor: pointer;
