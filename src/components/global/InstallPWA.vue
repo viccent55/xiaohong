@@ -37,7 +37,7 @@
       >
         <div class="banner-content">
           <img
-            src="https://picasso-static.xiaohongshu.com/fe-platform/0014d22afee72e538cadbe0be76e06bd1ebe55ec.png"
+            src="/logo-a2.png"
             alt="App Logo"
             class="app-logo"
           />

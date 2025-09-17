@@ -96,7 +96,7 @@
     :class="isNativePlatform ? 'isNative' : ''"
   >
     <!-- prettier-ignore -->
-    <a href="/"><img src="/logo.png" alt="logo" /></a>
+    <a href="/"><img src="/logo-a1.png" alt="logo" /></a>
     <div class="input-wrapper">
       <input
         :disabled="searchDisabled"
