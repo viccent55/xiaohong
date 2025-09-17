@@ -37,3 +37,4 @@ yarn-error.log*
 assets
 icons
 public/manifest.webmanifest
+components.d.ts
