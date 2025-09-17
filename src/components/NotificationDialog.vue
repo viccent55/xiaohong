@@ -29,7 +29,7 @@
     center
     align-center
   >
-    <div class="mt-5">正在遭受攻击 暂停注册、登录、用户行为.</div>
+    <div class="mt-5">正在遭受攻击 暂停注册、登录、用户行为即将更名为 小黄书</div>
     <template #footer>
       <el-button
         type="primary"
