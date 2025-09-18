@@ -37,7 +37,7 @@
       >
         <div class="banner-content">
           <img
-            src="/logo-a2.png"
+            src="/default-logo.png"
             alt="App Logo"
             class="app-logo"
           />
