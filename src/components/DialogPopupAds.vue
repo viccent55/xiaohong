@@ -23,6 +23,7 @@
   const dialog = ref(false);
   const adQueue = ref<Advert[]>([]);
   const currentAdIndexInQueue = ref(0);
+  const allowClose = ref(false);
 
   const currentAdvert = computed(
     () => adQueue.value[currentAdIndexInQueue.value]
@@ -129,6 +130,7 @@
           circle
           class="close-button"
           size="large"
+          :disabled="!allowClose"
           @click="closeDialog"
         >
           <el-icon><Close /></el-icon>
@@ -141,6 +143,7 @@
         :advert="currentAdvert"
         class="advert-image"
         @click="adsClick(Number(currentAdvert?.id))"
+        @allow-close="(v) => (allowClose = v)"
       />
     </div>
   </el-dialog>

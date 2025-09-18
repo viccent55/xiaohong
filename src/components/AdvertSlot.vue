@@ -19,6 +19,10 @@
       default: "cover",
     },
   });
+
+  const emit = defineEmits<{
+    (e: "allowClose", value: boolean): void;
+  }>();
 </script>
 
 <template>
@@ -38,6 +42,7 @@
         :width="width"
         :height="height"
         fit="cover"
+        @imageDimensions="emit('allowClose', true)"
       />
     </a>
   </el-card>

@@ -83,8 +83,9 @@
 <template>
   <el-image
     v-if="decryptedImage"
-    :src="decryptedImage"
+    :src="decryptedImage || EmptImage"
     :fit="fit"
+    lazy
     :width="width"
     :height="height"
     class="decrypted-image"
