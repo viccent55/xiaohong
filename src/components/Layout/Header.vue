@@ -12,7 +12,9 @@
   import AppLink from "../AppLink.vue";
   import useVariable from "@/composables/useVariable";
   import { StatusBar, Style } from "@capacitor/status-bar";
-
+  import { Capacitor } from "@capacitor/core";
+  import { SafeArea } from "capacitor-plugin-safe-area";
+import { App } from "@capacitor/app";
   const emits = defineEmits(["click-menu-item"]);
 
   const { store, isNativePlatform } = useVariable();
@@ -84,9 +86,37 @@
     }
   };
 
-  setStatusBarStyle(store.isDarkmode);
-  onMounted(() => {
+  watch(() => store.isDarkmode, setStatusBarStyle);
+
+  App.addListener('resume', () => {
     setStatusBarStyle(store.isDarkmode);
+  });
+
+  const initPlatformSaveArea = async () => {
+    const root = document.documentElement;
+    if (Capacitor.isNativePlatform()) {
+      // Function to apply insets
+      const applyInsets = (insets: any) => {
+        root.style.setProperty("--safe-area-inset-top", `${insets.top}px`);
+        root.style.setProperty(
+          "--safe-area-inset-bottom",
+          `${insets.bottom}px`
+        );
+        root.style.setProperty("--safe-area-inset-left", `${insets.left}px`);
+        root.style.setProperty("--safe-area-inset-right", `${insets.right}px`);
+      };
+      // Get initial insets
+      const { insets } = await SafeArea.getSafeAreaInsets();
+      applyInsets(insets);
+
+      // Listen for changes (rotation, notch, etc.)
+      SafeArea.addListener("safeAreaChanged", (data) => {
+        applyInsets(data.insets);
+      });
+    }
+  };
+  onMounted(() => {
+    initPlatformSaveArea();
   });
 </script>
 
@@ -96,7 +126,7 @@
     :class="isNativePlatform ? 'isNative' : ''"
   >
     <!-- prettier-ignore -->
-    <a href="/"><img src="/logo-a1.png" alt="logo" /></a>
+    <a href="/"><img src="/button-logo.png" alt="logo" /></a>
     <div class="input-wrapper">
       <input
         :disabled="searchDisabled"
@@ -340,7 +370,8 @@
     min-width: 170px; /* adjust as needed */
   }
   .isNative {
-    height: 110px !important;
+    height: 100px;
+    padding-bottom: 5px;
     padding-top: var(--safe-area-inset-top, 0px);
   }
 </style>
