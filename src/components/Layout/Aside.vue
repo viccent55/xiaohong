@@ -1,11 +1,9 @@
 <script setup lang="ts">
-  import { onMounted } from "vue";
   import { useUserStore } from "@/store/user";
   import { openLoginDialog } from "@/hooks/useLoginDialog";
   import type { NavigationItem } from "@/types/item";
   import SocialNetwork from "@/components/SocialNetwork.vue";
   import AppLink from "@/components/AppLink.vue";
-  import useHome from "@/composables/useHome";
   import { useStore } from "@/store";
   import { adsClick } from "@/api/advertisment";
   import { User } from "@element-plus/icons-vue";
@@ -26,22 +24,13 @@
 
   const store = useStore();
 
-  const { getAdsPosition } = useHome();
-
   const itemClick = (item: EmptyObjectType) => {
     adsClick(item.id);
   };
 
-  const route = useRoute();
   const onOpenPage = () => {
-    const param = route.query.chan || "";
-    const urlParams = new URLSearchParams(window.location.search);
-    const chan = urlParams.get("chan"); // "cgtt"
-    openPage(`${store.configuration?.download_app_url}?chan=${chan || param}`);
+    openPage(`${store.configuration?.download_app_url}?chan=${store.chan}`);
   };
-  onMounted(() => {
-    getAdsPosition(2);
-  });
 </script>
 
 <template>

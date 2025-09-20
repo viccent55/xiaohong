@@ -3,7 +3,6 @@
  */
 
 import { useUserStore } from "@/store/user";
-import { Session } from "@/utils/storage";
 
 const TOKEN_KEY = "access_token";
 const REFRESH_KEY = "refresh_token";
@@ -16,6 +15,7 @@ function appendToken(config: any) {
   // 检查token是否存在，如果不存在，则返回
   if (!token && refresh) {
     console.log("call refresh function ....");
+    // return refreshToken(refresh);
   } else {
     // 向请求头中添加token
     config.headers.Authorization = `Bearer ${token}`;

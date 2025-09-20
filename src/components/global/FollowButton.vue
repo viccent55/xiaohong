@@ -21,7 +21,7 @@
 
   button {
     margin-left: auto;
-    padding: 0 24px;
+    // padding: 0 24px;
     font-size: 16px;
     font-weight: 600;
     width: 96px;

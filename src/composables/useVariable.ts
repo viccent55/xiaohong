@@ -145,6 +145,12 @@ const useVariable = () => {
     }
     return type;
   };
+  const clearQuery = () => {
+    const { origin, pathname, hash } = window.location;
+    const newUrl = `${origin}${pathname}${hash}`;
+    window.history.replaceState({}, "", newUrl);
+  };
+
   return {
     isMobileSm,
     isMobile,
@@ -165,6 +171,7 @@ const useVariable = () => {
     platform,
     storeUser,
     getTypeDevice,
+    clearQuery,
   };
 };
 export default useVariable;

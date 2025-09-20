@@ -85,3 +85,10 @@ export const removeLike = (
 ): Promise<ResponseConfig<boolean>> => {
   return axios.delete("/member/likes", { params: { likeId } });
 };
+
+// member active
+export const getMemberActive = (
+  params: object
+): Promise<ResponseConfig<boolean>> => {
+  return axios.post("/member/active", params);
+};

@@ -4,14 +4,8 @@ import service from "@/utils/request";
 
 export function login(
   params?: object
-): Promise<ResponseConfig<EmptyObjectType>> {
+): Promise<EmptyObjectType> {
   return service.post("index/login", params);
-}
-
-export function refresh(
-  params?: object
-): Promise<ResponseConfig<EmptyObjectType>> {
-  return service.post("index/refresh", params);
 }
 
 export function register(
@@ -40,22 +34,10 @@ export function logout(params?: object) {
   });
 }
 
-export const getUserInfo = (
-  id: number
-): Promise<ResponseConfig<UserDetailInfo>> => {
-  return service.post("/index/userInfomation", { mid: id });
-};
-
 export const setUserInfo = (
   params: object
 ): Promise<ResponseConfig<UserDetailInfo>> => {
   return service.post("/member/setinfo", params);
-};
-// 获取笔记
-export const getNoteFeeds = (
-  params: object
-): Promise<ResponseConfig<ListConfig<EmptyObjectType>>> => {
-  return service.post("/item/author", params);
 };
 
 // 获取收藏
@@ -88,4 +70,3 @@ export function resetPassword(
 ): Promise<ResponseConfig<EmptyObjectType>> {
   return service.post("/index/setPassword", params);
 }
-

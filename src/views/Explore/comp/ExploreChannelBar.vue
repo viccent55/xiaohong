@@ -3,6 +3,7 @@
   import type { ExploreChannelItem } from "@/types/item";
   import { ElScrollbar } from "element-plus";
   import { ArrowLeft, ArrowRight } from "@element-plus/icons-vue";
+  import useVariable from "@/composables/useVariable";
 
   defineProps<{
     items: ExploreChannelItem[];
@@ -11,6 +12,7 @@
 
   defineEmits(["click-item"]);
 
+  const { isNativePlatform } = useVariable();
   const scrollbarRef = ref<InstanceType<typeof ElScrollbar>>();
   const showArrows = ref(false);
 
@@ -26,7 +28,8 @@
   const updateArrowsVisibility = () => {
     const scrollContainer = scrollbarRef.value?.wrapRef;
     if (scrollContainer) {
-      showArrows.value = scrollContainer.scrollWidth > scrollContainer.clientWidth;
+      showArrows.value =
+        scrollContainer.scrollWidth > scrollContainer.clientWidth;
     }
   };
 
@@ -52,7 +55,10 @@
 </script>
 
 <template>
-  <div class="channel-bar-container">
+  <div
+    class="channel-bar-container"
+    :class="isNativePlatform ? 'mt-4' : ''"
+  >
     <div
       v-if="showArrows"
       class="arrow-wrapper left"

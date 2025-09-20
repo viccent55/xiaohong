@@ -8,6 +8,7 @@
   import { getCurrentDomain } from "@/service";
   import { App } from "@capacitor/app";
   import { Capacitor } from "@capacitor/core";
+  import { adsClick } from "@/api/advertisment";
 
   import { useNoteDialog, noteDialogVisible } from "@/hooks/useNoteDialog";
   import { screenMode } from "@/hooks/useScreenMode";
@@ -23,13 +24,14 @@
   import type { PluginListenerHandle } from "@capacitor/core";
   import type { CommentBlockInfo } from "@/types/info";
   import * as Api from "@/api/note";
+  import { getNoteDetail } from "@/api/getMethod";
   import { checkPermissions } from "@/hooks/usePermisions";
   import { PERMISSION } from "@/common/permision";
   import { ElMessage } from "element-plus";
   import { useUserStore } from "@/store/user";
   import useVariable from "@/composables/useVariable";
 
-  const { onCopy, route } = useVariable();
+  const { onCopy, route, store } = useVariable();
   const bottomRef = useTemplateRef("bottomActions");
   const noteDIalogRef = useTemplateRef("note-dialog");
   const Swiper = defineAsyncComponent(
@@ -202,7 +204,7 @@
   // 打开弹窗时执行
   const onOpenNoteDialog = async () => {
     if (noteDIalogRef.value) noteDIalogRef.value.scrollTop = 0;
-    Api.getNoteDetail(Number(noteDialog.id.value), storeUser?.visitCode).then(
+    getNoteDetail(Number(noteDialog.id.value), storeUser?.visitCode).then(
       (res) => {
         article.value = res.data;
         getComments();
@@ -398,6 +400,7 @@
         <Content
           :article="article"
           @click-report="handle.clickReport"
+          @click-ads="adsClick"
         />
 
         <!-- 评论区域 -->
@@ -407,6 +410,29 @@
           :total="total"
           @more-comments="handle.getMoreComments"
         >
+          <el-card
+            v-for="(app, index) in store.detailAds"
+            :key="index"
+            body-style="padding: 0;"
+            class="my-2"
+          >
+            <a
+              :href="app.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class=""
+              @click="adsClick(app.id)"
+            >
+              <AdvertSlot
+                :advert="{
+                  title: app.name,
+                  image: app.image,
+                  url: app?.url,
+                }"
+                fit="cover"
+              />
+            </a>
+          </el-card>
           <template
             v-for="block in commentBlocks"
             :key="block.id"

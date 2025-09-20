@@ -1,8 +1,6 @@
 <script setup lang="ts">
-  import { computed, ref } from "vue";
+  import { ref } from "vue";
   import { ElAvatar } from "element-plus";
-  import { User } from "@element-plus/icons-vue";
-  import { MD5 } from "crypto-js";
 
   // Props & emits
   const props = defineProps<{

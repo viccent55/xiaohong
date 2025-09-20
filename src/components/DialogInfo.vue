@@ -1,7 +1,7 @@
 <script lang="ts" setup>
   import { reactive, ref } from "vue";
   import { ElDialog } from "element-plus";
-  import { getPageInfo } from "@/api/pageinfo";
+  import { getPageInfo } from "@/api/getMethod";
   import { Close } from "@element-plus/icons-vue";
   import { screenMode } from "@/hooks/useScreenMode";
 
@@ -20,6 +20,7 @@
     state.content = "";
 
     try {
+      console.log(item.page)
       const response = await getPageInfo(item.page);
       state.name = response.data.name;
       state.title = response.data.title;

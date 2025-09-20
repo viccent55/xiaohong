@@ -41,8 +41,8 @@
   const page = ref(1);
   const isNoMore = ref(false);
   const isInitialLoading = ref(true);
-  const { getAdsPosition, checkNewVisitor, getActiveUser } = useHome();
-  const { debounce } = useVariable();
+  const { getAdsPosition } = useHome();
+  const { debounce, clearQuery } = useVariable();
   const storeUser = useUserStore();
 
   const feedsCache = reactive<
@@ -170,6 +170,7 @@
       if (item.mode === 3) {
         itemAdClick(item.id);
       } else {
+        clearQuery();
         noteDialog.openNoteDialog(String(item.id));
       }
     },
@@ -230,25 +231,21 @@
       }
     }
   );
-  const init = () => {
-    if (storeUser.visitCode) {
-      getActiveUser();
-    } else {
-      checkNewVisitor();
-    }
-  };
   onBeforeMount(() => {
     containerEl.value = document.querySelector(".container");
   });
   onMounted(() => {
-    init();
     freshFeeds();
     getAdsPosition(1);
+    getAdsPosition(2);
+    getAdsPosition(3);
+    getAdsPosition(4);
   });
 </script>
 
 <template>
   <div class="explore-wrapper">
+    <h1 class="hidden">小红书成人版-记录性福每一天</h1>
     <!-- 频道导航 -->
     <ExploreChannelBar
       :items="categories"

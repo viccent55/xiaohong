@@ -1,12 +1,13 @@
 <script setup lang="ts">
+  import useVariable from "@/composables/useVariable";
   import Date from "../Date.vue";
-  import { getCurrentDomain } from "@/service";
 
   defineProps<{
     article: EmptyObjectType;
   }>();
 
-  defineEmits(["click-report"]);
+  defineEmits(["click-report", "click-ads"]);
+  const { store } = useVariable();
 </script>
 
 <template>
@@ -22,9 +23,37 @@
         }"
         class="date"
       />
+
       <!-- <ReportButton @click-report="$emit('click-report', article?.id)" /> -->
     </div>
-
+    <div
+      class="mt-2"
+      :class="{
+        'flex gap-8 justify-end': store?.detailAppAds.length <= 3,
+        'grid grid-cols-4 gap-3 justify-end': store?.detailAppAds.length > 3,
+      }"
+    >
+      <a
+        v-for="(app, index) in store?.detailAppAds"
+        :key="index"
+        :href="app.url || '#'"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="flex items-center gap-2 hover:opacity-80"
+        @click="$emit('click-ads', app.id)"
+      >
+        <AdvertSlot
+          :advert="{
+            title: app.name,
+            image: app.image,
+            url: app?.url,
+          }"
+          fit="cover"
+          style="width: 28px; height: 28px"
+        />
+        <span class="text-xs info">{{ app.name }}</span>
+      </a>
+    </div>
     <!-- <div>{{ getCurrentDomain() }}</div> -->
   </div>
 </template>

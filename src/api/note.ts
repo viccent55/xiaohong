@@ -2,13 +2,7 @@ import axios from "@/utils/request";
 import type { ResponseConfig } from "@/types/axios";
 import type { CommentBlockInfo, CommentInfo } from "@/types/info";
 
-// 获取文章细节
-export const getNoteDetail = (
-  id: number,
-  visitor: string
-): Promise<ResponseConfig<EmptyObjectType>> => {
-  return axios.post("/item/detail", { id, visitor });
-};
+
 
 // 获取评论
 export const getComments = (

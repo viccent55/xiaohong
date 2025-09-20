@@ -94,7 +94,12 @@
     }
     try {
       state.register.visitor = storeUser.visitCode;
-      const response = await register(state.register);
+      const request = {
+        ...state.register,
+        visitor: storeUser.visitCode,
+        chan: store.chan ?? "",
+      };
+      const response = await register(request);
       if (response.errcode === 0) {
         ElMessage.success("已申请注册!");
         state.step++;
@@ -167,7 +172,7 @@
         class="right"
         v-if="dialogMode !== 'left'"
       >
-        <h1>{{ state.isLogin ? "邮箱登录" : "邮箱注册" }}</h1>
+        <h4>{{ state.isLogin ? "邮箱登录" : "邮箱注册" }}</h4>
         <el-form
           class="px-8 pt-2 pb-0 w-full"
           ref="form"
@@ -374,7 +379,15 @@
               class="flex text-blue-500 cursor-pointer"
               @click="state.isLogin = !state.isLogin"
             >
-              <div>{{ state.isLogin ? "没有账号？" : state.step == 1 ? "已有账户？去登录"  : '暂不验证 去登录'}}</div>
+              <div>
+                {{
+                  state.isLogin
+                    ? "没有账号？"
+                    : state.step == 1
+                    ? "已有账户？去登录"
+                    : "暂不验证 去登录"
+                }}
+              </div>
             </div>
           </div>
 
@@ -522,7 +535,7 @@
       flex-direction: column;
       align-items: center;
 
-      h1 {
+      h4 {
         padding: 0 20px;
         margin-bottom: 20px;
         border-radius: 999px;
@@ -599,7 +612,7 @@
     min-width: 100%;
   });
 
-    h1 {
+    h4 {
       margin-top: 20px;
       font-size: 18px;
       color: var(--text-color-dark);

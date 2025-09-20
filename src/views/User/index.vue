@@ -16,12 +16,9 @@
   import { useRoute } from "vue-router";
   import type { ExploreChannelItem } from "@/types/item";
   import { UserChannelItems } from "@/common";
-  import {
-    getLikeFeeds,
-    getNoteFeeds,
-    getStarFeeds,
-    getUserInfo,
-  } from "@/api/user";
+  import { getLikeFeeds, getStarFeeds } from "@/api/user";
+  import { getNoteFeeds } from "@/api/getMethod";
+  import { getUserInfo } from "@/api/getMethod";
   import type { ExploreFeedInfo, UserDetailInfo } from "@/types/info";
   import { report } from "@/api/note";
   import { useNoteDialog } from "@/hooks/useNoteDialog";
@@ -67,11 +64,7 @@
     noteFeeds() {
       if (isLoadMore.value) return;
       isLoadMore.value = true;
-      const request = {
-        id: id.value,
-        page: page.value,
-      };
-      getNoteFeeds(request)
+      getNoteFeeds(id.value, page.value)
         .then((res) => {
           if (res.errcode !== 0) return;
           noteFeeds.value = [...noteFeeds.value, ...res.data];
@@ -167,7 +160,7 @@
   };
   const onInit = () => {
     getUserInfo(id.value).then((res) => {
-      userInfo.value = JSON.parse(JSON.stringify(res));
+      userInfo.value = JSON.parse(JSON.stringify(res)).data;
     });
     getRes.noteFeeds();
   };
@@ -291,7 +284,7 @@
         />
         <div class="flex items-center align-middle gap-2 px-4">
           <el-alert
-            v-if=" self"
+            v-if="self"
             type="warning"
             :closable="false"
             size="small"
@@ -301,7 +294,9 @@
               #title
               class="flex align-middle items-center"
             >
-              <span>⚠️ 未验证邮箱 {{ userInfo.email }} 验证后可订阅最新域名防止失联</span>
+              <span>
+                ⚠️ 未验证邮箱 {{ userInfo.email }} 验证后可订阅最新域名防止失联
+              </span>
               <el-button
                 type="primary"
                 size="small"

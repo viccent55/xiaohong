@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import CryptoJS from "crypto-js";
-
+import { decrypt } from "@/utils/crypto";
 // The decryption key and IV are extracted from your original code.
 const encryptionKey = CryptoJS.enc.Utf8.parse(
   "k9:3zeFq~]-EQMF,gpGx*uRw+x,n]xw9"
@@ -15,7 +15,7 @@ const urlCache = new Map<string, string>();
  * It handles fetching the encrypted data, decrypting it with CryptoJS,
  * and creating a Blob URL for display.
  */
-export const  useDecryption = () => {
+export const useDecryption = () => {
   const decryptedImage = ref<string>("");
   const isLoading = ref<boolean>(false);
   const error = ref<string | null>(null);
@@ -100,6 +100,20 @@ export const  useDecryption = () => {
       isLoading.value = false;
     }
   };
-
-  return { decryptedImage, isLoading, error, decryptImage, clearCache };
+  const encryptData = (res: any) => {
+    const decrypted = decrypt(res.data);
+    res.data = decrypted;
+    if (import.meta.env.MODE === "development") {
+      console.log(`Decrypted: Get`, decrypted);
+    }
+    return res.data;
+  };
+  return {
+    decryptedImage,
+    isLoading,
+    error,
+    decryptImage,
+    clearCache,
+    encryptData,
+  };
 };
