@@ -1,6 +1,6 @@
 import axios, { type AxiosInstance } from "axios";
 import { useUserStore } from "@/store/user";
-import { appendToken } from "@/hooks/useJWT";
+import { appendToken, refreshToken } from "@/hooks/useJWT";
 import { encrypt, decrypt, makeSign } from "@/utils/crypto";
 import dayjs from "dayjs";
 import { ElMessage } from "element-plus";
@@ -16,6 +16,12 @@ const instance: AxiosInstance = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+let isRefreshing = false;
+let failedQueue: {
+  resolve: (value: unknown) => void;
+  reject: (reason?: any) => void;
+}[] = [];
+
 instance.interceptors.request.use(
   (config) => {
     appendToken(config);
@@ -27,7 +33,7 @@ instance.interceptors.request.use(
     // );
 
     if (import.meta.env.MODE === "development") {
-      console.log("request => ", config.data);
+      console.log(`request => ${config.url}`, { ...config.data });
     }
     const client = "pwa";
     const timestamp = dayjs().unix();
@@ -52,11 +58,42 @@ instance.interceptors.request.use(
 );
 
 instance.interceptors.response.use(
-  (response) => {
+  async (response) => {
     if (response.data.errcode === 401001) {
       const userStore = useUserStore();
       userStore.logout();
       ElMessage.error(response.data.info);
+    }
+
+    if (response.data.errcode === 401013) {
+      const originalRequest = response.config;
+
+      if (isRefreshing) {
+        // If a refresh is already in progress, queue this request to be retried later.
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers["Authorization"] = "Bearer " + token;
+            return instance(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+
+      isRefreshing = true;
+      const userStore = useUserStore();
+
+      return userStore
+        .refreshToken()
+        .then((newAccessToken) => {
+          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+          return instance(originalRequest);
+        })
+        .finally(() => {
+          isRefreshing = false;
+        });
     }
 
     if (response.status === 200) {
@@ -66,7 +103,7 @@ instance.interceptors.response.use(
           const decrypted = decrypt(response.data.data);
           response.data = decrypted;
           if (import.meta.env.MODE === "development") {
-            console.log("Decrypted:", decrypted);
+            console.log(`Decrypted: ${response.config.url}`, decrypted);
           }
         } catch (e) {
           console.warn("Decryption failed:", e, response.data);
@@ -75,11 +112,6 @@ instance.interceptors.response.use(
       return response.data;
     }
 
-    if ([401, 403, 500].includes(response.status)) {
-      const userStore = useUserStore();
-      userStore.logout();
-      return Promise.reject(response.data);
-    }
     return Promise.reject(response.data);
   },
   (error) => {

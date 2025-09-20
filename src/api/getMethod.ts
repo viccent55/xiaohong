@@ -1,5 +1,7 @@
 import axios from "axios";
 import { useDecryption } from "@/composables/useDecryption";
+import { encrypt, decrypt, makeSign } from "@/utils/crypto";
+import dayjs from "dayjs";
 
 const apiEndPoint =
   import.meta.env.MODE === "development"
@@ -100,10 +102,19 @@ export async function refreshToken(
 ): Promise<EmptyObjectType> {
   try {
     const { encryptData } = useDecryption();
+    const timestamp = dayjs().unix();
+    const encryptedDataToken = encrypt({ refresh_token });
+    const sign = makeSign(timestamp, encryptedDataToken);
+    const request = {
+      client: "pwa",
+      timestamp,
+      data: encryptedDataToken,
+      sign,
+    };
     const res = await axios.post(
-      `${apiEndPoint}/apiv1/member/refreshToken`,
+      `${apiEndPoint}/apiv1/index/refreshToken`,
       {
-        refresh_token,
+        ...request,
       },
       {
         headers: {
@@ -111,9 +122,8 @@ export async function refreshToken(
         },
       }
     );
-    if (res.data.errorcode == 0) {
+    if (res.data) {
       const decrypted = encryptData(res.data);
-
       res.data = decrypted;
     } else {
       return Promise.reject(res.data);

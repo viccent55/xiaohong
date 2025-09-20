@@ -36,6 +36,7 @@ export interface UserDetailInfo extends UserInfo {
   invite_count: number;
   mode: number;
   subscribed: number;
+  visitor: string;
 }
 
 // 日期信息

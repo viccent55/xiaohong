@@ -82,11 +82,13 @@
     window.location.reload();
   };
   const initializeApp = async () => {
+    const NOTIFICATION_COOLDOWN = 60 * 60 * 1000; // 1 hour
     try {
       store.initMode();
       const response = await getConfiguration();
       if (response.errcode == 0) {
         store.configuration = response.data;
+        localStorage.removeItem("lastNotificationTimestamp");
       }
       // If initMode is successful, check for login
       if (!userStore.isLogin) {
@@ -94,7 +96,12 @@
       }
     } catch (error) {
       console.error("Server is down or initial fetch failed:", error);
-      notificationDialogRef.value?.open();
+      const now = Date.now();
+      const lastShown = localStorage.getItem("lastNotificationTimestamp");
+      if (!lastShown || now - Number(lastShown) > NOTIFICATION_COOLDOWN) {
+        notificationDialogRef.value?.open();
+        localStorage.setItem("lastNotificationTimestamp", String(now));
+      }
       allAdsClosed.value = false;
     }
   };

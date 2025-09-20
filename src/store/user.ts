@@ -3,6 +3,7 @@ import { setDefaultPermission } from "@/hooks/usePermisions";
 import { PERMISSION } from "@/common/permision";
 import { removeToken } from "@/hooks/useJWT";
 import { closeLoginDialog, loginDialogVisible } from "@/hooks/useLoginDialog";
+import { refreshToken } from "@/api/getMethod";
 
 import type { UserDetailInfo } from "@/types/info";
 
@@ -32,6 +33,8 @@ export const useUserStore = defineStore("user", {
       this.isLogin = true;
       this.userInfo = userInfo;
       this.useId = this.userInfo.id;
+      this.visitCode = this.userInfo.visitor;
+
       setDefaultPermission(PERMISSION.User);
       closeLoginDialog();
     },
@@ -50,6 +53,16 @@ export const useUserStore = defineStore("user", {
       // this.isLogin = false;
       // 打开登录弹窗
       // openLoginDialog();
+    },
+    async refreshToken() {
+      const response = await refreshToken(this.token.refresh_token);
+      if (response.errcode == 0) {
+        this.token = response.data;
+        return this.token.access_token;
+      } else {
+        this.logout();
+        return Promise.reject("Refresh token failed");
+      }
     },
   },
   getters: {

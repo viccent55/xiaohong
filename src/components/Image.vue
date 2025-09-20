@@ -113,7 +113,7 @@
           :width="width"
           :height="height"
           fit="contain"
-          class="rounded-xl"
+          class="rounded-xl bg-[#F2F2F2]"
           :src="EmptImage"
         />
       </div>
@@ -129,7 +129,7 @@
       :height="height"
       fit="contain"
       :style="imageStyle"
-      class="rounded-xl"
+      class="rounded-xl bg-[#F2F2F2]"
       :src="EmptImage"
     />
   </div>
