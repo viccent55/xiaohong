@@ -7,7 +7,6 @@
   import { checkPermissions } from "@/hooks/usePermisions";
   import type { PropType } from "vue";
   import * as Api from "@/api/note";
-  import { useStore } from "@/store";
 
   defineProps({
     feed: {
@@ -15,7 +14,6 @@
       default: () => [],
     },
   });
-  const store = useStore();
   const onClickLike = async (feed: EmptyObjectType) => {
     checkPermissions(PERMISSION.User, () => {
       const id_ = feed.id;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import type { NavigationItem } from "@/types/item";
   import { dropDownItems3 } from "@/common";
-  import { useStore } from "@/store";
+  import useVariable from "@/composables/useVariable";
 
   defineEmits([
     "click-menu-item", // 点击选项
@@ -9,9 +9,9 @@
   ]);
   defineProps<{
     items: NavigationItem[];
-    activeItem: NavigationItem;
+    activeItem: string;
   }>();
-  const store = useStore();
+  const { store } = useVariable();
 </script>
 
 <template>
@@ -34,14 +34,25 @@
             <el-icon :size="24"><component :is="item.icon" /></el-icon>
           </Dropdown>
 
-          <span>{{ item.name }}</span>
+          <div
+            class="text-xs mt-1"
+            :class="{ 'text-red-600': store.mode === item.mode }"
+          >
+            {{ item.name }}
+          </div>
         </div>
         <div
           v-else
           @click="$emit('click-nav-item', item)"
+          class="flex justify-center items-center flex-col"
         >
           <el-icon :size="24"><component :is="item.icon" /></el-icon>
-          <span>{{ item.name }}</span>
+          <div
+            class="text-xs mt-1"
+            :class="{ 'text-red-600': store.mode === item.mode }"
+          >
+            {{ item.name }}
+          </div>
         </div>
       </div>
     </template>
@@ -56,7 +67,7 @@
     position: fixed;
     bottom: 0;
     left: 0;
-    height: var(--footer-height-mobile, 60px);
+    height: var(--footer-height-mobile, 80px);
     width: 100%;
     display: flex;
     background-color: var(--background-color);

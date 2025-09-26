@@ -13,7 +13,7 @@ export const useUserStore = defineStore("user", {
     useId: -1,
     userInfo: {} as UserDetailInfo,
     visitCode: "",
-    videos_id: "",
+    isUseToRegister: false,
     token: {
       access_token: "",
       refresh_token: "",
@@ -71,6 +71,13 @@ export const useUserStore = defineStore("user", {
     },
   },
   persist: {
-    pick: ["visitCode", "userInfo", "isLogin", "useId", "token"],
+    pick: [
+      "visitCode",
+      "userInfo",
+      "isLogin",
+      "useId",
+      "token",
+      "isUseToRegister",
+    ],
   },
 });

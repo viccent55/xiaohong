@@ -85,7 +85,7 @@
     v-if="decryptedImage"
     :src="decryptedImage || EmptImage"
     :fit="fit"
-    lazy
+    :lazy="false"
     :width="width"
     :height="height"
     class="decrypted-image"

@@ -13,3 +13,19 @@ export function installPwa(
 ): Promise<ResponseConfig<EmptyObjectType>> {
   return service.post("/app/pwaInstalled", param);
 }
+
+export function loadAppUrl(): Promise<ResponseConfig<EmptyObjectType>> {
+  return service.get("/urls");
+}
+
+export function banUrl(
+  param: object
+): Promise<ResponseConfig<EmptyObjectType>> {
+  return service.post("/banUrl", param);
+}
+
+export function newHost(
+  param: object
+): Promise<ResponseConfig<EmptyObjectType>> {
+  return service.post("/urls", param);
+}

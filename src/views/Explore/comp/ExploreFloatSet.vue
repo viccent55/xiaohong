@@ -31,7 +31,7 @@
   .float-set {
     z-index: 100;
     position: fixed;
-    bottom: 24px;
+    bottom: 32px;
     gap: 8px;
     display: flex;
     flex-direction: column;
@@ -48,7 +48,7 @@
 
     .phone-mode({
       right: @phone-right-padding;
-      bottom: 72px;
+      bottom: 92px;
     });
   }
 

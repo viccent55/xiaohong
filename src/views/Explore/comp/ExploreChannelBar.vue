@@ -4,6 +4,8 @@
   import { ElScrollbar } from "element-plus";
   import { ArrowLeft, ArrowRight } from "@element-plus/icons-vue";
   import useVariable from "@/composables/useVariable";
+  import { screenMode } from "@/hooks/useScreenMode";
+  import { adsClick } from "@/api/advertisment";
 
   defineProps<{
     items: ExploreChannelItem[];
@@ -12,7 +14,7 @@
 
   defineEmits(["click-item"]);
 
-  const { isNativePlatform } = useVariable();
+  const { isNativePlatform, store } = useVariable();
   const scrollbarRef = ref<InstanceType<typeof ElScrollbar>>();
   const showArrows = ref(false);
 
@@ -31,6 +33,10 @@
       showArrows.value =
         scrollContainer.scrollWidth > scrollContainer.clientWidth;
     }
+  };
+
+  const itemClick = (item: EmptyObjectType) => {
+    adsClick(item.id);
   };
 
   let resizeObserver: ResizeObserver;
@@ -55,44 +61,78 @@
 </script>
 
 <template>
-  <div
-    class="channel-bar-container"
-    :class="isNativePlatform ? 'mt-4' : ''"
-  >
+  <div>
     <div
-      v-if="showArrows"
-      class="arrow-wrapper left"
-      @click="scroll('left')"
+      class="channel-bar-container"
+      :class="isNativePlatform ? 'mt-4' : ''"
     >
-      <el-icon><ArrowLeft /></el-icon>
-    </div>
-    <el-scrollbar
-      ref="scrollbarRef"
-      class="channel-scrollbar"
-    >
-      <div class="button-group">
-        <template
-          v-for="item in items"
-          :key="item.id"
-        >
-          <el-button
-            round
-            @click="$emit('click-item', item)"
-            :type="item.value === activeValue ? 'danger' : 'default'"
-            text
-            :bg="item.value === activeValue ? true : false"
-          >
-            {{ item.name }}
-          </el-button>
-        </template>
+      <div
+        v-if="showArrows"
+        class="arrow-wrapper left"
+        @click="scroll('left')"
+      >
+        <el-icon><ArrowLeft /></el-icon>
       </div>
-    </el-scrollbar>
-    <div
-      v-if="showArrows"
-      class="arrow-wrapper right"
-      @click="scroll('right')"
-    >
-      <el-icon><ArrowRight /></el-icon>
+      <el-scrollbar
+        ref="scrollbarRef"
+        class="channel-scrollbar"
+      >
+        <div class="button-group">
+          <template
+            v-for="item in items"
+            :key="item.id"
+          >
+            <el-button
+              round
+              @click="$emit('click-item', item)"
+              :type="item.value === activeValue ? 'danger' : 'default'"
+              text
+              :bg="item.value === activeValue ? true : false"
+              :style="
+                screenMode === 'phone'
+                  ? 'padding: 5px 10px; margin-left: 0'
+                  : ''
+              "
+            >
+              {{ item.name }}
+            </el-button>
+          </template>
+        </div>
+      </el-scrollbar>
+      <div
+        v-if="showArrows"
+        class="arrow-wrapper right"
+        @click="scroll('right')"
+      >
+        <el-icon><ArrowRight /></el-icon>
+      </div>
+    </div>
+    <div>
+      <div
+        class="grid grid-cols-5 md:grid-cols-10 gap-1 justify-items-center mb-5"
+      >
+        <a
+          v-for="(app, index) in store?.recommendAds"
+          :key="index"
+          :href="app.url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex flex-col items-center space-y-2 hover:opacity-80"
+          @click="itemClick(app)"
+          v-show="index < 10"
+        >
+          <AdvertSlot
+            :advert="{
+              title: app.name,
+              image: app.image,
+              url: app?.url,
+            }"
+            fit="cover"
+            style="width: 55px; height: 55px"
+          />
+          <span class="text-xs info">{{ app.name }}</span>
+        </a>
+      </div>
     </div>
   </div>
 </template>

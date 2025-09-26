@@ -62,6 +62,7 @@ export const useStore = defineStore("store", {
       "detailAppAds",
       "detailAds",
       "chan",
+      'mode'
     ],
   },
 });

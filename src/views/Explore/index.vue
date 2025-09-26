@@ -78,7 +78,7 @@
       ...(store.mode !== "0"
         ? { mode: store.mode } // if mode != '0' → add only mode
         : channel.value !== "001"
-        ? { category: Number(store.channel) } // else if channel != "001" → add category
+        ? { category: Number(store.channel) }
         : {}),
       visitor: storeUser.visitCode,
       page: page.value,
@@ -170,8 +170,10 @@
       if (item.mode === 3) {
         itemAdClick(item.id);
       } else {
-        clearQuery();
-        noteDialog.openNoteDialog(String(item.id));
+        checkPermissions(PERMISSION.User, () => {
+          clearQuery();
+          noteDialog.openNoteDialog(String(item.id));
+        });
       }
     },
     // 点击Like

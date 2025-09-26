@@ -54,22 +54,18 @@
   setDefaultRejectCallback(openLoginDialog);
 
   // 导航索引
-  const navigationItem = computed(
-    () =>
-      NavigationItems.find((item) => item.mode === store?.mode) ??
-      NavigationItems[0]
-  );
 
   // 点击导航项
   const clickNavigationItem = (item: NavigationItem) => {
     if (item.type === "router-link") {
-      if (item.mode != "#") {
+      if (item.href != "/user") {
         store.mode = item.mode;
         store.channel = "001";
-        router.push("/");
+        router.push(item.href);
       } else {
         checkPermissions(PERMISSION.User, () => {
           store.mode = item.mode;
+          store.mode = item.href;
           router.push({ path: `/user/${userStore.useId}` });
         });
       }
@@ -152,7 +148,7 @@
       </div>
       <Footer
         :items="NavigationItems"
-        :active-item="navigationItem"
+        :active-item="store.mode"
         @click-nav-item="clickNavigationItem"
       ></Footer>
       <NoteDialog></NoteDialog>
@@ -206,7 +202,7 @@
 
     .mobile-mode({
       /* Account for the mobile footer height */
-      padding-bottom: var(--footer-height-mobile, 48px);
+      padding-bottom: var(--footer-height-mobile, 82px);
     });
   }
 </style>

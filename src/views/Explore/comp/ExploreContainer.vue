@@ -8,7 +8,7 @@
     inject,
   } from "vue";
   import ExploreFeed from "./ExploreFeed.vue";
-  import ExploreFeedSkeleton from "./ExploreFeedSkeleton.vue";
+  import { Loading as IconLoading } from "@element-plus/icons-vue";
   import MasonryWall from "@yeger/vue-masonry-wall";
   import useVariable from "@/composables/useVariable";
 
@@ -66,8 +66,6 @@
     window.removeEventListener("resize", updateColumnWidth);
   });
 
-  const skeletonItems = computed(() => Array.from({ length: 10 }));
-
   const handleItemClick = (item: any) => {
     emits("click-item", item);
   };
@@ -105,17 +103,15 @@
       </template>
     </MasonryWall>
     <!-- Loading indicator for loading more -->
-    <MasonryWall
-      v-if="isLoadMore"
-      :items="skeletonItems"
-      :column-width="columnWidth"
-      :gap="gap"
-      :scroll-container="scrollContainer"
-    >
-      <template #default>
-        <ExploreFeedSkeleton />
-      </template>
-    </MasonryWall>
+    <div class="pb-24 pt-5 lg:pb-12 mb-10 flex justify-center">
+      <el-icon
+        class="is-loading"
+        style="font-size: 40px"
+        v-if="isLoadMore"
+      >
+        <IconLoading class="text-[40px]" />
+      </el-icon>
+    </div>
   </div>
 </template>
 

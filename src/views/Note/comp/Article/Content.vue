@@ -26,13 +26,7 @@
 
       <!-- <ReportButton @click-report="$emit('click-report', article?.id)" /> -->
     </div>
-    <div
-      class="mt-2"
-      :class="{
-        'flex gap-8 justify-end': store?.detailAppAds.length <= 3,
-        'grid grid-cols-4 gap-3 justify-end': store?.detailAppAds.length > 3,
-      }"
-    >
+    <div class="mt-2 grid grid-cols-4 gap-3">
       <a
         v-for="(app, index) in store?.detailAppAds"
         :key="index"

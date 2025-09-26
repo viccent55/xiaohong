@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, onMounted, onBeforeUnmount, watch, defineExpose } from "vue";
+  import { ref, onMounted, onBeforeUnmount, watch } from "vue";
   import Hls from "hls.js";
 
   const props = defineProps({

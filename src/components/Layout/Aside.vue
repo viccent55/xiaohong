@@ -8,7 +8,6 @@
   import { adsClick } from "@/api/advertisment";
   import { User } from "@element-plus/icons-vue";
   import { openPage } from "@/service";
-  import { useRoute } from "vue-router";
 
   const userStore = useUserStore();
 

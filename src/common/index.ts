@@ -70,24 +70,35 @@ export const NavigationItems: NavigationItem[] = [
     icon: "House",
     type: "router-link",
     mode: "0",
+    href: "/",
   },
   {
-    name: "发布",
-    icon: "VideoPlay",
+    name: "吃瓜",
+    icon: "Postcard",
     type: "router-link",
     mode: "1",
+    href: "/article",
   },
   {
-    name: "通知",
+    name: "动漫",
     icon: "Picture",
     type: "router-link",
     mode: "2",
+    href: "/anime",
+  },
+  {
+    name: "创作者",
+    icon: "Female",
+    type: "router-link",
+    mode: "3",
+    href: "/creator",
   },
   {
     name: "我的",
     icon: "User",
     type: "router-link",
     mode: "#",
+    href: "/user",
   },
   // {
   //   name: '会员中心',
@@ -203,6 +214,7 @@ export const DefaultUserDetailInfo: UserDetailInfo = {
   mode: 0,
   subscribed: 0,
   isFollow: false,
+  visitor: "",
 };
 
 export const NotificationChannelItems: ExploreChannelItem[] = [
