@@ -3,6 +3,8 @@
   import Header from "./components/Layout/Header.vue";
   import Footer from "./components/Layout/Footer.vue";
   import NoteDialog from "./views/Note/NoteDialog.vue";
+  import NoteArticleDialog from "./views/NoteArticle/NoteDialog.vue";
+  import NoteAnimeDialog from "./views/NoteAnime/NoteDialog.vue";
   import LoginDialog from "./views/Login/LoginDialog.vue";
   import { listenResizeEvent } from "./hooks/useScreenMode";
   import {
@@ -13,9 +15,11 @@
   } from "./hooks/usePermisions";
   import { openLoginDialog } from "./hooks/useLoginDialog";
   import { useNoteDialog } from "./hooks/useNoteDialog";
+  import { useNoteArticleDialog } from "./hooks/useNoteArticleDialog";
+  import { useNoteAnimeDialog } from "./hooks/useNoteAnimeDialog";
   import { PERMISSION } from "@/common/permision";
 
-  import { computed, onBeforeMount, onMounted, provide, ref } from "vue";
+  import { onBeforeMount, onMounted, provide, ref } from "vue";
   import type { NavigationItem } from "./types/item";
   import { NavigationItems } from "./common";
   import { useUserStore } from "./store/user";
@@ -31,6 +35,8 @@
   const { router, store, platform } = useVariable();
   const userStore = useUserStore();
   const noteDialog = useNoteDialog();
+  const noteArticleDialog = useNoteArticleDialog();
+  const noteAnimeDialog = useNoteAnimeDialog();
   const { generateVisitCode, initVisitor } = useHome();
   const allAdsClosed = ref(false);
   const scrollContainer = ref<HTMLElement | null>(null);
@@ -115,6 +121,8 @@
     // Execute after a 500ms delay, as the route query parameters may not have been updated at this time
     setTimeout(() => {
       noteDialog.queryNoteDialogId();
+      noteArticleDialog.queryNoteDialogId();
+      noteAnimeDialog.queryNoteDialogId();
     }, 500);
   });
   // 初始加载数据
@@ -131,13 +139,6 @@
 
       <div
         class="container"
-        :class="
-          platform === 'ios'
-            ? 'isIos'
-            : platform === 'android'
-            ? 'isAndroid'
-            : ''
-        "
         ref="scrollContainer"
       >
         <router-view v-slot="{ Component }">
@@ -152,6 +153,8 @@
         @click-nav-item="clickNavigationItem"
       ></Footer>
       <NoteDialog></NoteDialog>
+      <NoteArticleDialog></NoteArticleDialog>
+      <NoteAnimeDialog></NoteAnimeDialog>
       <LoginDialog></LoginDialog>
       <NotificationDialog
         ref="notificationDialogRef"
@@ -202,7 +205,7 @@
 
     .mobile-mode({
       /* Account for the mobile footer height */
-      padding-bottom: var(--footer-height-mobile, 82px);
+      margin-bottom: var(--footer-height-mobile, 80px);
     });
   }
 </style>

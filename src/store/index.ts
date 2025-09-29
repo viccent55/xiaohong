@@ -22,6 +22,7 @@ export const useStore = defineStore("store", {
     recommendAds: [] as EmptyArrayType,
     detailAppAds: [] as EmptyArrayType,
     detailAds: [] as EmptyArrayType,
+    homeAds: [] as EmptyArrayType,
     channel: "001",
     mode: "0",
     search: "",
@@ -61,6 +62,7 @@ export const useStore = defineStore("store", {
       "recommendAds",
       "detailAppAds",
       "detailAds",
+      "homeAds",
       "chan",
       'mode'
     ],

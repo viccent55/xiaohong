@@ -295,6 +295,7 @@
               <span>忘记密码？</span>
             </el-button>
             <el-button
+              v-if="screenMode == 'phone'"
               class="w-full"
               type="warning"
               round

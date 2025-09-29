@@ -81,7 +81,7 @@ export const NavigationItems: NavigationItem[] = [
   },
   {
     name: "动漫",
-    icon: "Picture",
+    icon: "Film",
     type: "router-link",
     mode: "2",
     href: "/anime",

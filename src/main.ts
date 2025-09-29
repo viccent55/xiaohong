@@ -22,7 +22,6 @@ const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
 app.component("Heart", Heart);
-app.use(ElementPlus);
 app.use(pinia);
 app.use(router);
 app.mount("#app");

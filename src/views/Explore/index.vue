@@ -242,6 +242,7 @@
     getAdsPosition(2);
     getAdsPosition(3);
     getAdsPosition(4);
+    getAdsPosition(5);
   });
 </script>
 
@@ -278,6 +279,7 @@
     >
       <el-empty
         :image-size="120"
+        class="mt-0 pt-0"
         description="没有更多了"
       />
     </div>

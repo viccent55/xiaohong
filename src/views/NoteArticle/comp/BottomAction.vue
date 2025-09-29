@@ -109,7 +109,7 @@
         @click="$emit('click-star', action)"
       >
         <Star />
-        <span>{{ action?.collect_count }}</span>
+        <span>{{ action?.star_count }}</span>
       </div>
       <div
         class="action"
@@ -141,10 +141,6 @@
     height: max-content;
 
     border-top: 1px solid var(--border-color);
-
-    .pc-mode({
-      width: 375px;
-    });
 
     .mobile-mode({
       width: 100%;

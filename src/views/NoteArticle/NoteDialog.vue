@@ -9,36 +9,26 @@
   import { App } from "@capacitor/app";
   import { Capacitor } from "@capacitor/core";
   import { adsClick } from "@/api/advertisment";
-
-  import { useNoteDialog, noteDialogVisible } from "@/hooks/useNoteDialog";
-  import { screenMode } from "@/hooks/useScreenMode";
+  import { articleDtail, like, star, comment, comments } from "@/api/article";
   import {
-    computed,
-    defineAsyncComponent,
-    ref,
-    useTemplateRef,
-    nextTick,
-    onBeforeUnmount,
-    watch,
-  } from "vue";
+    useNoteArticleDialog,
+    noteDialogVisible,
+  } from "@/hooks/useNoteArticleDialog";
+  import { screenMode } from "@/hooks/useScreenMode";
+  import { computed, ref, useTemplateRef, onBeforeUnmount, watch } from "vue";
   import type { PluginListenerHandle } from "@capacitor/core";
   import type { CommentBlockInfo } from "@/types/info";
   import * as Api from "@/api/note";
-  import { getNoteDetail } from "@/api/getMethod";
   import { checkPermissions } from "@/hooks/usePermisions";
   import { PERMISSION } from "@/common/permision";
   import { ElMessage } from "element-plus";
-  import { useUserStore } from "@/store/user";
   import useVariable from "@/composables/useVariable";
 
   const { onCopy, route, store } = useVariable();
   const bottomRef = useTemplateRef("bottomActions");
   const noteDIalogRef = useTemplateRef("note-dialog");
-  const Swiper = defineAsyncComponent(
-    () => import("./comp/Article/Swiper.vue")
-  );
 
-  const noteDialog = useNoteDialog();
+  const noteDialog = useNoteArticleDialog();
 
   // 文章信息
   const article = ref<EmptyObjectType>({});
@@ -49,13 +39,10 @@
   const total = computed(() => {
     return article.value?.comment_count;
   });
-  // 媒体信息
-  const media = computed(() => {
-    return article.value?.fields;
-  });
+
   const getComments = async () => {
     if (!noteDialog.id.value) return;
-    Api.getComments(noteDialog.id.value).then((res) => {
+    comments(Number(noteDialog.id.value)).then((res) => {
       if (res.errcode !== 0) return;
       commentBlocks.value = res.data;
     });
@@ -67,28 +54,18 @@
 
   // 事件处理
   const handle = {
-    // 查看作者主页
     clickAuthor(id: string) {
       const url = `${window.location.origin}/#/user/${id}`;
       window.location.href = url;
       window.location.reload();
     },
-    // 关注
-    clickFollow(id: number) {
-      console.log("关注", id);
-      checkPermissions(PERMISSION.User, () => {
-        Api.follow(id).then((res) => {
-          if (res.errcode !== 0) return;
-          article.value.isFollow = !article.value.isFollow;
-        });
-      });
-    },
+
     // 点赞
     clickLike(item: EmptyObjectType) {
       console.log("点赞");
       checkPermissions(PERMISSION.User, () => {
         const id_ = item.id;
-        Api.like(id_).then((res) => {
+        like(id_).then((res) => {
           if (res.errcode == 0) {
             item.isLike = !item.isLike;
             if (item.isLike) {
@@ -103,36 +80,26 @@
     // 分享`
     clickShare() {
       ElMessage.success("链接已复制!");
-      onCopy(getCurrentDomain() + route.fullPath);
+      onCopy(getCurrentDomain() + "/#" + route.fullPath);
     },
     // 收藏
     clickStar(item: EmptyObjectType) {
       console.log("收藏");
       checkPermissions(PERMISSION.User, () => {
         const id_ = article.value.id;
-        Api.star(id_).then((res) => {
+        star(id_).then((res) => {
           if (res.errcode == 0) {
             item.isStar = !item.isStar;
             if (item.isStar) {
-              item.collect_count++;
+              item.star_count++;
             } else {
-              item.collect_count--;
+              item.star_count--;
             }
           }
         });
       });
     },
-    // 举报
-    clickReport(id: number) {
-      console.log("举报");
-      checkPermissions(PERMISSION.User, () => {
-        Api.report(id).then((res) => {
-          if (res.code !== 200) return;
 
-          ElMessage.warning(res.msg);
-        });
-      });
-    },
     // 评论
     clickReply(id: string, to: string | null) {
       checkPermissions(PERMISSION.User, () => {
@@ -142,44 +109,22 @@
     // 提交评论
     clickReplyTo(id: string, content: string, to = {}) {
       checkPermissions(PERMISSION.User, () => {
-        Api.reply(id, content, 0).then((res) => {
+        const request = {
+          id: id,
+          content: content,
+        };
+        comment(request).then((res) => {
           if (res.errcode != 0) return;
           const comment = res.data;
           article.value.comment_count++;
           console.log("res => ", comment);
           getComments();
-          // if (comment.replyTo) {
-          //   commentBlocks.value.forEach((block) => {
-          //     let index = block.commentList.findIndex((c) => c.id == id);
-          //     if (index !== -1) block.commentList.splice(index + 1, 0, comment);
-          //   });
-          // }
-          // else {
-          //   const block = {
-          //     commentList: [comment],
-          //     totalCommentCount: 1,
-          //   };
-          //   // 新评论块插入最前面
-          //   commentBlocks.value = [block, ...commentBlocks.value];
-          // }
 
           article.value.totalCommentCount += 1;
         });
       });
     },
-    // 获取更多评论
-    getMoreComments() {
-      console.log("更多评论");
-      checkPermissions(PERMISSION.User, () => {
-        Api.getComments(Number(noteDialog.id.value)).then((res) => {
-          if (res.code !== 200) return;
 
-          const list = res.data;
-          // 将评论列表添加到评论列表中
-          commentBlocks.value.push(...list);
-        });
-      });
-    },
     // 获取更多回复
     clickMoreReplies(id: string, num: number) {
       console.log("更多回复");
@@ -200,31 +145,15 @@
       });
     },
   };
-  const storeUser = useUserStore();
-  // 打开弹窗时执行
   const onOpenNoteDialog = async () => {
     if (noteDIalogRef.value) noteDIalogRef.value.scrollTop = 0;
-    getNoteDetail(Number(noteDialog.id.value), storeUser?.visitCode).then(
-      (res) => {
-        article.value = res.data;
-        getComments();
-      }
-    );
+    if (noteDIalogRef.value) noteDIalogRef.value.scrollTop = 0;
+    articleDtail(Number(noteDialog.id.value)).then((res) => {
+      article.value = res.data;
+      getComments();
+    });
   };
-  const swiperInstanceRef = ref<InstanceType<typeof Swiper> | null>(null);
-  const mediaContainerRef = ref<HTMLElement | null>(null);
-  const onCloseNoteDialog = async () => {
-    await nextTick();
-    if (swiperInstanceRef.value) {
-      swiperInstanceRef.value.closeVideo();
-    }
-  };
-  // onBeforeRouteLeave((to, from, next) => {
 
-  //   if (noteDialog.id.value) return;
-  //   next();
-  // });
-  // keep track of touch start X and Y for swipe gestures
   let startX = 0;
   let startY = 0;
   let isTouchingMedia = false;
@@ -232,15 +161,6 @@
   function onTouchStart(e: TouchEvent) {
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
-
-    if (
-      mediaContainerRef.value &&
-      mediaContainerRef.value.contains(e.target as Node)
-    ) {
-      isTouchingMedia = true;
-    } else {
-      isTouchingMedia = false;
-    }
   }
 
   function onTouchEnd(e: TouchEvent) {
@@ -262,18 +182,6 @@
       e.preventDefault(); // 🚀 block default back-swipe
       noteDialog.closeNoteDialog();
       return;
-    }
-
-    if (!swiperInstanceRef.value) return;
-
-    // Swipe left/right to navigate the swiper
-    if (isHorizontalSwipe) {
-      if (deltaX < -50) {
-        swiperInstanceRef.value.next();
-      } else if (deltaX > 50 && !isEdgeSwipe) {
-        // only allow swiper navigation if not from the extreme edge
-        swiperInstanceRef.value.prev();
-      }
     }
   }
 
@@ -332,7 +240,9 @@
       }
     }
   });
-
+  const onCloseNoteDialog = () => {
+    noteDialog.closeNoteDialog();
+  };
   const removeAllListeners = async () => {
     await keyboardWillShowListener?.remove();
     await keyboardWillHideListener?.remove();
@@ -359,47 +269,13 @@
       @touchend.passive="onTouchEnd"
     >
       <div
-        ref="mediaContainerRef"
-        class="media-container"
-        v-if="screenMode === 'pc'"
-      >
-        <Swiper
-          ref="swiperInstanceRef"
-          :media-info="media"
-        />
-      </div>
-      <!-- 文章内容区域 -->
-      <div
         class="container"
         ref="note-dialog"
       >
-        <!-- 作者信息 -->
-        <AuthorHeader
-          :author="{
-            ...article?.author,
-            isFollow: article?.isFollow,
-          }"
-          @click-close="noteDialog.closeNoteDialog"
-          @click-author="handle.clickAuthor"
-          @click-follow="handle.clickFollow"
-        />
+        <AuthorHeader @click-close="noteDialog.closeNoteDialog" />
 
-        <!-- 图片/视频区域 -->
-        <div
-          ref="mediaContainerRef"
-          class="media-container"
-          v-if="screenMode !== 'pc'"
-        >
-          <Swiper
-            ref="swiperInstanceRef"
-            :media-info="media"
-          />
-        </div>
-
-        <!-- 文章内容 -->
         <Content
           :article="article"
-          @click-report="handle.clickReport"
           @click-ads="adsClick"
         />
 
@@ -408,7 +284,6 @@
         <CommentContainer
           :fulled="blockFulled"
           :total="total"
-          @more-comments="handle.getMoreComments"
         >
           <el-card
             v-for="(app, index) in store.detailAds"
@@ -442,7 +317,6 @@
               @click-author="handle.clickAuthor"
               @click-like="handle.clickLike"
               @click-replay="handle.clickReply"
-              @click-report="handle.clickReport"
               @expand-reply="handle.clickMoreReplies"
             />
           </template>
@@ -473,7 +347,7 @@
     overflow: hidden;
 
     .mobile-mode({
-      height: 100vh;
+      // height: calc(100vh - 100px);
       flex-direction: column;
       padding-top: var(--safe-area-inset-top, 0px);
       padding-bottom: var(--safe-area-inset-bottom, 0px);
@@ -505,7 +379,7 @@
     flex-direction: column;
 
     .pc-mode({
-       width: 375px;
+      //  width: 375px;
        border-left: 1px solid var(--border-color);
     });
   }

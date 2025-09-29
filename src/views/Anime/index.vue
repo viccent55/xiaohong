@@ -2,12 +2,14 @@
   import { onMounted, reactive } from "vue";
   import { animeList } from "@/api/anime";
   import Image from "@/components/Image.vue";
-  import ExploreFeed from "../Explore/comp/ExploreFeed.vue";
+  import { useNoteAnimeDialog } from "@/hooks/useNoteAnimeDialog";
+  import useVariable from "@/composables/useVariable";
 
   const state = reactive({
     data: [] as EmptyArrayType,
     loading: false,
   });
+  const { clearQuery } = useVariable();
   const getData = async () => {
     state.loading = true;
     try {
@@ -19,13 +21,20 @@
       state.loading = false;
     }
   };
+
+  const noteDialog = useNoteAnimeDialog();
+  const openDialog = (id: string) => {
+    clearQuery();
+    noteDialog.openNoteDialog(String(id));
+  };
+
   onMounted(() => {
     getData();
   });
 </script>
 
 <template>
-  <div class="py-3 px-5">
+  <div class="anime-wrapper pb-14 md:pb-0">
     <el-row gutter="8">
       <el-col
         :span="8"
@@ -36,6 +45,7 @@
           shadow="never"
           class="news-card"
           body-style="padding:0; height:120px "
+          @click="openDialog(item.id)"
         >
           <!-- Cover Image -->
           <Image
@@ -56,13 +66,21 @@
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="less">
+  @import "@/assets/styles/base.less";
+  .anime-wrapper {
+    width: 100%;
+    // max-height: calc(90vh - 160px);
+    overflow-y: auto;
+    padding: 0 12px;
+    margin-top: 10px;
+  }
   .news-card {
     width: 100%;
     border-radius: 8px;
     overflow: hidden;
     border: none;
-    height: 180px;
+    margin-bottom: 8px;
   }
 
   .card-cover {
@@ -75,13 +93,7 @@
   .card-content .title {
     font-size: 14px;
     font-weight: 500;
-    color: #333;
     line-height: 1.5;
     margin-bottom: 6px;
-  }
-
-  .card-content .meta {
-    font-size: 12px;
-    color: #999;
   }
 </style>

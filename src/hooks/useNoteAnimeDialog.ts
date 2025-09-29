@@ -6,16 +6,15 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 export const noteDialogVisible = ref(false)
-const noteDialogId = ref<string | number>('-1')
+const noteDialogId = ref<string>('-1')
 
-export function useNoteDialog() {
+export function useNoteAnimeDialog() {
   const route = useRoute()
   const router = useRouter()
 
   function openNoteDialog(id: string) {
     // const route = useRoute()
     // const router = useRouter()
-
     noteDialogVisible.value = true
     noteDialogId.value = id
 
@@ -23,7 +22,7 @@ export function useNoteDialog() {
       ...route,
       query: {
         ...route.query,
-        noteId: id,
+        noteAnimeId: id,
       },
     })
   }
@@ -38,17 +37,17 @@ export function useNoteDialog() {
       ...route,
       query: {
         ...route.query,
-        noteId: undefined,
+        noteAnimeId: undefined,
       },
     })
   }
 
   // 传入route，从路由中获取id
   function queryNoteDialogId() {
-    const noteId = route.query.noteId
+    const noteAnimeId = route.query.noteAnimeId
 
-    if (noteId) {
-      openNoteDialog(noteId as string)
+    if (noteAnimeId) {
+      openNoteDialog(noteAnimeId as string)
     }
   }
 

@@ -13,3 +13,15 @@ export function animeDetail(
     id: id,
   });
 }
+
+
+export function like(id: number): Promise<EmptyObjectType> {
+  return service.post("/behavior/likeCartoonVideo", {
+    id,
+  });
+}
+export function star(id: number): Promise<EmptyObjectType> {
+  return service.post("/behavior/starCartoonVideo", {
+    id,
+  });
+}

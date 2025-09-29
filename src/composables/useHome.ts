@@ -21,6 +21,8 @@ export default function useHome() {
       store.detailAppAds = data;
     } else if (position === 4) {
       store.detailAds = data;
+    } else if (position === 5) {
+      store.homeAds = data;
     }
   };
 

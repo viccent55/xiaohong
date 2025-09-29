@@ -246,7 +246,7 @@ import { App } from "@capacitor/app";
       align-center
       :before-close="handleClose"
     >
-      <template #title>
+      <template #header>
         <div class="text-center">推荐福利应用</div>
       </template>
       <AppLink

@@ -1,12 +1,5 @@
 <script setup lang="ts">
-  import {
-    nextTick,
-    computed,
-    onMounted,
-    onUnmounted,
-    type PropType,
-    inject,
-  } from "vue";
+  import { nextTick, onMounted, onUnmounted, type PropType, inject } from "vue";
   import ExploreFeed from "./ExploreFeed.vue";
   import { Loading as IconLoading } from "@element-plus/icons-vue";
   import MasonryWall from "@yeger/vue-masonry-wall";
@@ -103,11 +96,13 @@
       </template>
     </MasonryWall>
     <!-- Loading indicator for loading more -->
-    <div class="pb-24 pt-5 lg:pb-12 mb-10 flex justify-center">
+    <div
+      class="pb-24 pt-5 lg:pb-12 mb-10 flex justify-center"
+      v-if="isLoadMore"
+    >
       <el-icon
         class="is-loading"
         style="font-size: 40px"
-        v-if="isLoadMore"
       >
         <IconLoading class="text-[40px]" />
       </el-icon>
