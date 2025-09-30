@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import CommentBlock from "./comp/Comment/CommentBlock.vue";
-  import Content from "./comp/Article/Content.vue";
+  import Date from "./comp/Date.vue";
   import CommentContainer from "./comp/Comment/CommentContainer.vue";
   import AuthorHeader from "./comp/Article/AuthorHeader.vue";
   import { Keyboard } from "@capacitor/keyboard";
@@ -15,7 +15,14 @@
     noteDialogVisible,
   } from "@/hooks/useNoteArticleDialog";
   import { screenMode } from "@/hooks/useScreenMode";
-  import { computed, ref, useTemplateRef, onBeforeUnmount, watch } from "vue";
+  import {
+    computed,
+    ref,
+    useTemplateRef,
+    onBeforeUnmount,
+    watch,
+    nextTick,
+  } from "vue";
   import type { PluginListenerHandle } from "@capacitor/core";
   import type { CommentBlockInfo } from "@/types/info";
   import * as Api from "@/api/note";
@@ -23,6 +30,7 @@
   import { PERMISSION } from "@/common/permision";
   import { ElMessage } from "element-plus";
   import useVariable from "@/composables/useVariable";
+  import ContentArticle from "@/components/ContentArticle.vue";
 
   const {
     onCopy,
@@ -33,6 +41,7 @@
   } = useVariable();
   const bottomRef = useTemplateRef("bottomActions");
   const noteDIalogRef = useTemplateRef("note-dialog");
+  const contentArticleRef = ref<InstanceType<typeof ContentArticle> | any>();
 
   const noteDialog = useNoteArticleDialog();
 
@@ -247,8 +256,12 @@
       }
     }
   });
-  const onCloseNoteDialog = () => {
+  const onCloseNoteDialog = async () => {
     noteDialog.closeNoteDialog();
+    await nextTick();
+    if (contentArticleRef.value) {
+      contentArticleRef.value.closeVideo();
+    }
     enableHorizontalSwipe();
   };
   const removeAllListeners = async () => {
@@ -282,53 +295,99 @@
       >
         <AuthorHeader @click-close="noteDialog.closeNoteDialog" />
 
-        <Content
-          :article="article"
-          @click-ads="adsClick"
-        />
-
-        <!-- 评论区域 -->
-
-        <CommentContainer
-          :fulled="blockFulled"
-          :total="total"
+        <el-row
+          :gutter="24"
+          class="px-5"
         >
-          <el-card
-            v-for="(app, index) in store.detailAds"
-            :key="index"
-            body-style="padding: 0;"
-            class="my-2"
+          <el-col
+            :span="24"
+            :md="16"
           >
-            <a
-              :href="app.url"
-              target="_blank"
-              rel="noopener noreferrer"
-              class=""
-              @click="adsClick(app.id)"
-            >
-              <AdvertSlot
-                :advert="{
-                  title: app.name,
-                  image: app.image,
-                  url: app?.url,
-                }"
-                fit="cover"
-              />
-            </a>
-          </el-card>
-          <template
-            v-for="block in commentBlocks"
-            :key="block.id"
-          >
-            <CommentBlock
-              :comment="block"
-              @click-author="handle.clickAuthor"
-              @click-like="handle.clickLike"
-              @click-replay="handle.clickReply"
-              @expand-reply="handle.clickMoreReplies"
+            <div class="title">{{ article?.title }}</div>
+            <ContentArticle
+              :content="article?.content"
+              ref="contentArticleRef"
             />
-          </template>
-        </CommentContainer>
+          </el-col>
+          <el-col
+            :span="24"
+            :md="8"
+          >
+            <div class="date-wrapper">
+              <Date
+                isAuthor
+                :date="{
+                  date: article?.created_at,
+                  location: article?.author?.location,
+                }"
+                class="date"
+              />
+            </div>
+            <div class="mt-2 grid grid-cols-3 gap-3">
+              <a
+                v-for="(app, index) in store?.detailAppAds"
+                :key="index"
+                :href="app.url || '#'"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center gap-2 hover:opacity-80"
+                @click="adsClick(app.id)"
+              >
+                <AdvertSlot
+                  :advert="{
+                    title: app.name,
+                    image: app.image,
+                    url: app?.url,
+                  }"
+                  fit="cover"
+                  style="width: 28px; height: 28px"
+                />
+                <span class="text-xs info">{{ app.name }}</span>
+              </a>
+            </div>
+            <CommentContainer
+              class="mt-5"
+              :fulled="blockFulled"
+              :total="total"
+            >
+              <el-card
+                v-for="(app, index) in store.detailAds"
+                :key="index"
+                body-style="padding: 0;"
+                class="my-2"
+              >
+                <a
+                  :href="app.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class=""
+                  @click="adsClick(app.id)"
+                >
+                  <AdvertSlot
+                    :advert="{
+                      title: app.name,
+                      image: app.image,
+                      url: app?.url,
+                    }"
+                    fit="cover"
+                  />
+                </a>
+              </el-card>
+              <template
+                v-for="block in commentBlocks"
+                :key="block.id"
+              >
+                <CommentBlock
+                  :comment="block"
+                  @click-author="handle.clickAuthor"
+                  @click-like="handle.clickLike"
+                  @click-replay="handle.clickReply"
+                  @expand-reply="handle.clickMoreReplies"
+                />
+              </template>
+            </CommentContainer>
+          </el-col>
+        </el-row>
 
         <!-- 评论区域 -->
         <BottomAction
@@ -390,5 +449,25 @@
       //  width: 375px;
        border-left: 1px solid var(--border-color);
     });
+  }
+  .date {
+    font-size: 14px;
+  }
+
+  .date-wrapper {
+    margin-top: 12px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  .title {
+    font-size: 22px;
+    color: var(--text-color-dark);
+    margin-bottom: 8px;
+    font-weight: 800;
+  }
+
+  .content {
+    font-size: 14px;
   }
 </style>

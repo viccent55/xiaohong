@@ -14,16 +14,29 @@
     noteDialogVisible,
   } from "@/hooks/useNoteAnimeDialog";
   import { screenMode } from "@/hooks/useScreenMode";
+  import Date from "./comp/Date.vue";
 
-  import { computed, ref, useTemplateRef, onBeforeUnmount, watch } from "vue";
+  import {
+    computed,
+    ref,
+    useTemplateRef,
+    onBeforeUnmount,
+    watch,
+    defineAsyncComponent,
+    nextTick,
+  } from "vue";
   import type { PluginListenerHandle } from "@capacitor/core";
   import type { CommentBlockInfo } from "@/types/info";
   import { checkPermissions } from "@/hooks/usePermisions";
   import { PERMISSION } from "@/common/permision";
   import { ElMessage } from "element-plus";
   import useVariable from "@/composables/useVariable";
-  import Content from "./comp/Article/Content.vue";
 
+  const VideoPlayer = defineAsyncComponent(
+    () => import("@/components/Video.vue")
+  );
+
+  const videoPlayerRef = ref();
   const {
     onCopy,
     route,
@@ -98,6 +111,7 @@
       });
     },
   };
+
   const onOpenNoteDialog = async () => {
     if (noteDIalogRef.value) noteDIalogRef.value.scrollTop = 0;
     if (noteDIalogRef.value) noteDIalogRef.value.scrollTop = 0;
@@ -193,8 +207,12 @@
       }
     }
   });
-  const onCloseNoteDialog = () => {
+  const onCloseNoteDialog = async () => {
     noteDialog.closeNoteDialog();
+    await nextTick();
+    if (videoPlayerRef.value) {
+      videoPlayerRef.value?.closeVideo();
+    }
     enableHorizontalSwipe();
   };
   const removeAllListeners = async () => {
@@ -227,51 +245,100 @@
         ref="note-dialog"
       >
         <AuthorHeader @click-close="noteDialog.closeNoteDialog" />
-        <Content
-          :article="article"
-          @click-ads="adsClick"
-        />
-
-        <!-- 评论区域 -->
-
-        <CommentContainer
-          :fulled="blockFulled"
-          :total="total"
+        <el-row
+          :gutter="24"
+          class="px-5"
         >
-          <el-card
-            v-for="(app, index) in store.detailAds"
-            :key="index"
-            body-style="padding: 0;"
-            class="my-2"
+          <el-col
+            :span="24"
+            :md="16"
           >
-            <a
-              :href="app.url"
-              target="_blank"
-              rel="noopener noreferrer"
-              class=""
-              @click="adsClick(app.id)"
-            >
-              <AdvertSlot
-                :advert="{
-                  title: app.name,
-                  image: app.image,
-                  url: app?.url,
+            <div class="title">{{ article?.title }}</div>
+            <div>
+              <VideoPlayer
+                v-if="article?.m3u8"
+                :src="article?.m3u8"
+                ref="videoPlayerRef"
+              ></VideoPlayer>
+            </div>
+          </el-col>
+          <el-col
+            :span="24"
+            :md="8"
+          >
+            <div class="date-wrapper">
+              <Date
+                isAuthor
+                :date="{
+                  date: article?.created_at,
+                  location: article?.author?.location,
                 }"
-                fit="cover"
+                class="date"
               />
-            </a>
-          </el-card>
-          <template
-            v-for="block in commentBlocks"
-            :key="block.id"
-          >
-            <CommentBlock
-              :comment="block"
-              @click-author="handle.clickAuthor"
-              @click-like="handle.clickLike"
-            />
-          </template>
-        </CommentContainer>
+            </div>
+            <div class="mt-2 grid grid-cols-3 gap-3">
+              <a
+                v-for="(app, index) in store?.detailAppAds"
+                :key="index"
+                :href="app.url || '#'"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center gap-2 hover:opacity-80"
+                @click="adsClick(app.id)"
+              >
+                <AdvertSlot
+                  :advert="{
+                    title: app.name,
+                    image: app.image,
+                    url: app?.url,
+                  }"
+                  fit="cover"
+                  style="width: 28px; height: 28px"
+                />
+                <span class="text-xs info">{{ app.name }}</span>
+              </a>
+            </div>
+            <CommentContainer
+              class="mt-5"
+              :fulled="blockFulled"
+              :total="total"
+            >
+              <el-card
+                v-for="(app, index) in store.detailAds"
+                :key="index"
+                body-style="padding: 0;"
+                class="my-2"
+              >
+                <a
+                  :href="app.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class=""
+                  @click="adsClick(app.id)"
+                >
+                  <AdvertSlot
+                    :advert="{
+                      title: app.name,
+                      image: app.image,
+                      url: app?.url,
+                    }"
+                    fit="cover"
+                  />
+                </a>
+              </el-card>
+              <template
+                v-for="block in commentBlocks"
+                :key="block.id"
+              >
+                <CommentBlock
+                  :comment="block"
+                  @click-author="handle.clickAuthor"
+                  @click-like="handle.clickLike"
+                />
+              </template>
+            </CommentContainer>
+          </el-col>
+        </el-row>
 
         <!-- 评论区域 -->
         <BottomAction
@@ -326,10 +393,25 @@
     scrollbar-width: none;
     display: flex;
     flex-direction: column;
+  }
+  .date {
+    font-size: 14px;
+  }
 
-    .pc-mode({
-       width: 375px;
-       border-left: 1px solid var(--border-color);
-    });
+  .date-wrapper {
+    margin-top: 12px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  .title {
+    font-size: 22px;
+    color: var(--text-color-dark);
+    margin-bottom: 8px;
+    font-weight: 800;
+  }
+
+  .content {
+    font-size: 14px;
   }
 </style>

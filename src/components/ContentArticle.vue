@@ -1,5 +1,12 @@
 <script lang="ts" setup>
-  import { ref, computed, onMounted, watch } from "vue";
+  import {
+    ref,
+    computed,
+    onMounted,
+    watch,
+    onUnmounted,
+    watchEffect,
+  } from "vue";
   import Hls from "hls.js";
   import { useDecryption } from "@/composables/useDecryption";
 
@@ -19,6 +26,7 @@
   const contentRef = ref<HTMLDivElement | null>(null);
   const clonedContent = computed(() => structuredClone(props.content));
   const loading = ref(false);
+  const hlsInstances = ref<Hls[]>([]);
 
   const initImgAndVideo = async () => {
     loading.value = true;
@@ -66,6 +74,7 @@
             video.src = src; // Safari
           } else if (Hls.isSupported()) {
             const hls = new Hls();
+            hlsInstances.value.push(hls);
             hls.loadSource(src);
             hls.attachMedia(video);
           }
@@ -78,18 +87,32 @@
     }
   };
 
-  onMounted(() => {
-    watch(
-      () => props.content,
-      () => {
-        if (contentRef.value) {
-          contentRef.value.innerHTML = "";
-        }
-        initImgAndVideo();
-      }
-    );
+  const closeVideo = () => {
+    // Pause any HLS instances to stop them from loading more data
+    hlsInstances.value.forEach((hls) => {
+      hls.stopLoad();
+    });
+
+    // Pause all video elements inside the content
+    if (contentRef.value) {
+      const videos = contentRef.value.querySelectorAll("video");
+      videos.forEach((video) => {
+        video.pause();
+      });
+    }
+  };
+
+  defineExpose({
+    closeVideo,
+  });
+
+  watchEffect(() => {
+    if (contentRef.value) {
+      contentRef.value.innerHTML = "";
+    }
     initImgAndVideo();
   });
+  initImgAndVideo();
 </script>
 <template>
   <div

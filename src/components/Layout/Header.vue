@@ -119,7 +119,7 @@
   };
   const filteredNavItems = computed(() =>
     NavigationItems.filter((item) =>
-      ["/article", "/anime", "/creator"].includes(item.href)
+      ["/" ,"/article", "/anime", "/creator"].includes(item.href)
     )
   );
   onMounted(() => {

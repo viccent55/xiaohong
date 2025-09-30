@@ -59,19 +59,25 @@
     :infinite-scroll-immediate="false"
   >
     <el-row
-      :gutter="12"
+      :gutter="24"
       class="md:p-5 p-0"
     >
       <el-col
         :span="8"
         :sm="6"
+        :md="6"
+        :lg="4"
         v-for="(item, index) in state.data"
         :key="index"
+        class="mb-4"
       >
         <el-card
           shadow="never"
-          class="news-card h-[120px] md:h-[260px]"
-          body-style="padding:0"
+          class="news-card"
+          :body-style="{
+            padding: 0,
+            height: '212px',
+          }"
           @click="openDialog(item.id)"
         >
           <!-- Cover Image -->

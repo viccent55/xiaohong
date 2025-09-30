@@ -139,7 +139,8 @@
     display: flex;
     margin-top: auto;
     height: max-content;
-
+    display: flex;
+    justify-content: end;
     border-top: 1px solid var(--border-color);
 
     .mobile-mode({

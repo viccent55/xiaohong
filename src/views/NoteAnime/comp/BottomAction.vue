@@ -8,7 +8,7 @@
 </script>
 
 <template>
-  <div class="bottom-action rounded-b-2xl">
+  <div class="bottom-action rounded-b-2x">
     <div class="actions-container">
       <div
         class="action"
