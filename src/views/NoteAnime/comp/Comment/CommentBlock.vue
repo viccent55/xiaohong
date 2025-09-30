@@ -1,0 +1,58 @@
+<script setup lang="ts">
+  import Comment from "./Comment.vue";
+  import { type ActionInfo } from "@/types/info";
+
+  const emits = defineEmits(["expand-reply", "click-like", "click-replay"]);
+
+  const props = defineProps<{
+    comment: EmptyObjectType;
+  }>();
+
+  const handle = {
+    clickLike(item: ActionInfo, id: number) {
+      emits("click-like", item, id);
+    },
+
+    clickReplay(id: number, name: string) {
+      emits("click-replay", id, name);
+    },
+
+    expandReply() {
+      emits("expand-reply", props.comment.id, props.comment.content);
+    },
+  };
+</script>
+
+<template>
+  <div class="comment-block">
+    <Comment
+      :comment="comment"
+      @click-like="handle.clickLike"
+      @click-reply="handle.clickReplay"
+    />
+    <!-- <span
+      class="expand"
+      v-if="expandNum > 0"
+      @click="handle.expandReply"
+    >
+      展开 {{ expandNum }} 条回复
+    </span> -->
+  </div>
+</template>
+
+<style scoped lang="less">
+  .comment-block {
+    margin-bottom: 16px;
+
+    & > :not(:first-child) {
+      margin-left: 48px;
+    }
+
+    .expand {
+      font-size: 14px;
+      margin-left: 48px;
+      cursor: pointer;
+      color: rgb(19, 56, 108);
+    }
+  }
+</style>

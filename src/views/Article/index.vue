@@ -4,6 +4,8 @@
   import Image from "@/components/Image.vue";
   import { useNoteArticleDialog } from "@/hooks/useNoteArticleDialog";
   import useVariable from "@/composables/useVariable";
+  import { checkPermissions } from "@/hooks/usePermisions";
+  import { PERMISSION } from "@/common/permision";
 
   const state = reactive({
     data: [] as EmptyArrayType,
@@ -24,8 +26,10 @@
   };
   const noteDialog = useNoteArticleDialog();
   const openDialog = (id: string) => {
-    clearQuery();
-    noteDialog.openNoteDialog(String(id));
+    checkPermissions(PERMISSION.User, () => {
+      clearQuery();
+      noteDialog.openNoteDialog(String(id));
+    });
   };
   onMounted(() => {
     getData();
