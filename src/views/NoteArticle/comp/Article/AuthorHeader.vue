@@ -1,10 +1,10 @@
 <script setup lang="ts">
-  import CloseButton from "@/components/global/CloseButton.vue";
+
   const emits = defineEmits(["click-close", "click-author", "click-follow"]);
 </script>
 
 <template>
-  <div class="author-header justify-end rounded-r-2xl">
+  <div class="author-header justify-end rounded-2xl">
     <!-- <CloseButton
       class="close-btn"
       @click="$emit('click-close')"

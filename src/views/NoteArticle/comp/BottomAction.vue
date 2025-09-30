@@ -63,7 +63,7 @@
 </script>
 
 <template>
-  <div class="bottom-action rounded-br-2xl">
+  <div class="bottom-action rounded-b-2xl">
     <div class="flex align-center items-center gap-2">
       <div class="input-wrapper">
         <input

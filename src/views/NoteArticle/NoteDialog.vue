@@ -24,7 +24,13 @@
   import { ElMessage } from "element-plus";
   import useVariable from "@/composables/useVariable";
 
-  const { onCopy, route, store } = useVariable();
+  const {
+    onCopy,
+    route,
+    store,
+    disableHorizontalSwipe,
+    enableHorizontalSwipe,
+  } = useVariable();
   const bottomRef = useTemplateRef("bottomActions");
   const noteDIalogRef = useTemplateRef("note-dialog");
 
@@ -152,6 +158,7 @@
       article.value = res.data;
       getComments();
     });
+    disableHorizontalSwipe();
   };
 
   let startX = 0;
@@ -242,6 +249,7 @@
   });
   const onCloseNoteDialog = () => {
     noteDialog.closeNoteDialog();
+    enableHorizontalSwipe();
   };
   const removeAllListeners = async () => {
     await keyboardWillShowListener?.remove();
