@@ -8,8 +8,15 @@
 
 <template>
   <div class="py-3 px-5">
-    <el-row gutter="8">
-      <el-col :span="24">
+    <el-row
+      gutter="8"
+      class="md:p-5 p-0 md:pt-0"
+      justify="center"
+    >
+      <el-col
+        :md="10"
+        :span="24"
+      >
         <el-card
           shadow="never"
           body-style="padding:0; "

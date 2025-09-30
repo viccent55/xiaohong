@@ -112,7 +112,7 @@
         class="grid grid-cols-5 md:grid-cols-10 gap-1 justify-items-center mb-5"
       >
         <a
-          v-for="(app, index) in store?.recommendAds"
+          v-for="(app, index) in store?.homeAds"
           :key="index"
           :href="app.url"
           target="_blank"

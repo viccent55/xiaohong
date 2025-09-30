@@ -170,10 +170,8 @@
       if (item.mode === 3) {
         itemAdClick(item.id);
       } else {
-        checkPermissions(PERMISSION.User, () => {
-          clearQuery();
-          noteDialog.openNoteDialog(String(item.id));
-        });
+        clearQuery();
+        noteDialog.openNoteDialog(String(item.id));
       }
     },
     // 点击Like

@@ -2,7 +2,7 @@ import type { ResponseConfig } from "@/types/axios";
 import service from "@/utils/request";
 
 export function articlList(param: object): Promise<EmptyObjectType> {
-  return service.post("/scand/select", {});
+  return service.post("/scand/select", param);
 }
 export function articleDtail(
   id: number

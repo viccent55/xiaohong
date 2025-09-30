@@ -15,14 +15,7 @@
   } from "@/hooks/useNoteAnimeDialog";
   import { screenMode } from "@/hooks/useScreenMode";
 
-  import {
-    computed,
-    ref,
-    useTemplateRef,
-    onBeforeUnmount,
-    defineAsyncComponent,
-    watch,
-  } from "vue";
+  import { computed, ref, useTemplateRef, onBeforeUnmount, watch } from "vue";
   import type { PluginListenerHandle } from "@capacitor/core";
   import type { CommentBlockInfo } from "@/types/info";
   import { checkPermissions } from "@/hooks/usePermisions";
@@ -31,7 +24,13 @@
   import useVariable from "@/composables/useVariable";
   import Content from "./comp/Article/Content.vue";
 
-  const { onCopy, route, store } = useVariable();
+  const {
+    onCopy,
+    route,
+    store,
+    disableHorizontalSwipe,
+    enableHorizontalSwipe,
+  } = useVariable();
   const bottomRef = useTemplateRef("bottomActions");
   const noteDIalogRef = useTemplateRef("note-dialog");
   const noteDialog = useNoteAnimeDialog();
@@ -105,6 +104,7 @@
     animeDetail(Number(noteDialog.id.value)).then((res) => {
       article.value = res.data;
     });
+    disableHorizontalSwipe();
   };
 
   let startX = 0;
@@ -195,6 +195,7 @@
   });
   const onCloseNoteDialog = () => {
     noteDialog.closeNoteDialog();
+    enableHorizontalSwipe();
   };
   const removeAllListeners = async () => {
     await keyboardWillShowListener?.remove();

@@ -1,10 +1,8 @@
 import type { ResponseConfig } from "@/types/axios";
 import service from "@/utils/request";
 
-export function animeList(
-  param: object
-): Promise<EmptyObjectType> {
-  return service.post("/cartoonVideo/select", {});
+export function animeList(param: object): Promise<EmptyObjectType> {
+  return service.post("/cartoonVideo/select", param);
 }
 export function animeDetail(
   id: number
@@ -13,7 +11,6 @@ export function animeDetail(
     id: id,
   });
 }
-
 
 export function like(id: number): Promise<EmptyObjectType> {
   return service.post("/behavior/likeCartoonVideo", {

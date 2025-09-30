@@ -14,9 +14,11 @@
   import { StatusBar, Style } from "@capacitor/status-bar";
   import { Capacitor } from "@capacitor/core";
   import { SafeArea } from "capacitor-plugin-safe-area";
-import { App } from "@capacitor/app";
-  const emits = defineEmits(["click-menu-item"]);
+  import { App } from "@capacitor/app";
+  import { NavigationItems } from "@/common";
+  import { screenMode } from "@/hooks/useScreenMode";
 
+  const emits = defineEmits(["click-menu-item"]);
   const { store, isNativePlatform } = useVariable();
   const toggleDarkMode = () => {
     store.toggleDarkMode();
@@ -88,7 +90,7 @@ import { App } from "@capacitor/app";
 
   watch(() => store.isDarkmode, setStatusBarStyle);
 
-  App.addListener('resume', () => {
+  App.addListener("resume", () => {
     setStatusBarStyle(store.isDarkmode);
   });
 
@@ -115,6 +117,11 @@ import { App } from "@capacitor/app";
       });
     }
   };
+  const filteredNavItems = computed(() =>
+    NavigationItems.filter((item) =>
+      ["/article", "/anime", "/creator"].includes(item.href)
+    )
+  );
   onMounted(() => {
     initPlatformSaveArea();
   });
@@ -126,8 +133,26 @@ import { App } from "@capacitor/app";
     :class="isNativePlatform ? 'isNative' : ''"
   >
     <!-- prettier-ignore -->
-    <a href="/"><img src="/button-logo.png" alt="logo" /></a>
-    <div class="input-wrapper">
+    <router-link to="/"><img src="/button-logo.png" alt="logo" /></router-link>
+    <div
+      class="flex gap-5"
+      v-if="screenMode !== 'phone'"
+    >
+      <router-link
+        v-for="(item, index) in filteredNavItems"
+        :key="index"
+        :to="item.href"
+        v-slot="{ isActive, navigate }"
+      >
+        <a
+          @click="navigate"
+          :class="[isActive ? 'primary' : 'info', 'text-lg', 'cursor-pointer']"
+        >
+          {{ item.name }}
+        </a>
+      </router-link>
+    </div>
+    <div class="input-wrapper lg:w-[20%] xl:w-[50%]">
       <input
         :disabled="searchDisabled"
         v-model.trim="store.search"
@@ -290,7 +315,6 @@ import { App } from "@capacitor/app";
   }
 
   .input-wrapper {
-    width: 50%;
     min-width: 200px;
     max-width: 500px;
     height: 40px;

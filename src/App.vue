@@ -92,9 +92,20 @@
         store.configuration = response.data;
         localStorage.removeItem("lastNotificationTimestamp");
       }
+      const LOGIN_DIALOG_COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours
       // If initMode is successful, check for login
       if (!userStore.isLogin) {
-        openLoginDialog();
+        const lastLoginPrompt = localStorage.getItem(
+          "lastLoginPromptTimestamp"
+        );
+        const now = Date.now();
+        if (
+          !lastLoginPrompt ||
+          now - Number(lastLoginPrompt) > LOGIN_DIALOG_COOLDOWN
+        ) {
+          openLoginDialog();
+          localStorage.setItem("lastLoginPromptTimestamp", String(now));
+        }
       }
     } catch (error) {
       console.error("Server is down or initial fetch failed:", error);

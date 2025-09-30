@@ -151,6 +151,35 @@ const useVariable = () => {
     window.history.replaceState({}, "", newUrl);
   };
 
+  let startX = 0;
+  let startY = 0;
+
+  const touchStartHandler = (e: TouchEvent) => {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  };
+
+  const touchMoveHandler = (e: TouchEvent) => {
+    if (
+      Math.abs(e.touches[0].clientX - startX) >
+      Math.abs(e.touches[0].clientY - startY)
+    ) {
+      e.preventDefault(); // prevent horizontal swipe
+    }
+  };
+  const disableHorizontalSwipe = () => {
+    document.addEventListener("touchstart", touchStartHandler, {
+      passive: false,
+    });
+    document.addEventListener("touchmove", touchMoveHandler, {
+      passive: false,
+    });
+  };
+
+  const enableHorizontalSwipe = () => {
+    document.removeEventListener("touchstart", touchStartHandler);
+    document.removeEventListener("touchmove", touchMoveHandler);
+  };
   return {
     isMobileSm,
     isMobile,
@@ -172,6 +201,8 @@ const useVariable = () => {
     storeUser,
     getTypeDevice,
     clearQuery,
+    disableHorizontalSwipe,
+    enableHorizontalSwipe,
   };
 };
 export default useVariable;

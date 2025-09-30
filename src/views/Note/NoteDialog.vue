@@ -31,7 +31,13 @@
   import { useUserStore } from "@/store/user";
   import useVariable from "@/composables/useVariable";
 
-  const { onCopy, route, store } = useVariable();
+  const {
+    onCopy,
+    route,
+    store,
+    disableHorizontalSwipe,
+    enableHorizontalSwipe,
+  } = useVariable();
   const bottomRef = useTemplateRef("bottomActions");
   const noteDIalogRef = useTemplateRef("note-dialog");
   const Swiper = defineAsyncComponent(
@@ -210,6 +216,7 @@
         getComments();
       }
     );
+    disableHorizontalSwipe();
   };
   const swiperInstanceRef = ref<InstanceType<typeof Swiper> | null>(null);
   const mediaContainerRef = ref<HTMLElement | null>(null);
@@ -218,13 +225,9 @@
     if (swiperInstanceRef.value) {
       swiperInstanceRef.value.closeVideo();
     }
+    enableHorizontalSwipe();
   };
-  // onBeforeRouteLeave((to, from, next) => {
 
-  //   if (noteDialog.id.value) return;
-  //   next();
-  // });
-  // keep track of touch start X and Y for swipe gestures
   let startX = 0;
   let startY = 0;
   let isTouchingMedia = false;

@@ -10,6 +10,7 @@
   import { openPage } from "@/service";
   import { useStore } from "@/store";
   import { generateCode } from "@/utils/toolsValidate";
+  import useVariable from "@/composables/useVariable";
   // state
   const dialogMode = ref<"all" | "left" | "right">();
   const store = useStore();
@@ -29,6 +30,8 @@
     isLogin: true,
     activeName: "login",
   });
+
+  const { onCopy } = useVariable();
   // 监听屏幕宽度变化
   watch(
     () => screenMode.value,
@@ -355,7 +358,12 @@
                 <span class="text-xs">防失联邮箱：</span>
 
                 <el-link
-                  :href="store.configuration?.email"
+                  @click="
+                    () => {
+                      onCopy(store.configuration?.email);
+                      ElMessage.success('复制成功');
+                    }
+                  "
                   target="_blank"
                   rel="noopener noreferrer"
                   type="primary"
