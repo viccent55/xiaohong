@@ -93,7 +93,7 @@
 
     <div
       class="flex justify-center text-xl py-2"
-      v-if="!state.data.length"
+      v-if="!state.data.length && !state.loading"
     >
       <el-empty
         :image-size="120"

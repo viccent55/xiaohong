@@ -254,9 +254,6 @@
       @click-item="handle.clickChannel"
     />
 
-    <!-- Loading indicator for loading more -->
-    <ExploreLoading :loading="loading && !isInitialLoading" />
-
     <!-- 列表 -->
     <ExploreContainer
       class="explore-container"
