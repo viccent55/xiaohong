@@ -41,7 +41,8 @@
     noteDialog.openNoteDialog(String(id));
   };
   const loadMore = async () => {
-    if (state.loading || state.isNoMore || state.data.length >= state.total) return;
+    if (state.loading || state.isNoMore || state.data.length >= state.total)
+      return;
     state.page++;
     await getData();
   };
@@ -81,7 +82,7 @@
             class="card-cover"
           />
         </el-card>
-        <div class="text-sm md:text-base text-center">
+        <div class="title text-center">
           {{ item.title }}
         </div>
       </el-col>
@@ -125,7 +126,7 @@
     margin-bottom: 10px;
   }
 
-  .card-content .title {
+  .title {
     font-size: 16px;
     font-weight: 500;
     padding: 0 12px;

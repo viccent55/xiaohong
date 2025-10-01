@@ -103,7 +103,7 @@
           />
         </el-card>
         <!-- Content -->
-        <div class="text-sm md:text-base">
+        <div class="title px-2">
           {{ item.title }}
         </div>
       </el-col>
@@ -148,7 +148,7 @@
     margin-bottom: 10px;
   }
 
-  .card-content .title {
+  .title {
     font-size: 14px;
     font-weight: 500;
     line-height: 1.5;
