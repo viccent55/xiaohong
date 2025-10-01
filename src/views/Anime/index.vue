@@ -5,12 +5,14 @@
   import { useNoteAnimeDialog } from "@/hooks/useNoteAnimeDialog";
   import useVariable from "@/composables/useVariable";
   import ExploreLoading from "@/views/Explore/comp/ExploreLoading.vue";
+  import { screenMode } from "@/hooks/useScreenMode";
 
   const state = reactive({
     data: [] as EmptyArrayType,
     loading: false,
     page: 1,
     isNoMore: false,
+    total: 0,
   });
   const { clearQuery } = useVariable();
   const getData = async () => {
@@ -22,8 +24,8 @@
       };
       const response = await animeList(request);
       if (response.errcode === 0 && response.data.items.length > 0) {
-        console.log(response.data.items);
         state.data.push(...response.data.items);
+        state.total = response.data.count;
       } else if (response.errcode == -1) {
         state.isNoMore = true;
       }
@@ -41,7 +43,8 @@
   };
 
   const loadMore = async () => {
-    if (state.loading || state.isNoMore) return;
+    if (state.loading || state.isNoMore || state.data.length >= state.total)
+      return;
     state.page++;
     await getData();
   };
@@ -59,14 +62,14 @@
     :infinite-scroll-immediate="false"
   >
     <el-row
-      :gutter="24"
+      :gutter="screenMode == 'phone' ? 6 : 24"
       class="md:p-5 p-0"
     >
       <el-col
         :span="8"
-        :sm="6"
-        :md="6"
-        :lg="4"
+        :md="8"
+        :lg="6"
+        :xl="6"
         v-for="(item, index) in state.data"
         :key="index"
         class="mb-4"
@@ -76,7 +79,18 @@
           class="news-card"
           :body-style="{
             padding: 0,
-            height: '212px',
+            width:
+              screenMode === 'phone'
+                ? '30vw'
+                : screenMode === 'pad'
+                ? '30vw'
+                : '17.708vw',
+            height:
+              screenMode === 'phone'
+                ? '20vw'
+                : screenMode === 'pad'
+                ? '16vw'
+                : '11.042vw',
           }"
           @click="openDialog(item.id)"
         >
@@ -84,6 +98,8 @@
           <Image
             :src="item.cover"
             fit="cover"
+            width="17.708vw"
+            height="11.042vw"
           />
         </el-card>
         <!-- Content -->

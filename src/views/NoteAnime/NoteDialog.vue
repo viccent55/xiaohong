@@ -240,18 +240,16 @@
       @touchstart="onTouchStart"
       @touchend.passive="onTouchEnd"
     >
-      <div
-        class="container"
-        ref="note-dialog"
-      >
+      <div ref="note-dialog">
         <AuthorHeader @click-close="noteDialog.closeNoteDialog" />
         <el-row
           :gutter="24"
           class="px-5"
+          justify="center"
         >
           <el-col
             :span="24"
-            :md="16"
+            :md="20"
           >
             <div class="title">{{ article?.title }}</div>
             <div>
@@ -264,7 +262,7 @@
           </el-col>
           <el-col
             :span="24"
-            :md="8"
+            :md="20"
           >
             <div class="date-wrapper">
               <Date
@@ -276,7 +274,7 @@
                 class="date"
               />
             </div>
-            <div class="mt-2 grid grid-cols-3 gap-3">
+            <div class="mt-2 grid grid-cols-3 md:grid-cols-8 gap-3">
               <a
                 v-for="(app, index) in store?.detailAppAds"
                 :key="index"

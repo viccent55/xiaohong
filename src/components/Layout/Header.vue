@@ -119,7 +119,7 @@
   };
   const filteredNavItems = computed(() =>
     NavigationItems.filter((item) =>
-      ["/" ,"/article", "/anime", "/creator"].includes(item.href)
+      ["/", "/article", "/anime", "/creator"].includes(item.href)
     )
   );
   onMounted(() => {
@@ -133,7 +133,12 @@
     :class="isNativePlatform ? 'isNative' : ''"
   >
     <!-- prettier-ignore -->
-    <router-link to="/"><img src="/button-logo.png" alt="logo" /></router-link>
+    <router-link :to="'/'"  v-slot="{ isActive, navigate }">
+      <img  @click="() => {
+        navigate();
+        store.mode = '0';
+      }" src="/button-logo.png" alt="logo" />
+    </router-link>
     <div
       class="flex gap-5"
       v-if="screenMode !== 'phone'"

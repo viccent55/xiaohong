@@ -11,6 +11,7 @@
     loading: false,
     page: 1,
     isNoMore: false,
+    total: 0,
   });
   const { clearQuery } = useVariable();
 
@@ -22,9 +23,9 @@
         limit: 30,
       };
       const response = await articlList(request);
-      console.log("response =>", response);
       if (response.errcode === 0 && response.data.items.length > 0) {
         state.data.push(...response.data.items);
+        state.total = response.data.count;
       } else if (response.errcode == -1) {
         state.isNoMore = true;
       }
@@ -40,7 +41,7 @@
     noteDialog.openNoteDialog(String(id));
   };
   const loadMore = async () => {
-    if (state.loading || state.isNoMore) return;
+    if (state.loading || state.isNoMore || state.data.length >= state.total) return;
     state.page++;
     await getData();
   };
@@ -58,7 +59,7 @@
     :infinite-scroll-immediate="false"
   >
     <el-row
-      :gutter="32"
+      :gutter="24"
       class="md:p-5 p-0 md:pt-0"
     >
       <el-col

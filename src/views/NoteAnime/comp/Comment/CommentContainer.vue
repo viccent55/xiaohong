@@ -13,7 +13,6 @@
 <template>
   <div class="comments-container">
     <slot name="content"></slot>
-    <div class="total">共 {{ total }} 条评论</div>
     <slot></slot>
     <!-- <div
       class="gain-more"
