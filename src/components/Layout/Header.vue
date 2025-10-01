@@ -19,7 +19,7 @@
   import { screenMode } from "@/hooks/useScreenMode";
 
   const emits = defineEmits(["click-menu-item"]);
-  const { store, isNativePlatform } = useVariable();
+  const { store, isNativePlatform, getDeviceInfo } = useVariable();
   const toggleDarkMode = () => {
     store.toggleDarkMode();
   };
@@ -67,7 +67,7 @@
     const chan = urlParams.get("chan"); // "cgtt"
     openPage(`${store.configuration?.download_app_url}?chan=${chan || param}`);
   };
-  const { isIOS, onInstall, dialogIosGuide, openDialogIos } = usePWA();
+  const { onInstall, dialogIosGuide, openDialogIos } = usePWA();
   const dialogVisible = ref(false);
   const openAds = () => {
     dialogVisible.value = true;
@@ -211,7 +211,7 @@
             <el-dropdown-item>
               <!-- iOS Instructions -->
               <div
-                v-if="isIOS"
+                v-if="getDeviceInfo().isIos"
                 class="text-base px-3 py-1"
                 @click="openDialogIos"
               >

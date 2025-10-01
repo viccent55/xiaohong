@@ -31,34 +31,44 @@ export default function usePWA() {
     offlineReady.value = false;
     needRefresh.value = false;
   };
-
-  onMounted(() => {
-    // Detect if the user is on an iOS device
+  const initPupup = () => {
     const ua = window.navigator.userAgent;
     const isStandalone = window.matchMedia(
       "(display-mode: standalone)"
     ).matches;
     const isIosDevice = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
     isIOS.value = isIosDevice;
-
     // Don't show the prompt if the app is already installed
-    if (isStandalone) {
-      return;
-    }
+    if (isStandalone) return;
+
+    const showPromptIfNeeded = () => {
+      const today = new Date().toISOString().split("T")[0];
+      const lastShownDate = localStorage.getItem("installPromptDate");
+
+      if (lastShownDate !== today) {
+        showInstallPrompt.value = true;
+        localStorage.setItem("installPromptDate", today);
+        return true;
+      }
+      return false;
+    };
 
     if (isIosDevice) {
-      // On iOS, we just show the instruction prompt.
-      showInstallPrompt.value = true;
+      // For iOS, check immediately.
+      showPromptIfNeeded();
     } else {
+      // For other browsers, wait for the event, then check.
       window.addEventListener("beforeinstallprompt", (e) => {
         e.preventDefault();
         installPromptEvent = e as any;
-        // Update UI to notify the user they can install the PWA
-        showInstallPrompt.value = true;
-        console.log("`beforeinstallprompt` event was fired.");
+        if (showPromptIfNeeded()) {
+          console.log(
+            "`beforeinstallprompt` event was fired and prompt shown."
+          );
+        }
       });
     }
-  });
+  };
 
   const { getDeviceInfo, route, storeUser } = useVariable();
 
@@ -113,5 +123,6 @@ export default function usePWA() {
     onInstall,
     dialogIosGuide,
     openDialogIos,
+    initPupup,
   };
 }

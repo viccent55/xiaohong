@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import usePWA from "@/composables/usePWA";
   import GuideIos from "./GuideIos.vue";
+import { onMounted } from "vue";
 
   // Import all necessary state and methods from the composable
   const {
@@ -12,6 +13,7 @@
     onInstall,
     dialogIosGuide,
     openDialogIos,
+    initPupup,
   } = usePWA();
 
   // Handler for the reload button click
@@ -19,7 +21,8 @@
     await updateServiceWorker();
     // Close the prompt after the user clicks to reload.
     closeReloadPrompt();
-  };
+  }; 
+  onMounted(() => initPupup())
 </script>
 
 <template>
